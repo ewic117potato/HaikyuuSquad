@@ -1,0 +1,22 @@
+name: Spike Legends Game Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Verify V4 economy, free rolls, staff and online drafts
+        run: npm run test:v4
+      - name: Test match engine
+        run: npm run test:engine
+      - name: Test multiplayer server and room sync
+        run: npm test

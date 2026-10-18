@@ -1,0 +1,11 @@
+SPIKE LEGENDS V4 — GET YOUR GAME ONLINE
+
+1. Extract this ZIP.
+2. Upload all FILES AND FOLDERS inside it directly to GitHub repo root.
+3. GitHub root must have package.json, server.js, public/, and server/.
+4. Render Web Service settings: Root Directory blank; Build npm install; Start npm start.
+5. Deploy latest commit; check /health on your Render URL.
+6. Optional cloud saving: run supabase/OPTIONAL_CLOUD_SAVE.sql and set Render SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY.
+7. Test friendly draft in two browsers. Configure extra school rolls, rerolls, and coaches before creating a room.
+
+Every successful pick gets another FREE school roll. Extra school changes consume roll tickets; refreshing the four cards consumes rerolls. Coaches use gems and have six rarity levels.
