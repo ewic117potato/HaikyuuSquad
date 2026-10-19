@@ -8,13 +8,15 @@ const safeName=x=>String(x||'ATHLETE').replace(/[^\w \-]/g,'').trim().slice(0,34
 function sanitizeSquad(squad){
  if(!Array.isArray(squad)||squad.length!==6)return [];
  const allowed=['S','OH','MB','OP','L'];const slots=['OH','MB','OP','MB/L','OH','S'];
- return squad.map((x,i)=>({
+ const sanitized=squad.map((x,i)=>({
    name:safeName(x?.name),id:String(x?.id||'').slice(0,80),
    power:clamp(Number(x?.power)||65,60,100),attack:clamp(Number(x?.attack)||65,60,100),
    defense:clamp(Number(x?.defense)||65,60,100),set:clamp(Number(x?.set)||65,60,100),
    position:allowed.includes(x?.position)?x.position:slots[i],slot:slots[i],awakening:clamp(Number(x?.awakening)||0,0,6),
    school:String(x?.school||'Unknown').replace(/[^\w \-]/g,'').slice(0,32)
  }));
+ const unique=new Set(sanitized.map(x=>x.name.toLowerCase()));
+ return unique.size===6?sanitized:[];
 }
 function teamwork(squad){const counts={};let aligned=0;
  for(const c of squad){counts[c.school]=(counts[c.school]||0)+1;if(c.position===c.slot||(c.slot==='MB/L'&&['MB','L'].includes(c.position)))aligned++;}

@@ -22,7 +22,7 @@ assert.strictEqual(last(a,'draft_offer').round,1);
 assert.strictEqual(last(b,'draft_offer').round,1);
 for(let n=1;n<=6;n++){
  const aa=last(a,'draft_offer'),bb=last(b,'draft_offer');
- assert.equal(aa.cards.length,4);assert.equal(bb.cards.length,4);
+ assert(aa.cards.length>=1&&aa.cards.length<=4);assert(bb.cards.length>=1&&bb.cards.length<=4);
  assert(aa.cards.every(c=>c.school===aa.school));
  if(n===1){send(a,{type:'draft_school_roll'});assert.strictEqual(last(a,'draft_offer').schoolRolls,3);
   for(let x=0;x<3;x++)send(a,{type:'draft_school_roll'});

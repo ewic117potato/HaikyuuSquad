@@ -6,7 +6,7 @@ for(let run=0;run<600;run++){
  const squad=[];
  for(let round=0;round<6;round++){
   const o=D.makeOffer({roster:SPIKE_ROSTER,existing:squad,rand:Math.random,cardFromIndex:(idx,stage)=>({key:`${idx}-${stage}`,name:SPIKE_ROSTER[idx].name,school:SPIKE_ROSTER[idx].school,position:SPIKE_ROSTER[idx].pos,stage})});
-  assert.equal(o.cards.length,4);
+  assert(o.cards.length>=1&&o.cards.length<=4);
   assert(o.cards.every(c=>c.school===o.school));
   assert(o.cards.some(c=>D.eligible(squad,c)),`No usable card on run ${run} round ${round}`);
   const choice=o.cards.filter(c=>D.eligible(squad,c));

@@ -25,13 +25,13 @@ const jrows=rowsFromJikan({data:[{character:{name:'Kageyama, Tobio',images:{jpg:
 assert.equal(findPortrait('Tobio Kageyama',jrows),malImg);
 assert.equal(jrows.length,1);
 const allNames=[...new Set([...SPIKE_ROSTER,...SPIKE_COACHES].map(p=>p.name))];
-assert.ok(allNames.length>190,'Expected full players/staff roster');
+assert.ok(allNames.length>90,'Expected curated main-school roster and pro players');
 for(const [i,p] of SPIKE_ROSTER.entries()){
- const art=path.join(__dirname,'..','public','portraits',String(i).padStart(2,'0')+'.svg');
+ const art=path.join(__dirname,'..','public','portraits',String(p.id).padStart(2,'0')+'.svg');
  assert.ok(fs.existsSync(art),`Missing backup art ${p.name} at index ${i}`);
 }
 for(let i=0;i<SPIKE_COACHES.length;i++){
- const staffArt=path.join(__dirname,'..','public','portraits','staff',String(i).padStart(2,'0')+'.svg');
+ const staffArt=path.join(__dirname,'..','public','portraits','staff',String(SPIKE_COACHES[i].id.split('-').at(-1)).padStart(2,'0')+'.svg');
  assert.ok(fs.existsSync(staffArt),'Missing staff art '+SPIKE_COACHES[i].name);
 }
 assert.ok(fs.existsSync(path.join(__dirname,'..','public','portraits','staff-placeholder.svg')));

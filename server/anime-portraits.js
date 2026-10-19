@@ -1,4 +1,10 @@
 'use strict';
+const fs=require('node:fs');
+const path=require('node:path');
+const overrideFile=path.join(__dirname,'..','portrait-overrides.json');
+let customImages={};
+try{customImages=JSON.parse(fs.readFileSync(overrideFile,'utf8'));}catch{}
+
 /**
  * Haikyuu portrait resolver.
  *
@@ -158,6 +164,10 @@ async function individualPortrait(name,fetchImpl=globalThis.fetch){return (await
 async function portraitInfoFor(name,fetchImpl=globalThis.fetch){
  const id=key(name);
  if(!id)return {url:'',source:'none'};
+ // Manually verified per-character portrait URLs take precedence over lookups.
+ // HTTPS is required; no auto-downloading and no broken placeholder URLs.
+ const override=safeImageUrl(customImages[name]||'');
+ if(override)return {url:override,source:'Verified portrait mapping',alternates:[]};
  const recent=detailCache.get(id);
  if(recent&&recent.until>Date.now())return recent.value;
  // Try the two indexed Haikyuu-only lists before resorting to searches.

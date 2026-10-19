@@ -4,6 +4,17 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.SpikePacks=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
 const ODDS=Object.freeze({standard:98.9,elite:1,apex:0.1});
+// Only notable characters with a documented adult storyline are included in Timeskip packs.
+// Ordinary school reserves are never arbitrarily turned into 98-OVR pros.
+const TIMESKIP_NAMES=new Set([
+ 'Shoyo Hinata','Tobio Kageyama','Wakatoshi Ushijima','Kotaro Bokuto',
+ 'Kiyoomi Sakusa','Atsumu Miya','Osamu Miya','Korai Hoshiumi','Wakatsu Kiryu',
+ 'Kenma Kozume','Tetsuro Kuroo','Kei Tsukishima','Toru Oikawa',
+ 'Yu Nishinoya','Keiji Akaashi','Morisuke Yaku','Aran Ojiro',
+ 'Rintaro Suna','Motoya Komori','Tatsuki Washio','Gao Hakuba',
+ 'Tsutomu Goshiki','Kanji Koganegawa','Takanobu Aone','Shinsuke Kita',
+ 'Hajime Iwaizumi','Ryunosuke Tanaka','Daichi Sawamura','Asahi Azumane'
+]);
 const APEX_NAMES=new Set(['Wakatoshi Ushijima','Tobio Kageyama','Kiyoomi Sakusa','Kotaro Bokuto','Atsumu Miya','Shoyo Hinata','Korai Hoshiumi','Wakatsu Kiryu']);
 function rollTier(rng=Math.random){const x=Math.max(0,Math.min(.999999999999,Number(rng())||0));return x<0.001?'apex':x<0.011?'elite':'standard';}
 function eliteCandidate(c){return c.stage>=1&&c.power>=91;}
@@ -23,9 +34,9 @@ function weightedChoose(items,rng=Math.random){if(!items?.length)throw Error('Em
 }
 function drawPack(catalog,stage,rng=Math.random){if(![2,3].includes(stage))throw Error('Only Timeskip and Professional packs are sold');
  const tier=rollTier(rng);
- let choices=catalog.filter(c=>c.stage===stage&&(c.packTier||'standard')===tier&&(stage===3?c.proOnly===true:!c.proOnly));
+ let choices=catalog.filter(c=>c.stage===stage&&(c.packTier||'standard')===tier&&(stage===3?c.proOnly===true:!c.proOnly&&TIMESKIP_NAMES.has(c.name)));
  if(!choices.length)throw Error('No '+tier+' stage '+stage+' cards in this pack');
  return {tier,card:weightedChoose(choices,rng),odds:ODDS};
 }
-return {ODDS,APEX_NAMES,rollTier,eliteCandidate,apexCandidate,upgradeCard,weightedChoose,drawPack};
+return {ODDS,APEX_NAMES,TIMESKIP_NAMES,rollTier,eliteCandidate,apexCandidate,upgradeCard,weightedChoose,drawPack};
 });

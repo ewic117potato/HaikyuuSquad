@@ -1,0 +1,13 @@
+/* V9 school-first character cards. No extra dependencies. */
+.v3-card{transition:transform .22s ease,box-shadow .22s ease;}
+.v3-card .v3-image{isolation:isolate;position:relative;background:radial-gradient(ellipse at 45% 18%,#adb2f344,transparent 63%),linear-gradient(150deg,#29304a,#101b2c);}
+.v3-card .v3-image::after{content:'SCHOOL';position:absolute;bottom:8px;right:8px;z-index:4;font:900 9px/1 system-ui,sans-serif;letter-spacing:1px;background:#090e1ccd;color:#fbf3e4;border:1px solid #fff5;border-radius:4px;padding:6px 7px;pointer-events:none}
+.v3-card[data-stage="1"] .v3-image::after{content:'NATIONALS';color:#f0d39b;border-color:#e8b66188}
+.v3-card[data-stage="2"] .v3-image::after{content:'TIMESKIP';color:#c7eeff;border-color:#7ed3e388}
+.v3-card[data-stage="3"] .v3-image::after{content:'PRO LEAGUE';color:#ffe2a5;border-color:#ecd18b88}
+.v3-card[data-stage="2"],.v3-card[data-stage="3"]{background:linear-gradient(145deg,#343858,#1a2038 64%,#111727)}
+.v3-card[data-stage="3"] .v3-image{background:radial-gradient(ellipse at 45% 30%,#dfb66156,transparent 70%),#141b36}
+.v3-image img.v3-remote,.v5-court-portrait img.v3-remote,.v5-duel-face img.v3-remote,.v5-staff-art img.v3-remote{width:100%;height:100%;object-fit:cover;object-position:center 19%;}
+.v3-card-info b{overflow-wrap:anywhere;}
+.v3-coach-card .v5-staff-art img{object-fit:cover;object-position:center 18%}
+@media (prefers-reduced-motion: reduce){.v3-card,.v3-image img{transition:none!important;}}

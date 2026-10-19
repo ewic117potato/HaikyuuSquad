@@ -1,4 +1,4 @@
-name: Haikyuu Legends V8 Game Checks
+name: Haikyuu Legends V10 Game Checks
 on:
   push:
     branches: [main]
@@ -14,8 +14,8 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify V8 balance, packs, visuals, staff and online drafts
-        run: npm run test:v8
+      - name: Verify V10 unique cards, quests and multiplayer drafts
+        run: npm run test:v10
       - name: Test match engine
         run: npm run test:engine
       - name: Test multiplayer server and room sync

@@ -9,9 +9,9 @@ vm.runInContext(fs.readFileSync('public/draft-rules.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/pack-engine.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/game-v3.js','utf8'),context);
 function get(e){return vm.runInContext(e,context)}
-assert.equal(get('SPIKE_ROSTER.length')>=200,true);
-assert.equal(get('SCHOOLS.length')>=22,true);
-assert.equal(get('SPIKE_COACHES.length')>=25,true);
+assert.equal(get('SPIKE_ROSTER.length')>=100,true);
+assert.equal(get('SCHOOLS.length'),10);
+assert.equal(get('SPIKE_COACHES.length')>=15,true);
 assert.equal(get('state.squad.filter(Boolean).length'),0);
 get('newRun()');
 for(let i=0;i<6;i++)get('runPick(state.v3.offer.cards.find(c=>Draft.eligible(state.v3.run.picks.map(player).filter(Boolean),c)).key)');

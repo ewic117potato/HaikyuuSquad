@@ -44,6 +44,7 @@
       if(row?.payload && remoteDate>localDate) {
         state=Object.assign(DEFAULT(),row.payload);
         state.v3=Object.assign(DEFAULT().v3,state.v3||{});
+        migrateUniqueInventory(state);
         if(!Array.isArray(state.bench))state.bench=[null,null,null,null];
         if(!Array.isArray(state.coaches))state.coaches=[];
         if(!Array.isArray(state.savedTeams))state.savedTeams=[null,null,null,null,null];

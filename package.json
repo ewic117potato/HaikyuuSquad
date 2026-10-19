@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "8.0.0",
+  "version": "10.0.0",
   "private": true,
-  "description": "Haikyuu Legends V8 Astral Court: rarity-balanced high school draft, exclusive Timeskip/Pro packs, magical UI, online character portraits and private friend duels.",
+  "description": "Haikyuu Legends V10: one unique school character card per athlete, no repeat drafts, duplicate-safe inventory, daily/weekly quests for rolls and rerolls.",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -13,7 +13,9 @@
     "test:v5": "node test/v5-overhaul.test.js && npm run test:v4",
     "test:v6": "node test/v6-premium.test.js && npm run test:v5",
     "test:v7": "node test/portraits.test.js && npm run test:v6",
-    "test:v8": "node test/v8-astral.test.js && npm run test:v7"
+    "test:v8": "node test/v8-astral.test.js && npm run test:v7",
+    "test:v9": "node test/v9-school.test.js && npm run test:v8",
+    "test:v10": "node test/v10-unique-quests.test.js && npm run test:v9"
   },
   "dependencies": {
     "ws": "^8.18.0"

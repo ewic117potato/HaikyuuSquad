@@ -31,8 +31,8 @@ const OVERRIDES=Object.freeze({
  'Terutsugu Inubousaki':80,'Nagito Sarukui':82
 });
 const STAGES=Object.freeze(['High School','Nationals','Timeskip','Professional']);
-// Ordinary school cards + occasional Nationals. Timeskip/Pro are SHOP + QUEST rewards.
-const STAGE_CHANCES=Object.freeze([97,3,0,0]);
+// Normal school rolls give the single High School version only. Nationals and adult versions are quest/pack rewards.
+const STAGE_CHANCES=Object.freeze([100,0,0,0]);
 const ALLOWED_OVER_90=new Set(Object.entries(OVERRIDES).filter(([,v])=>v>=90).map(([n])=>n));
 function versionForRoll(random=Math.random){let n=Math.min(.999999999,Math.max(0,Number(random())||0))*100;for(let i=0;i<STAGE_CHANCES.length;i++){n-=STAGE_CHANCES[i];if(n<0)return i;}return 0;}
 function schoolBaseline(base,index){
@@ -55,11 +55,11 @@ function ratingFor(base,index,stage){
 }
 function weightFor(base,index){const n=ratingFor(base,index,0);return n>=97?.35:n>=94?.75:n>=90?1.5:n>=85?4:n>=78?8:15;}
 function rarityFor(power){return power>=100?5:power>=97?4:power>=92?3:power>=85?2:power>=75?1:0;}
-function buildCard(base,index,stage){const power=ratingFor(base,index,stage),pos=base.pos;
- return {key:`${index}-${stage}`,idx:index,stage,variant:STAGES[stage],name:base.name,school:base.school,
+function buildCard(base,index,stage){const power=ratingFor(base,index,stage),pos=base.pos,legacyId=Number.isInteger(base.id)?base.id:index;
+ return {key:`${legacyId}-${stage}`,idx:legacyId,stage,variant:STAGES[stage],name:base.name,school:base.school,
  position:pos,power,rarity:rarityFor(power),attack:Math.min(100,Math.max(60,power+(pos==='OH'||pos==='OP'?4:-3))),
  defense:Math.min(100,Math.max(60,power+(pos==='L'||pos==='MB'?4:-3))),set:Math.min(100,Math.max(60,power+(pos==='S'?4:-5))),
- portrait:`portraits/${String(index).padStart(2,'0')}.svg`,ability:base.ability||'Team Specialist',proOnly:!!base.proOnly};
+ portrait:`portraits/${String(legacyId).padStart(2,'0')}.svg`,ability:base.ability||'Team Specialist',proOnly:!!base.proOnly};
 }
 return {OVERRIDES,STAGES,STAGE_CHANCES,ALLOWED_OVER_90,schoolBaseline,versionForRoll,ratingFor,weightFor,rarityFor,buildCard};
 });

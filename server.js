@@ -5,7 +5,7 @@ const path=require('path');
 const crypto=require('crypto');
 const {WebSocketServer,WebSocket}=require('ws');
 const {STYLES,sanitizeSquad,teamwork,chooseRally,isFinished}=require('./server/match-engine');
-const {SPIKE_ROSTER,SPIKE_COACHES}=require('./public/roster-data.js');
+const {SPIKE_ROSTER,SPIKE_COACHES,SPIKE_NATIONALS_SCHOOLS}=require('./public/roster-data.js');
 const Draft=require('./public/draft-rules.js');
 const Balance=require('./public/balance.js');
 const https=require('https');
@@ -62,7 +62,7 @@ const server=http.createServer((req,res)=>{
  const route=(req.url||'/').split('?')[0];
  if(route==='/api/portrait'){apiPortrait(req,res);return;}
  if(route==='/api/portrait-status'){portraitStatus(req,res);return;}
- if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'astral-court-v8'}));return;}
+ if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'one-card-per-athlete-v10'}));return;}
  if(route==='/api/public-config'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({supabaseUrl:process.env.SUPABASE_URL||'',supabasePublishableKey:process.env.SUPABASE_PUBLISHABLE_KEY||''}));return;}
  let pathname;
  try{pathname=decodeURIComponent(route)}catch{res.writeHead(400);res.end('Bad request');return;}
@@ -79,16 +79,16 @@ function broadcast(room,obj){for(const p of room.players)send(p.ws,obj);}
 function code(){let out;do{out=crypto.randomBytes(3).toString('hex').toUpperCase()}while(rooms.has(out));return out;}
 function clearTimer(room){if(room.timer)clearInterval(room.timer);room.timer=null;}
 const rand=(max)=>crypto.randomInt(max);
-function draftCard(i,v){return Balance.buildCard(SPIKE_ROSTER[i],i,v);}
+function draftCard(i,v){const p=SPIKE_ROSTER[i];return Balance.buildCard(p,i,v===1&&!SPIKE_NATIONALS_SCHOOLS.includes(p.school)?0:v);}
 function newOffer(room,p){
- const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,avoidSchool:p.offer?.school||p.lastSchool||null,rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:Balance.versionForRoll,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
+ const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,avoidSchool:p.offer?.school||p.lastSchool||null,rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:()=>0,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
  p.offer=result;
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,
    rerolls:p.rerolls,schoolRolls:p.schoolRolls,needed:Draft.needs(p.squad),settings:room.settings});
 }
 function rerollSameSchool(room,p){
  const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,targetSchool:p.offer.school,
-  rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:Balance.versionForRoll,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
+  rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:()=>0,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
  p.offer=result;
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,
    rerolls:p.rerolls,schoolRolls:p.schoolRolls,needed:Draft.needs(p.squad),settings:room.settings});

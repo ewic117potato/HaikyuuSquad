@@ -1,47 +1,89 @@
-# HAIKYUU LEGENDS V8 — Astral Court
+# HAIKYUU LEGENDS V10 — ONE CARD PER PLAYER + SCOUT QUESTS
 
-A no-local-install Haikyuu-inspired multiplayer browser-game project for **GitHub + Render + Supabase**. It includes the existing court-based squad builder, four-card school rolls, cross-school friendship and rivalry chemistry, six-player positions, one coach + one manager, quests, school battles, AI matches, saved squads and friend duels. This V8 project replaces V7 and includes all files.
+**Complete GitHub / Render / optional Supabase replacement project.** No Node.js installation is required on your PC when deploying through GitHub Desktop and Render.
 
-## V8 — Updated game design
+## V10 changes (October 2026)
 
-**Normal school drafting** is where squads begin: one free school roll shows four cards, then pick one. Every new pick grants a free next school. Earned rerolls re-roll that school's four cards, and extra rolls switch schools. Each four-card draw guarantees at least one useful missing position. Schools dominate the pool: **97% High School / 3% Nationals / 0% Timeskip / 0% Professional**, per card. The shop—not the normal school draft—is the path to Timeskip and Pro characters.
+- **One school card per named character.** School scouting is now **100% High School versions**. The school roll no longer mixes the same character's Nationals, Timeskip or Professional variants. Nationals cards remain available from earned Nationals Scout Passes and character quests; Timeskip and Professional cards remain exclusive to premium coin packs and quests.
+- **No repeated athlete in an offer or during a six-player draft.** School scouting shows up to four distinct names from one real school. If a school contains fewer than four eligible known athletes (e.g. Itachiyama has three), it shows fewer options rather than duplicating a character. At least one offer is always usable for a missing role. This applies to online friend drafts, too.
+- **Unique permanent collection.** Repeated copies of the same card version don't make extra inventory entries. Existing V9 browser saves are migrated: duplicate cards are merged, the **highest existing upgrade level** is kept, and active/saved lineup slots are repaired. Characters from other card versions still exist as separate collectible cards (e.g. school Hinata and a professional Hinata).
+- **One athlete per team lineup.** A saved six-player squad cannot field the same named player twice, even using multiple stages. The multiplayer server validates this.
+- **More rolls from quests:** Daily First Scouting Pick (+2 school rolls, +1 reroll), Daily Build Momentum (+2 rolls, +2 rerolls), Daily Practice (+2 rolls); Weekly School Recruiter (+6 rolls, +4 rerolls), Weekly Winning Scout (+4 rolls), and first-recruit Legend Road milestone (+3 rolls, +2 rerolls). Existing quests remain available.
+- **School battle first-clear rewards:** a permanent school card, **2 rolls** and **1 reroll**. Every third match victory awards an extra school roll.
+- **Duplicate pack compensation:** repeated exact Timeskip/Pro cards return coins instead of filling inventory with copies (1,600 for Timeskip, 5,000 for Pro).
+- **Draft costs unchanged:** first roll free; a fresh free school roll after each pick; extra school change uses a School Roll; changing the four offered characters uses a Reroll.
 
-**Pack shop (coins only):**
+### Upgrade with GitHub Desktop
 
-| Pack | Price | Contents |
-| --- | ---: | --- |
-| Timeskip Chronicles | 7,500 coins | One older-version school athlete |
-| Pro League Contract | 22,000 coins | One verified pro-team player from the roster |
+1. **Keep your existing repository**, Render web service, and Supabase project; don't delete them.
+2. Extract the complete V10 ZIP.
+3. In GitHub Desktop, choose the repository Render is connected to and select **Repository → Show in Explorer**.
+4. Copy the **contents** of the V10 folder (`public`, `server`, `test`, `package.json`, `server.js`, `.github`, etc.) directly to the repository root. Choose **Replace files**. Do not nest the game in another folder or delete the `.git` folder.
+5. In GitHub Desktop click **Commit to main → Push origin**.
+6. Render should redeploy automatically. For root-level files use: **Root Directory empty**, **Build `npm install`**, **Start `npm start`**.
+7. Refresh your game. Verify the top-bar **Rolls** count and visit **Quests & Rewards** to collect the new rewards.
 
-Only these **two packs** are sold. In each pack, **98.9% Standard / 1% Elite / 0.1% Apex**. The odds are per one-card pack, not multiplied by the number of cards in a normal school draft. Standard's selection is *also* weighted: top-performing pro stars are rarer than lesser-known pro teammates. Only selected notable characters can receive the rare Apex form.
+**Save compatibility:** Uses the existing `spike-legends-save-v1` browser key and existing Supabase save schema. V10 merges exact duplicate cards and may clear redundant positions in previously invalid lineups; it does not intentionally wipe your currency, first card, progress or saved team presets. As a precaution, back up your browser data before updating.
 
-**Earned Nationals Scout Passes** from quests directly recruit one random Nationals athlete without selling a third type of pack. Pro tokens open Pro packs without paying coins. Daily/weekly/long-term quests give coins, passes, coach currency, and specific character rewards. Legacy unclaimed V7 packs can still be claimed.
+**Testing:** `npm run test:v10` runs 1,800 randomly generated legal six-player drafts, duplicate-migration and quest-claim tests, the simulated multiplayer server tests, and the older regression suites. Actual Render-to-Render client duels, cloud saves, and online anime artwork still require checking after deployment. The browser-local economy is not yet cheat-resistant.
 
-**Player ratings:** Between 60 and 100, with narrow ratings above 90: Ushijima **99**, Sakusa **97**, Kiryu **97**, Kageyama **96**, Bokuto **96**, Hoshiumi **96**, Atsumu **95**, Oikawa **94**, Kenma **89**, Hinata **88** (base school versions). A minor bench character now gets a plausible low-to-mid rating, not an arbitrary 98. Nationals/Timeskip/Pro stage changes remain carefully capped by each player's base ability. Rare Apex forms are special collectibles and can reach 100 only for eligible stars. **These are subjective game ratings, not official canon.**
+---
 
-**Interface overhaul:** Astral Court visual theme with luminous lilac/gold rarity cards, cinematic Timeskip/Pro covers, frosted panels, strengthened court layout, improved responsive grid, animated effects and accessible reduced-motion handling. The six-player court respects the requested formation: top **OH / M / OP**, bottom **M or L / OH / S**.
+# Previous V9 notes (historical)
 
-## Online portraits
+A complete replacement project for the existing GitHub → Render → Supabase browser game. **No local Node.js installation is required for deployment.**
 
-All **210 roster entries** and **30 coach/manager cards** have local fallback SVG illustrations, so the game has an image for every card, even offline. While online, the server attempts to match *real Haikyuu character portraits* by name from AniList and MyAnimeList/Jikan, with a Haikyuu Wiki fallback. A given character's school, Nationals, Timeskip and Pro variants may reuse the same portrait. **100% real anime imagery is not guaranteed**: some obscure or manga-only characters don't have accessible anime photos, and third-party image hosts can refuse hotlinking. These online images are third-party copyrighted artworks and are **not bundled**. For public release, obtain appropriate permission or licensed artwork.
+## V9 changes
 
-After deploying, visit `YOUR-SITE/portrait-check.html` to verify which online anime images are actually loading for your character roster and staff.
+### School scouting is now school-only
 
-## Upgrade an existing GitHub/Render website
+Normal four-card scouting is limited to ten prominent **boys' high-school** teams:
 
-1. Back up any rare saved characters before changing things. **Do not clear browser data**. The persistent browser key is still `spike-legends-save-v1`.
-2. Extract this ZIP. Open GitHub Desktop, select the repository actually connected to Render and click **Repository → Show in Explorer**.
-3. Copy **the contents** (folders and files) of this directory into the cloned repository's **root**. Replace the existing files. Do not create an extra parent directory, do not delete the hidden `.git` folder.
-4. In GitHub Desktop, **Commit to main → Push origin**. If the Render service points to a different GitHub repository, update the correct one.
-5. In Render Settings use **Root Directory blank** (when `package.json` is at root), **Build Command `npm install`**, **Start Command `npm start`**. Redeploy the latest commit or rely on automatic deployment. The `/health` endpoint should report `astral-court-v8`.
-6. Visit the live site and test school rolls, Timeskip and Pro shops, quest passes, staff and a two-device friend duel.
+Karasuno, Nekoma, Aoba Johsai, Date Tech, Shiratorizawa, Fukurodani, Inarizaki, Kamomedai, Itachiyama and Mujinazaka.
 
-Supabase is optional for cloud saving and uses the same `supabase/OPTIONAL_CLOUD_SAVE.sql` configuration as V7. Anonymous accounts do not provide reliable recovery from another device, so a permanent sign-in method would be needed for a competitive public release.
+- **Removed from selectable scouting:** Niyama Girls, junior-high schools, lesser-known filler schools, all professional teams and the national side.
+- Each card in an offer must belong to the school shown. Four choices are offered. At least one has a position you still need.
+- Normal school picks have a **97% school / 3% Nationals** version chance. Nationals variants appear only for the schools that actually went to Nationals. **Zero Timeskip / zero Professional cards** can appear in a school roll or its reroll.
+- Ordinary school cards stay at believable character-specific ratings, from 60 to 100. Bench/reserve players no longer get their OVR artificially overwritten by the career difficulty. For example, Kenma = **89**, Kageyama = **96**, Ushijima = **99**. Ratings are fan-game balancing values, not canonical statistics.
+- Corrected notable positions, including school Hinata as MB, Daichi as opposite and school Gao Hakuba as opposite.
 
-## Technical notes
+### Timeskip and Professional exclusive packs
 
-- Node 20+ on Render; **no Node.js installation on your computer required**.
-- `npm install && npm run test:v8` runs V8 tests plus the V7/V6/V5/V4 suites.
-- `npm start` launches the multiplayer HTTP + WebSocket service.
-- Cloud currency, rewards and inventories are not fully verified server-side: **the online economy is still a prototype and is not cheat-resistant**.
-- Offline logic tests include 200 brand-new six-character drafts on top of the 600 existing scenarios; live online multiplayer and actual online portrait availability still require post-deployment checks.
+The *only* coin-bought packs are:
+
+- **Timeskip Chronicles** — 7,500 coins, with a curated list of named characters who have adult storylines.
+- **Pro League Contract** — 22,000 coins, only actual listed pro-team players.
+
+Each pack has **98.9% Standard, 1% Elite, 0.1% Apex** chance. Card selection within a rarity is weighted, so the main aces are rarer than ordinary professional teammates. Quests may directly reward a named Timeskip or Professional card without opening a random school roll.
+
+### Anime character pictures
+
+Every playable card has an individual **offline SVG backup portrait** for its specific named character, and the server attempts to replace it with a matching **online Haikyuu anime character portrait** from the AniList and MyAnimeList/Jikan listings. A Haikyuu Wiki portrait is a further fallback when listings have no image. Coach/manager images have the same treatment.
+
+- The lookup uses verified character-name matching against Haikyuu series listings, rather than showing pictures of unrelated characters with similar names.
+- Real anime portraits are **not guaranteed for every character**. Some athletes appear only in manga, some sites prohibit external hotlinking, and professional/timeskip manga looks have not all been animated. Those cards keep their named backup illustration instead of a broken image.
+- You can audit **every active character** at `https://YOUR-GAME-URL/portrait-check.html` to see which online pictures actually load.
+- `portrait-overrides.json` at the project root is an optional map `{ "Shoyo Hinata": "https://..." }` for publisher-authorized, manually verified images. It allows the backend to override a bad automatic match with a known-good picture. Only approved image CDN hosts are accepted by the validation code.
+- Images from other publishers are not included in this ZIP. Obtain appropriate permission/licensing before distributing anime screenshots as your own game's assets.
+
+### Previous game systems retained
+
+Friend duels (saved team and custom new drafts), configurable extra-school rolls and rerolls, free automatic school offer after each pick, one coach + one manager, school and rivalry chemistry, saved squad presets, coins, gems, quests, character packs, school battles, AI matches and optional Supabase cloud saves.
+
+## Update from V8 using GitHub Desktop
+
+1. Back up existing progress if you have valuable cards; avoid clearing browser data. Keep the original GitHub repository and Render service.
+2. Download and extract the **V9 complete ZIP**.
+3. GitHub Desktop → choose the repository *connected to Render* → **Repository → Show in Explorer**.
+4. Copy **the contents** of this extracted folder (`public`, `server`, `test`, `package.json`, `server.js`, etc.) into the repository root. Replace old files. Do not copy an extra containing folder and do not touch `.git`.
+5. In GitHub Desktop, choose **Commit to main** then **Push origin**.
+6. Render usually deploys automatically; otherwise **Manual Deploy → Deploy latest commit**. Render Settings: Root Directory blank **if** `package.json` is at root; Build `npm install`; Start `npm start`.
+7. Confirm `/health` shows `school-showdown-v9`, test a school draft and a Timeskip pack, then open `/portrait-check.html`.
+
+**Saving:** V9 keeps the existing `spike-legends-save-v1` local save key. Original numeric character IDs are preserved for retained characters, even though the available-school list is smaller. Previously owned cards from retired teams remain in the saved JSON (not deleted), but retired teams and their cards no longer appear as selectable cards in V9. Existing Supabase settings remain unchanged.
+
+## Tests and limitations
+
+Run `npm run test:v9` with Node 20+ if you want to validate logic. Automated checks cover the fixed ratings, 500 completed school drafts, pack exclusivity, prior save IDs and portrait file fallback availability.
+
+Full live multiplayer, actual third-party online anime-image availability and Supabase connectivity still need testing **after deployment**. Coins and cloud inventories are not yet fully server-authoritative; don't release it as a cheat-resistant competitive economy without further hardening.
