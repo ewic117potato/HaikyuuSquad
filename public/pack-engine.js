@@ -22,8 +22,8 @@ function apexCandidate(c){return c.stage>=1&&APEX_NAMES.has(c.name);}
 function upgradeCard(base,tier){if(!base||!['elite','apex'].includes(tier))throw Error('Invalid premium card');
  const apex=tier==='apex',b=apex?6:3,skill=apex?12:6;
  return {...base,key:`${base.key}:${tier}`,rarity:apex?5:4,
-  packTier:tier,power:Math.min(100,base.power+b),
-  attack:Math.min(100,base.attack+skill),defense:Math.min(100,base.defense+skill),set:Math.min(100,base.set+skill),
+  packTier:tier,power:Math.min(apex?109:107,base.power+b),
+  attack:Math.min(110,base.attack+skill),defense:Math.min(110,base.defense+skill),set:Math.min(110,base.set+skill),
   variant:`${base.variant} · ${apex?'APEX':'ELITE'}`,ability:`${apex?'APEX AWAKENING':'ELITE FORM'} · ${base.ability}`};
 }
 function weightedChoose(items,rng=Math.random){if(!items?.length)throw Error('Empty pack pool');

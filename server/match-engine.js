@@ -1,28 +1,29 @@
 'use strict';
 // The match server owns rally outcomes; browsers receive the same generated event.
+const Links=require('../public/team-chemistry.js');
 const STYLES={balanced:[1,1,1],power:[1.16,.90,.96],iron:[.91,1.17,.98],tempo:[1.05,.95,1.12]};
 const clamp=(n,low,high)=>Math.max(low,Math.min(high,n));
 const PICK=['THUNDER SPIKE','LIGHTNING QUICK','CROSS-COURT ROCKET','PERFECT IRON WALL','JUMP SERVE ACE','MIRACLE DIG','PHANTOM DECOY','BACK-ROW ATTACK'];
-const PAIRS=[['Shoyo Hinata','Tobio Kageyama',7],['Shoyo Hinata','Kenma Kozume',5],['Kotaro Bokuto','Keiji Akaashi',7],['Tetsuro Kuroo','Kenma Kozume',6],['Atsumu Miya','Osamu Miya',7],['Toru Oikawa','Hajime Iwaizumi',7],['Kotaro Bokuto','Tetsuro Kuroo',5],['Kei Tsukishima','Tetsuro Kuroo',6],['Shoyo Hinata','Kotaro Bokuto',5],['Shoyo Hinata','Atsumu Miya',8],['Tobio Kageyama','Toru Oikawa',5],['Shoyo Hinata','Korai Hoshiumi',7],['Kiyoomi Sakusa','Atsumu Miya',6],['Wakatoshi Ushijima','Tobio Kageyama',6]];
+const LEGACY_PAIRS=[['Shoyo Hinata','Tobio Kageyama',7],['Shoyo Hinata','Kenma Kozume',5],['Kotaro Bokuto','Keiji Akaashi',7],['Tetsuro Kuroo','Kenma Kozume',6],['Atsumu Miya','Osamu Miya',7],['Toru Oikawa','Hajime Iwaizumi',7],['Kotaro Bokuto','Tetsuro Kuroo',5],['Kei Tsukishima','Tetsuro Kuroo',6],['Shoyo Hinata','Kotaro Bokuto',5],['Shoyo Hinata','Atsumu Miya',8],['Tobio Kageyama','Toru Oikawa',5],['Shoyo Hinata','Korai Hoshiumi',7],['Kiyoomi Sakusa','Atsumu Miya',6],['Wakatoshi Ushijima','Tobio Kageyama',6]];
 const safeName=x=>String(x||'ATHLETE').replace(/[^\w \-]/g,'').trim().slice(0,34)||'ATHLETE';
 function sanitizeSquad(squad){
  if(!Array.isArray(squad)||squad.length!==6)return [];
  const allowed=['S','OH','MB','OP','L'];const slots=['OH','MB','OP','MB/L','OH','S'];
  const sanitized=squad.map((x,i)=>({
    name:safeName(x?.name),id:String(x?.id||'').slice(0,80),
-   power:clamp(Number(x?.power)||65,60,100),attack:clamp(Number(x?.attack)||65,60,100),
-   defense:clamp(Number(x?.defense)||65,60,100),set:clamp(Number(x?.set)||65,60,100),
+   power:clamp(Number(x?.power)||65,60,115),attack:clamp(Number(x?.attack)||65,60,115),
+   defense:clamp(Number(x?.defense)||65,60,115),set:clamp(Number(x?.set)||65,60,115),
    position:allowed.includes(x?.position)?x.position:slots[i],slot:slots[i],awakening:clamp(Number(x?.awakening)||0,0,6),
    school:String(x?.school||'Unknown').replace(/[^\w \-]/g,'').slice(0,32)
  }));
  const unique=new Set(sanitized.map(x=>x.name.toLowerCase()));
  return unique.size===6?sanitized:[];
 }
-function teamwork(squad){const counts={};let aligned=0;
- for(const c of squad){counts[c.school]=(counts[c.school]||0)+1;if(c.position===c.slot||(c.slot==='MB/L'&&['MB','L'].includes(c.position)))aligned++;}
- const best=Math.max(0,...Object.values(counts));const schoolBonus=best>=6?12:best>=5?9:best>=4?7:best>=3?5:best>=2?3:0;
- const names=new Set(squad.map(c=>c.name));const duoBonus=PAIRS.filter(([a,b])=>names.has(a)&&names.has(b)).reduce((s,p)=>s+p[2],0);
- return {schoolBonus,duoBonus,aligned,topSchool:Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]||'UNKNOWN'};
+function teamwork(squad){const links=Links.evaluate(squad);let aligned=0;
+ for(const c of squad)if(c.position===c.slot||(c.slot==='MB/L'&&['MB','L'].includes(c.position)))aligned++;
+ return {schoolBonus:links.schoolBonus,duoBonus:links.linkBonus,
+  duoOnlyBonus:links.duoBonus,rivalryBonus:links.rivalryBonus,links:links.links,
+  aligned,topSchool:links.main[0]};
 }
 function mean(squad,key){return squad.reduce((a,c)=>a+c[key],0)/Math.max(1,squad.length);}
 function teamScore(player,rally){const squad=player.squad;const s=STYLES[player.strategy]||STYLES.balanced;

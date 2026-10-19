@@ -6,6 +6,7 @@ const SPIKE_SCHOOL_TEAMS = Object.freeze([
  'KARASUNO','NEKOMA','AOBA JOHSAI','DATE TECH','SHIRATORIZAWA',
  'FUKURODANI','INARIZAKI','KAMOMEDAI','ITACHIYAMA','MUJINAZAKA'
 ]);
+const SPIKE_SECONDARY_TEAMS = Object.freeze(['NOHEBI','JOHZENJI','TSUBAKIHARA','TOKONAMI']);
 const SPIKE_PRO_TEAMS = Object.freeze([
  'MSBY BLACK JACKALS','SCHWEIDEN ADLERS','JAPAN NATIONAL',
  'TACHIBANA RED FALCONS','EJP RAIJIN','AZUMA GREEN ROCKETS'
@@ -18,7 +19,7 @@ const SPIKE_NATIONALS_SCHOOLS = Object.freeze([
 const _seenSchoolNames = new Set();
 const SPIKE_ROSTER=SPIKE_ALL_ROSTER.filter(player=>{
  if(player.proOnly)return SPIKE_PRO_TEAMS.includes(player.school);
- if(!SPIKE_SCHOOL_TEAMS.includes(player.school))return false;
+ if(!SPIKE_SCHOOL_TEAMS.includes(player.school)&&!SPIKE_SECONDARY_TEAMS.includes(player.school))return false;
  const entry=player.school+'::'+player.name;
  if(_seenSchoolNames.has(entry))return false;
  _seenSchoolNames.add(entry);
@@ -31,7 +32,7 @@ SPIKE_COACHES_ALL.push(
  {id:'coach-29',name:'Runa Kuribayashi',school:'JOHZENJI',buff:'focus',value:5,rating:81}
 );
 const SPIKE_COACHES=SPIKE_COACHES_ALL.filter(person=>
- SPIKE_SCHOOL_TEAMS.includes(person.school)||SPIKE_PRO_TEAMS.includes(person.school)
+ SPIKE_SCHOOL_TEAMS.includes(person.school)||SPIKE_SECONDARY_TEAMS.includes(person.school)||SPIKE_PRO_TEAMS.includes(person.school)
 ).filter((person,index,all)=>all.findIndex(x=>x.name===person.name&&x.school===person.school)===index);
-const SPIKE_COLORS = {"KARASUNO":"#e99036","NEKOMA":"#d45b55","FUKURODANI":"#ccb27e","INARIZAKI":"#bda15d","SHIRATORIZAWA":"#9d79b7","AOBA JOHSAI":"#7ebbc0","DATE TECH":"#50aebc","KAMOMEDAI":"#9ab3ca","ITACHIYAMA":"#72b6ba","JOHZENJI":"#e5ad52","MSBY BLACK JACKALS":"#d8a644","SCHWEIDEN ADLERS":"#7e99b6","JAPAN NATIONAL":"#d55252"};
-if(typeof module !== "undefined") module.exports = {SPIKE_ROSTER,SPIKE_COACHES,SPIKE_COLORS,SPIKE_SCHOOL_TEAMS,SPIKE_PRO_TEAMS,SPIKE_NATIONALS_SCHOOLS};
+const SPIKE_COLORS = {"KARASUNO":"#e99036","NEKOMA":"#d45b55","FUKURODANI":"#ccb27e","INARIZAKI":"#bda15d","SHIRATORIZAWA":"#9d79b7","AOBA JOHSAI":"#7ebbc0","DATE TECH":"#50aebc","KAMOMEDAI":"#9ab3ca","ITACHIYAMA":"#72b6ba","JOHZENJI":"#e5ad52","NOHEBI":"#bb6266","TSUBAKIHARA":"#527fbb","TOKONAMI":"#558b75","MUJINAZAKA":"#906ed2","MSBY BLACK JACKALS":"#d8a644","SCHWEIDEN ADLERS":"#7e99b6","JAPAN NATIONAL":"#d55252"};
+if(typeof module !== "undefined") module.exports = {SPIKE_ROSTER,SPIKE_COACHES,SPIKE_COLORS,SPIKE_SCHOOL_TEAMS,SPIKE_SECONDARY_TEAMS,SPIKE_PRO_TEAMS,SPIKE_NATIONALS_SCHOOLS};

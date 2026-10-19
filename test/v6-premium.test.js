@@ -19,13 +19,13 @@ const catalog=basic.concat(basic.filter(P.eliteCandidate).map(c=>P.upgradeCard(c
 for(const stage of [2,3])for(const [tier,number] of [['apex',0],['elite',.001],['standard',.5]]){
  const randomValues=[number,.5];const result=P.drawPack(catalog,stage,()=>randomValues.shift()??.5);
  assert.equal(result.card.stage,stage);assert.equal(result.card.proOnly,stage===3);assert.equal(result.tier,tier);assert.equal(result.card.packTier||'standard',tier);
- assert(result.card.power>=60&&result.card.power<=100);
+ assert(result.card.power>=60&&result.card.power<=109);
 }
 const storage={},elements=new Map();
 function el(key){if(!elements.has(key))elements.set(key,{value:'',textContent:'',innerHTML:'',dataset:{},classList:{add(){},remove(){},toggle(){}},style:{},addEventListener(){},focus(){},setSelectionRange(){}});return elements.get(key);}
 function load(){const context=vm.createContext({document:{body:{dataset:{}},querySelector:el,querySelectorAll:()=>[],addEventListener(){}},console,crypto:crypto.webcrypto,
  localStorage:{getItem:key=>storage[key]||null,setItem:(key,val)=>storage[key]=val},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout(){return 0;},clearTimeout(){},setInterval(){return 0;},clearInterval(){},Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
- for(const file of ['roster-data.js','balance.js','draft-rules.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+file,'utf8'),context);
+ for(const file of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+file,'utf8'),context);
  return {context,run:js=>vm.runInContext(js,context)};
 }
 let client=load(),run=client.run;

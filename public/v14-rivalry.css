@@ -1,0 +1,53 @@
+/* V14 live card portraits + regional discovery + chemistry ledger.
+   Portrait sources are verified Haikyuu character profiles; fall back to local art. */
+.v14-card-art{display:block;position:absolute;inset:0;overflow:hidden;border-radius:inherit}
+.v14-card-art .v13-card-image,.v14-card-art .v13-staff-card-image{width:100%;height:100%;object-fit:cover;display:block}
+.v14-card-art .v3-remote{position:absolute!important;z-index:2;left:9%!important;top:17%!important;width:82%!important;height:44%!important;object-fit:cover!important;object-position:center 18%!important;border-radius:12px!important;box-shadow:0 0 12px #000a,0 0 15px color-mix(in srgb,var(--rarity),transparent 42%);border:2px solid color-mix(in srgb,var(--rarity),white 30%);background:#111c3a!important;pointer-events:none}
+.v13-illustrated-card .v14-card-art .v3-remote{max-width:none}
+.v12-scout-art .v3-remote{position:absolute!important;z-index:2;inset:17% 12% 35% 12%!important;width:76%!important;height:48%!important;object-fit:cover;border-radius:6px;background:#111831}
+.v14-card{transition:transform .2s,filter .2s!important}
+.v14-card[data-stage="1"]{filter:saturate(1.1)}
+.v14-card[data-stage="2"]{filter:saturate(1.2)}
+.v14-card[data-stage="3"]{box-shadow:0 0 12px #ffc96b96,0 12px 28px #000b!important}
+.v14-card[data-stage="4"]{box-shadow:0 0 18px #e280ff,0 16px 32px #000b!important}
+.v14-card.v14-over100::after{content:''!important;display:block!important;position:absolute;inset:2px;border:1px solid #f8dd8a86;border-radius:inherit;pointer-events:none}
+.v14-high-rating{position:absolute;z-index:3;top:7px;right:5px;background:#201137ed;border:1px solid #e9bc77;color:#ffe1a2;font-size:8px;line-height:1.1;padding:4px 5px;border-radius:5px;font-weight:950;max-width:46%;white-space:nowrap}
+.v14-chemistry,.v14-regions{background:linear-gradient(126deg,#10182ef5,#121f44e9);border:1px solid #4d5c8b;border-radius:16px;padding:22px;margin:19px 0 25px;box-shadow:0 12px 36px #03051199}
+.v14-chem-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.v14-chem-header h2{margin:5px 0 0;font-size:clamp(19px,2.2vw,28px);letter-spacing:.5px}
+.v14-chem-header>strong{font-size:19px;color:#84f4bb;text-shadow:0 0 14px #32d4926a}
+.v14-chem-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v14-link-category{border:1px solid #5d7297;background:#111b36;border-radius:10px;min-width:0;padding:15px}
+.v14-link-category h3{font-size:13px;color:#f5d7ab;text-transform:uppercase;letter-spacing:.65px;margin:0 0 14px}
+.v14-link-category p{font-size:12px;line-height:1.5;color:#a7b2cb}
+.v14-link{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 0;border-top:1px solid #44507188}
+.v14-link span{display:grid;gap:4px;min-width:0}
+.v14-link b{font-size:13px;line-height:1.2;color:#fff}
+.v14-link small{font-size:10px;color:#a5b7d7;overflow-wrap:anywhere}
+.v14-link strong{color:#84f4bb;font-size:18px;white-space:nowrap}
+.v14-balance-note{font-size:12px;color:#bcc8de;line-height:1.55;margin:14px 0 0}
+.v14-region-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.v14-region{display:grid;gap:8px;padding:12px;border-radius:12px;background:linear-gradient(130deg,#18254b,#0c1330);border:1px solid #4f628e;min-height:85px}
+.v14-region.ready{background:linear-gradient(130deg,#244839,#101f30);border-color:#61dbac}
+.v14-region.locked{opacity:.74}
+.v14-region b{font-size:14px;letter-spacing:.45px}
+.v14-region small{font-size:11px;color:#bdcadd;line-height:1.45}
+.v14-chemistry button,.v14-regions button{min-height:40px}
+@media(max-width:950px){.v14-chem-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v14-region-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:590px){.v14-chemistry,.v14-regions{padding:13px;margin:12px 0 17px}.v14-chem-grid{grid-template-columns:1fr}.v14-region-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v14-high-rating{font-size:6px;padding:2px}.v14-card-art .v3-remote{border-width:1px!important;border-radius:4px!important}}
+@media(prefers-reduced-motion:reduce){.v14-card{transition:none!important}}
+
+/* Three polished dashboard destinations */
+.v14-home-cards{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:13px;margin:16px 0 22px}
+.v14-home-banner{min-width:0;min-height:198px;display:flex;flex-direction:column;align-items:start;padding:23px 18px;border-radius:14px;border:1px solid #7a7da4;background:linear-gradient(135deg,#292a57,#0c152d);position:relative;overflow:hidden;box-shadow:0 11px 28px #050820ad}
+.v14-home-banner::after{content:'';position:absolute;width:190px;height:190px;border:24px solid #ffffff18;transform:rotate(40deg);right:-110px;top:-78px;pointer-events:none}
+.v14-home-banner.pro{background:radial-gradient(circle at 100% 25%,#6f421b 0,transparent 50%),linear-gradient(130deg,#312316,#0c172c);border-color:#c99b56}
+.v14-home-banner.quest{background:radial-gradient(circle at 100% 25%,#6a2f82 0,transparent 50%),linear-gradient(130deg,#271d4a,#0d122d);border-color:#a364ca}
+.v14-home-banner.latest{background:radial-gradient(circle at 100% 25%,#185d81 0,transparent 50%),linear-gradient(130deg,#132b4c,#0c142c);border-color:#477bbd}
+.v14-home-banner small{font-size:10px;letter-spacing:1.2px;font-weight:950;color:#eccf9a}
+.v14-home-banner h2{position:relative;z-index:1;font-size:clamp(19px,1.7vw,25px);line-height:1.15;font-weight:950;margin:16px 0 5px;letter-spacing:-.4px}
+.v14-home-banner p{position:relative;z-index:1;line-height:1.55;font-size:12px;color:#d0d8ed;margin:0 0 16px}
+.v14-home-banner button{margin-top:auto;position:relative;z-index:2;min-height:37px}
+.v14-court-card img{object-fit:cover!important;object-position:center 27%;width:100%;height:100%}
+@media(max-width:970px){.v14-home-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.v14-home-banner.latest{grid-column:span 2}}
+@media(max-width:630px){.v14-home-cards{grid-template-columns:1fr}.v14-home-banner.latest{grid-column:auto}.v14-home-banner{min-height:174px;padding:18px}}

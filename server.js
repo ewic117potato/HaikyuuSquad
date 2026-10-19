@@ -5,14 +5,14 @@ const path=require('path');
 const crypto=require('crypto');
 const {WebSocketServer,WebSocket}=require('ws');
 const {STYLES,sanitizeSquad,teamwork,chooseRally,isFinished}=require('./server/match-engine');
-const {SPIKE_ROSTER,SPIKE_COACHES,SPIKE_NATIONALS_SCHOOLS}=require('./public/roster-data.js');
+const {SPIKE_SCHOOL_TEAMS,SPIKE_ROSTER,SPIKE_COACHES,SPIKE_NATIONALS_SCHOOLS}=require('./public/roster-data.js');
 const Draft=require('./public/draft-rules.js');
 const Balance=require('./public/balance.js');
 const https=require('https');
 const {portraitInfoFor,getStatus}=require('./server/anime-portraits');
 const PORT=process.env.PORT||3000;
 const root=path.join(__dirname,'public');
-const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
+const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.json':'application/json; charset=utf-8','.ico':'image/x-icon'};
 const portraitCache=new Map();
 function sendPortrait(res,info){
  res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'public,max-age=1800'});
@@ -62,7 +62,7 @@ const server=http.createServer((req,res)=>{
  const route=(req.url||'/').split('?')[0];
  if(route==='/api/portrait'){apiPortrait(req,res);return;}
  if(route==='/api/portrait-status'){portraitStatus(req,res);return;}
- if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'one-card-per-athlete-v10'}));return;}
+ if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'v13-complete-card-gallery'}));return;}
  if(route==='/api/public-config'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({supabaseUrl:process.env.SUPABASE_URL||'',supabasePublishableKey:process.env.SUPABASE_PUBLISHABLE_KEY||''}));return;}
  let pathname;
  try{pathname=decodeURIComponent(route)}catch{res.writeHead(400);res.end('Bad request');return;}
@@ -81,13 +81,13 @@ function clearTimer(room){if(room.timer)clearInterval(room.timer);room.timer=nul
 const rand=(max)=>crypto.randomInt(max);
 function draftCard(i,v){const p=SPIKE_ROSTER[i];return Balance.buildCard(p,i,v===1&&!SPIKE_NATIONALS_SCHOOLS.includes(p.school)?0:v);}
 function newOffer(room,p){
- const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,avoidSchool:p.offer?.school||p.lastSchool||null,rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:()=>0,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
+ const result=Draft.makeOffer({roster:SPIKE_ROSTER,allowedSchools:SPIKE_SCHOOL_TEAMS,existing:p.squad,avoidSchool:p.offer?.school||p.lastSchool||null,rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:()=>0,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
  p.offer=result;
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,
    rerolls:p.rerolls,schoolRolls:p.schoolRolls,needed:Draft.needs(p.squad),settings:room.settings});
 }
 function rerollSameSchool(room,p){
- const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,targetSchool:p.offer.school,
+ const result=Draft.makeOffer({roster:SPIKE_ROSTER,allowedSchools:SPIKE_SCHOOL_TEAMS,existing:p.squad,targetSchool:p.offer.school,
   rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:()=>0,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
  p.offer=result;
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,

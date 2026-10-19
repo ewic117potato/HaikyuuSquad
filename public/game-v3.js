@@ -11,7 +11,7 @@ const pick=a=>a[randint(a.length)];
 const nowDay=()=>new Date().toISOString().slice(0,10);
 const week=()=>{const d=new Date();d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10)};
 const RR=[{name:'Common',color:'#9ba9b6'},{name:'Rare',color:'#64bcff'},{name:'Epic',color:'#c59dff'},{name:'Legendary',color:'#ffd36e'},{name:'Mythic',color:'#ff778b'},{name:'Secret',color:'#86ffdb'}];
-const SCHOOLS=[...new Set(SPIKE_ROSTER.filter(c=>!c.proOnly).map(c=>c.school))];
+const SCHOOLS=[...SPIKE_SCHOOL_TEAMS,...SPIKE_SECONDARY_TEAMS];
 const POS=['OH','MB','OP','MB/L','OH','S'];
 const Balance=SpikeBalance;
 const Draft=SpikeDraftRules;
@@ -20,19 +20,15 @@ const COACH_CHANCES=[30,29,20,12,7,2];
 function staffTier(){let k=Math.random()*100;for(let i=0;i<COACH_CHANCES.length;i++){k-=COACH_CHANCES[i];if(k<0)return i;}return 5;}
 function ratedCoach(base,tier){return {...base,portrait:`portraits/staff/${String(Number(base.id.split('-').at(-1))).padStart(2,'0')}.svg`,tier,rarity:COACH_RARITIES[tier],value:Math.min(10,Math.max(1,Math.round(base.value*[.35,.55,.85,1.12,1.45,1.9][tier])))};}
 const VERSIONS=Balance.STAGES;
-const DUOS=[
- ['Shoyo Hinata','Tobio Kageyama','Freak Quick',7],['Shoyo Hinata','Kenma Kozume','Friendly Rivals',5],
- ['Kotaro Bokuto','Keiji Akaashi','Ace & Setter',7],['Tetsuro Kuroo','Kenma Kozume','Childhood Connection',6],
- ['Atsumu Miya','Osamu Miya','Miya Twins',7],['Toru Oikawa','Hajime Iwaizumi','Perfect Partnership',7],
- ['Kotaro Bokuto','Tetsuro Kuroo','Tokyo Training Camp',5],['Kei Tsukishima','Tetsuro Kuroo','Blocking Mentor',6],
- ['Shoyo Hinata','Kotaro Bokuto','Master & Disciple',5],['Shoyo Hinata','Atsumu Miya','New Generation Quick',8],
- ['Tobio Kageyama','Toru Oikawa','Rival Setters',5],['Shoyo Hinata','Korai Hoshiumi','Little Giants',7],
- ['Kiyoomi Sakusa','Atsumu Miya','Black Jackals Sync',6],['Wakatoshi Ushijima','Tobio Kageyama','Adlers Power',6],
- ['Shoyo Hinata','Yu Nishinoya','Karasuno Energy',4],['Kenma Kozume','Tobio Kageyama','Setter Mindgames',4],
- ['Shinsuke Kita','Atsumu Miya','Captain Discipline',5],['Wakatoshi Ushijima','Satori Tendo','Shiratorizawa Wall',6],
- ['Takanobu Aone','Kenji Futakuchi','Date Tech Iron Wall',6],['Kiyoomi Sakusa','Motoya Komori','Itachiyama Duo',6],
- ['Korai Hoshiumi','Sachiro Hirugami','Kamomedai Fortress',7],['Shoyo Hinata','Kageyama Tobio','Quick Strike',7]
+const Links=SpikeChemistry;
+const DUOS=Links.PAIRS.map(([a,b,label,bonus])=>[a,b,label,bonus]);
+const REGION_UNLOCKS=[
+ {school:'NOHEBI',wins:2,label:'Regional Trial I'},
+ {school:'JOHZENJI',wins:4,label:'Regional Trial II'},
+ {school:'TSUBAKIHARA',wins:6,label:'Regional Trial III'},
+ {school:'TOKONAMI',wins:8,label:'Regional Master'}
 ];
+const unlockedSchools=()=>[...SPIKE_SCHOOL_TEAMS,...REGION_UNLOCKS.filter(x=>state.career>=x.wins).map(x=>x.school)];
 const SCHEMES={KARASUNO:'Offensive tempo',NEKOMA:'Receiving & endurance',FUKURODANI:'Ace power',INARIZAKI:'Serve & attack',SHIRATORIZAWA:'Raw power','DATE TECH':'Blocking','AOBA JOHSAI':'Precision setting',KAMOMEDAI:'Block & balance'};
 const SQUAD_NAMES=['Main Team','All-Rounders','Championship','Defence Unit','Dream Team'];
 function generatedCard(i,v){return Balance.buildCard(SPIKE_ROSTER[i],i,v);}
@@ -46,9 +42,26 @@ const BASE_CATALOG=SPIKE_ROSTER.flatMap((x,i)=>{
   ...(SpikePacks.TIMESKIP_NAMES.has(x.name)?[2]:[])];
  return variants.map(v=>generatedCard(i,v));
 });
+// Legend Road cards are separate collectibles: NEVER school rolls, pack drops or
+// paid shop purchases. Each requires a one-time quest claim.
+const QUEST_LEGENDS=[
+ {key:'legend-bokuto-thunder',name:'Kotaro Bokuto',title:'BOKUTO · THUNDER ACE',power:104,ability:'Thunder Ace Awakening',school:'FUKURODANI'},
+ {key:'legend-hinata-sky',name:'Shoyo Hinata',title:'HINATA · SKY BREAKER',power:103,ability:'Sky Breaker',school:'KARASUNO'},
+ {key:'legend-kenma-oracle',name:'Kenma Kozume',title:'KENMA · COURT ORACLE',power:100,ability:'Perfect Game Plan',school:'NEKOMA'},
+ {key:'legend-kageyama-king',name:'Tobio Kageyama',title:'KAGEYAMA · COURT KING',power:105,ability:'King of Setters',school:'KARASUNO'},
+ {key:'legend-ushijima-power',name:'Wakatoshi Ushijima',title:'USHIJIMA · LEFT ARM',power:105,ability:'Unstoppable Cannon',school:'SHIRATORIZAWA'}
+].map(spec=>{
+ const original=BASE_CATALOG.find(c=>c.name===spec.name&&c.stage===0);
+ return {...original,...spec,stage:4,variant:spec.title,rarity:spec.power>=100?5:4,
+  questOnly:true,cardSource:'quest',packTier:undefined,proOnly:false,
+  attack:Math.min(110,Math.max(original?.attack||85,spec.power+1)),
+  defense:Math.min(110,Math.max(original?.defense||85,spec.power-2))};
+});
+const QUEST_LEGEND_MAP=Object.fromEntries(QUEST_LEGENDS.map(c=>[c.key,c]));
 const CATALOG=BASE_CATALOG.concat(
  BASE_CATALOG.filter(SpikePacks.eliteCandidate).map(c=>SpikePacks.upgradeCard(c,'elite')),
- BASE_CATALOG.filter(SpikePacks.apexCandidate).map(c=>SpikePacks.upgradeCard(c,'apex'))
+ BASE_CATALOG.filter(SpikePacks.apexCandidate).map(c=>SpikePacks.upgradeCard(c,'apex')),
+ QUEST_LEGENDS
 );
 const BY_KEY=Object.fromEntries(CATALOG.map(x=>[x.key,x]));
 const DEFAULT=()=>({name:'ROOKIE',coins:2500,tickets:4,items:[],squad:[null,null,null,null,null,null],bench:[null,null,null,null],coach:null,coaches:[],savedTeams:[null,null,null,null,null],wins:0,losses:0,level:1,xp:0,trophies:0,rolls:0,career:0,meta:{},v3:{runs:0,run:null,offer:null,rerolls:2,packs:0,coachPacks:0,coinsWon:0,quests:{},weekly:{},claimed:{},weeklyClaimed:{},milestoneClaimed:{},day:nowDay(),week:week(),duelGames:0,duelWins:0,proOwned:0,squadCrafts:0,crewBought:0,quickTokens:0}});
@@ -121,6 +134,10 @@ state.gems=Number.isFinite(Number(state.gems))?Number(state.gems):100;
 state.v3.highOvrClaimed=state.v3.highOvrClaimed||{};
 state.v3.cosmetics=state.v3.cosmetics||[];
 state.v3.skin=state.v3.skin||'classic';
+// V11: persistent Nationals journeys and unique first-clear rewards.
+state.v3.nationals=Object.assign({runs:0,bestWins:0,history:[],active:null,day:nowDay(),dailyEntries:0},state.v3.nationals||{});
+if(!Array.isArray(state.v3.nationals.history))state.v3.nationals.history=[];
+const Nationals=typeof SpikeNationals!=='undefined'?SpikeNationals:null;
 // Persistent V6 pack stats and unclaimed reveals (safe against refreshes).
 state.v3.packsOpened=Math.max(0,Number(state.v3.packsOpened)||0);
 state.v3.eliteFound=Math.max(0,Number(state.v3.eliteFound)||0);
@@ -143,15 +160,24 @@ const MANAGER_IDS=new Set([16,17,18,19,20,21,27,28,29]);
 const staffType=base=>MANAGER_IDS.has(Number(String(base.id).split('-').at(-1)))?'manager':'coach';
 const starting=()=>state.squad.map(player).filter(Boolean);
 const bench=()=>state.bench.map(player).filter(Boolean);
-function chem(cards=starting(),staff=coach()){const counts={},names=new Set(cards.map(c=>c.name));cards.forEach(c=>{counts[c.school]=(counts[c.school]||0)+1});const main=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]||['NONE',0];const count=main[1];const schoolBonus=count>=6?12:count>=5?9:count>=4?7:count>=3?5:count>=2?3:0;
- const duos=DUOS.filter(([a,b])=>names.has(a)&&names.has(b));const duoBonus=duos.reduce((a,x)=>a+x[3],0);
- const staffBonus=(staff?(staff.value||0)+(staff.school===main[0]?3:0):0)+(manager()?.value||0)*.55;const benchBonus=Math.min(3,bench().length);
+function chem(cards=starting(),staff=coach()){
+ const links=Links.evaluate(cards);
+ const staffBonus=(staff?(staff.value||0)+(staff.school===links.main[0]?3:0):0)+(manager()?.value||0)*.55;
+ const benchBonus=Math.min(3,bench().length);
  const awakeningBonus=Math.min(18,cards.reduce((sum,c)=>sum+(c.packTier==='apex'?6:c.packTier==='elite'?3:0),0));
- return {main,schoolBonus,duos,duoBonus,staffBonus,benchBonus,awakeningBonus,total:schoolBonus+duoBonus+staffBonus+benchBonus+awakeningBonus};}
+ // Duo and rivalry bonuses are together capped at +12; school chemistry adds up to +5.
+ return {main:links.main,schools:links.schools,schoolBonus:links.schoolBonus,
+  duos:links.links.map(x=>[x.a,x.b,x.label,x.bonus,x.type]),
+  duoBonus:links.linkBonus,friendBonus:links.duoBonus,rivalryBonus:links.rivalryBonus,
+  staffBonus,benchBonus,awakeningBonus,
+  total:links.total+staffBonus+benchBonus+awakeningBonus};
+}
 function avg(cards=starting()){return cards.length?Math.round(cards.reduce((a,c)=>a+c.power+(c.level||0),0)/cards.length):0;}
-function ovr(){return clamp(avg()+Math.min(10,Math.floor(chem().total/4)),0,100)}
-function addCard(key){
+function ovr(){return clamp(avg()+Math.min(18,Math.floor(chem().total/3)),0,115)}
+function addCard(key,source='standard'){
  const c=BY_KEY[key];if(!c)return null;
+ // Quest exclusives can only enter the collection after validating the quest.
+ if(c.questOnly&&source!=='quest-reward')return null;
  // One copy of every exact character-version card in the collection.
  // Recruited duplicate cards reuse the original UID (keeps saved squads intact).
  const previous=state.items.find(x=>x.key===key);
@@ -159,6 +185,7 @@ function addCard(key){
  const obj={key,uid:id(),level:0};state.items.push(obj);return {...c,...obj};
 }
 function save(){state.savedAt=Date.now();try{localStorage.setItem('spike-legends-save-v1',JSON.stringify(state));}catch{}updateHeader();window.queueCloudSave?.()}
+let revealSeq=0,lastDraftSignature='',legendTimer=null;
 let view='home',selectionSlot=0,filters='',chosenSchool='ALL SCHOOLS',offer=null,room=null,ws=null,duel=null,botTick=null,tab='daily',duelMode='saved',friendSettings={extraRolls:8,rerolls:5,coaches:true},coachTab='coaches',pendingQuest='',tempRerolls=0;
 function updateHeader(){const a=$('#coins'),b=$('#tickets'),n=$('#playerName');if(a)a.textContent=f(state.coins);if(b)b.textContent=f(state.tickets);if(n)n.textContent=state.name;const gems=$('#gems');if(gems)gems.textContent=f(state.gems);const st=$('#staffCount');if(st)st.textContent=f(state.coaches.length);}
 function notice(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.classList.remove('show'),2900)}
@@ -168,11 +195,29 @@ function head(tag,title,sub=''){return `<div class="headingline"><div><div class
 function rarity(c){return RR[c.rarity]||RR[0]}
 function img(c){const local=c.portrait||'', fallback=local?`<img src="${local}" loading="lazy" alt="${escapeHtml(c.name)}" onerror="this.style.display='none'">`:`<div class="v3-avatar-fallback" style="--team:${SPIKE_COLORS[c.school]||'#78a4b8'}">${escapeHtml(c.name.split(' ').map(x=>x[0]).slice(-2).join(''))}</div>`;
  return `<div class="v3-image" data-img-name="${escapeHtml(c.name)}">${fallback}</div>`}
-function card(c,{click='',tiny=false,selected=false,disabled=false}={}){const b=rarity(c);return `<button type="button" class="v3-card ${tiny?'compact':''} ${selected?'chosen':''} ${disabled?'v4-unavailable':''}" data-stage="${Number(c.stage)||0}" style="--rarity:${b.color}" ${disabled?'disabled title="Position already filled"':''} ${click?`data-v="${click}"`:''} data-key="${c.key||''}" data-uid="${c.uid||''}" aria-label="${escapeHtml(c.name)} ${c.power} overall"><div class="v3-card-top"><span>${b.name.toUpperCase()}</span><strong>${c.power+(c.level||0)}</strong></div>${img(c)}<div class="v3-card-info"><b>${escapeHtml(c.name)}</b><span>${escapeHtml(c.school)}</span><small>${c.position} • ${escapeHtml(c.variant)}</small></div><div class="v3-card-line"></div></button>`}
-function coachCard(c,click=''){const tier=c.tier||0,rare=COACH_RARITIES[tier]||'Common',type=c.type||staffType(c),isEquipped=type==='manager'?state.manager===c.uid:state.coach===c.uid;return `<button type="button" class="v3-coach-card ${isEquipped?'v5-staff-selected':''}" style="--rarity:${RR[tier].color}" ${click?`data-v="${click}"`:''} data-coach="${c.uid||c.id}"><div class="v5-staff-art" data-img-name="${escapeHtml(c.name)}"><img src="${c.portrait||'portraits/staff-placeholder.svg'}" loading="lazy" alt="${escapeHtml(c.name)}" /></div><span class="v4-staff-rarity">${rare.toUpperCase()} · ${type.toUpperCase()}</span><strong>${escapeHtml(c.name)}</strong><small>${escapeHtml(c.school)}</small><span>+${c.value}% ${escapeHtml(c.buff)}</span>${isEquipped?'<em>✓ EQUIPPED</em>':''}</button>`}
-
-function show(v){view=v;render();$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));$('#bread').textContent='HOME / '+v.toUpperCase();window.scrollTo({top:0,behavior:'instant'});}
-function render(){let out='';const pages={home,roll:rollPage,squad:squadPage,collection:collectionPage,staff:staffPage,shop:shopPage,quests:questsPage,duels:duelPage,career:careerPage};try{out=(pages[view]||home)();}catch(e){console.error(e);out='<p>Could not render this screen. Refresh to retry.</p>'}$('#view').innerHTML=out;updateHeader();loadOnlinePortraits();}
+function v13CardPath(c){
+ const key=String(c.key||'').replace(/[^a-zA-Z0-9_-]/g,'_');
+ return `cards/players/${key}.webp`;
+}
+function v13StaffPath(c){return `cards/staff/${String(c.key||c.id).replace(/[^a-zA-Z0-9_-]/g,'_')}-tier-${Math.max(0,Math.min(5,Number(c.tier)||0))}.webp`;}
+function card(c,{click='',tiny=false,selected=false,disabled=false}={}){
+ const b=rarity(c),fullImage=v13CardPath(c),high=Number(c.power)>=100;
+ return `<button type="button" class="v3-card v13-illustrated-card v14-card ${high?'v14-over100':''} ${c.questOnly?'v12-legend-card v14-quest-card':''} ${tiny?'compact':''} ${selected?'chosen':''} ${disabled?'v4-unavailable':''}" data-stage="${Number(c.stage)||0}" style="--rarity:${b.color}" ${disabled?'disabled title="Position already filled"':''} ${click?`data-v="${click}"`:''} data-key="${escapeHtml(c.key||'')}" data-uid="${escapeHtml(c.uid||'')}" aria-label="${escapeHtml(c.name)} ${c.power+(c.level||0)} overall. ${escapeHtml(c.variant)}">
+ <span class="v14-card-art" data-img-name="${escapeHtml(c.name)}"><img class="v13-card-image" src="${escapeHtml(fullImage)}" loading="lazy" alt="${escapeHtml(c.name)}. ${c.power} overall. ${escapeHtml(c.school)}. ${escapeHtml(c.variant)}." onerror="this.onerror=null;this.src='${escapeHtml(c.portrait||'portraits/staff-placeholder.svg')}'"></span>
+ ${high?'<span class="v14-high-rating">★ 100+ CLUB</span>':''}
+ ${Number(c.level)>0?`<span class="v13-card-level">LEVEL +${Number(c.level)}</span>`:''}
+ ${selected?'<span class="v13-card-selected">✓ SELECTED</span>':''}
+ </button>`;
+}
+function coachCard(c,click=''){
+ const tier=c.tier||0,rare=COACH_RARITIES[tier]||'Common',type=c.type||staffType(c),isEquipped=type==='manager'?state.manager===c.uid:state.coach===c.uid;
+ return `<button type="button" class="v3-coach-card v13-illustrated-staff ${isEquipped?'v5-staff-selected':''}" style="--rarity:${RR[tier].color}" ${click?`data-v="${click}"`:''} data-coach="${escapeHtml(c.uid||c.id)}" aria-label="${escapeHtml(c.name)} ${rare} ${type}, +${c.value}% ${escapeHtml(c.buff)}">
+ <span class="v14-card-art" data-img-name="${escapeHtml(c.name)}"><img class="v13-staff-card-image" src="${escapeHtml(v13StaffPath(c))}" loading="lazy" alt="${escapeHtml(c.name)} ${rare} ${type}" onerror="this.onerror=null;this.src='${escapeHtml(c.portrait||'portraits/staff-placeholder.svg')}'"></span>
+ ${isEquipped?'<span class="v13-card-selected">✓ EQUIPPED</span>':''}
+ </button>`;
+}
+function show(v){if(v!=='roll')endLegendReveal();view=v;render();$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));$('#bread').textContent='HOME / '+v.toUpperCase();window.scrollTo({top:0,behavior:'instant'});}
+function render(){let out='';const pages={home,roll:rollPage,squad:squadPage,collection:collectionPage,staff:staffPage,shop:shopPage,quests:questsPage,duels:duelPage,career:careerPage,nationals:nationalsPage};try{out=(pages[view]||home)();}catch(e){console.error(e);out='<p>Could not render this screen. Refresh to retry.</p>'}$('#view').innerHTML=out;updateHeader();loadOnlinePortraits();queueDraftReveal();}
 // Court layout matches the six positions drawn by the player (top OH / M / OP; bottom M/L / OH / S).
 const COURT_POS=[{label:'OH',hint:'OUTSIDE HITTER'},{label:'M',hint:'MIDDLE BLOCKER'},{label:'OP',hint:'OPPOSITE'},{label:'M / L',hint:'MIDDLE / LIBERO'},{label:'OH',hint:'OUTSIDE HITTER'},{label:'S',hint:'SETTER'}];
 function arrangePartial(cards){
@@ -184,47 +229,121 @@ function arrangePartial(cards){
 function courtBoard(cards,{interactive=false,caption='YOUR STARTING SIX',selected=-1}={}){
  const placed=cards.length===6?cards:arrangePartial(cards);
  return `<section class="v5-court-section"><div class="v5-court-head"><div><span class="eyebrow">TACTICAL LINEUP BOARD</span><h2>${escapeHtml(caption)}</h2></div><div class="v5-court-legend"><span>● FRONT ROW</span><span>● BACK ROW</span></div></div>
- <div class="v5-court"><div class="v5-court-surface"><span class="v5-front-label">NET / FRONT ROW</span><span class="v5-back-label">BACK COURT</span><div class="v5-court-grid">${COURT_POS.map((pos,i)=>{const c=placed[i];const a=c?`<div class="v5-court-portrait" data-img-name="${escapeHtml(c.name)}"><img src="${c.portrait}" loading="lazy" alt="${escapeHtml(c.name)}" /></div>`:`<div class="v5-empty-athlete">${pos.label==='M / L'?'M/L':pos.label}</div>`;
+ <div class="v5-court"><div class="v5-court-surface"><span class="v5-front-label">NET / FRONT ROW</span><span class="v5-back-label">BACK COURT</span><div class="v5-court-grid">${COURT_POS.map((pos,i)=>{const c=placed[i];const a=c?`<div class="v5-court-portrait v14-court-card" data-img-name="${escapeHtml(c.name)}"><img src="${escapeHtml(v13CardPath(c))}" loading="lazy" alt="${escapeHtml(c.name)}" /></div>`:`<div class="v5-empty-athlete">${pos.label==='M / L'?'M/L':pos.label}</div>`;
  return `<${interactive?'button':'div'} ${interactive?'type="button" data-v="selectSlot" data-idx="'+i+'"':''} class="v5-court-slot ${c?'filled':'empty'} ${selected===i?'selected':''}" style="--team:${c?SPIKE_COLORS[c.school]||'#e39d55':'#a7d4ea'}"><span class="v5-slot-no">0${i+1} · ${pos.label}</span>${a}<div class="v5-court-name">${c?escapeHtml(c.name):'OPEN POSITION'}</div><span class="v5-court-sub">${c?`${c.power} OVR · ${escapeHtml(c.variant)}`:pos.hint}</span></${interactive?'button':'div'}>`}).join('')}</div><span class="v5-court-watermark">SPIKE LEAGUE</span></div></div></section>`;
 }
 
-function home(){
- return `<section class="v5-hero"><div class="v5-hero-accent">SEASON 10 · UNIQUE SCHOOL CARDS</div><div class="v5-hero-inner"><div><div class="eyebrow">THE ULTIMATE ANIME VOLLEYBALL SQUAD BUILDER</div><h1>BUILD YOUR<br><em>DREAM SIX.</em></h1><p>Draft a school. Choose your stars. Combine rival chemistry and staff bonuses. Challenge the best Haikyuu teams — or your friends.</p><div class="hero-actions"><button class="btn" data-go="roll">START FREE SCHOOL DRAFT →</button><button class="btn ghost" data-go="duels">⚔ FRIEND DUELS</button></div></div><div class="v5-hero-stats"><span>YOUR TEAM</span><strong>${ovr()} <small>OVR</small></strong><span>${starting().length}/6 PLAYERS LOCKED IN</span><b>${f(state.coins)} COINS IN THE VAULT</b></div></div></section>
- <div class="v3-stats"><div><small>ACTIVE TEAM OVR</small><strong>${ovr()}</strong><span>Max 100</span></div><div><small>CHARACTER COLLECTION</small><strong>${owned().length}</strong><span>${new Set(owned().map(c=>c.key)).size} unique cards</span></div><div><small>COACH / MANAGER</small><strong>${Number(!!coach())} / ${Number(!!manager())}</strong><span>One of each</span></div><div><small>CAREER WINS</small><strong>${state.wins}</strong><span>${state.losses} losses</span></div></div>
- ${courtBoard(state.squad.map(player),{caption:'YOUR ACTIVE SQUAD'})}
- <div class="v3-panels"><div class="v3-feature"><span class="eyebrow">ONE CARD PER SCHOOL PLAYER</span><h3>DRAFT FOUR. PICK ONE.</h3><p>Each school player has ONE High School card. No repeated characters in your offers or squad. Nationals are earned through quests; Timeskip and Pro cards come from packs and quests.</p><button class="btn sm" data-go="roll">OPEN DRAFT →</button></div><div class="v3-feature"><span class="eyebrow">BUILD YOUR STAFF</span><h3>ONE COACH + ONE MANAGER</h3><p>Coaches enhance your team. Managers increase rewards. Collect staff in six rarities.</p><button class="btn sm ghost" data-go="staff">STAFF ROOM →</button></div><div class="v3-feature"><span class="eyebrow">CHALLENGE THE WORLD</span><h3>SCHOOL & FRIEND DUELS</h3><p>Take on story schools or challenge friends with saved teams or fresh drafts.</p><button class="btn sm ghost" data-go="career">SCHOOL BATTLES →</button></div></div>`;
+function chemistryPanel(cards=starting()){
+ const info=Links.evaluate(cards);const personal=info.links.filter(x=>x.type==='duo');const rivals=info.links.filter(x=>x.type==='rivalry');
+ const group=(title,items,empty)=>`<section class="v14-link-category"><h3>${title}</h3>${items.length?items.map(link=>`<div class="v14-link"><span><b>${escapeHtml(link.label)}</b><small>${escapeHtml(link.a)} + ${escapeHtml(link.b)}</small></span><strong>+${link.bonus}</strong></div>`).join(''):`<p>${empty}</p>`}</section>`;
+ return `<section class="v14-chemistry"><div class="v14-chem-header"><div><span class="eyebrow">ACTIVE CONNECTIONS</span><h2>CHEMISTRY & RIVALRY</h2></div><strong>+${info.total} TEAM OVR</strong></div><div class="v14-chem-grid">${group('🏫 School Bonds',info.schools.map(x=>({a:x.count+' athletes',b:x.school,label:x.school,bonus:x.bonus})),'Draft two from the same school to activate.')}${group('⚡ Duo Chemistry',personal,'Try Hinata + Kageyama or Bokuto + Akaashi.')}${group('⚔ Rivalry Chemistry',rivals,'Mix opponents like Hinata + Kenma or Kageyama + Oikawa.')}</div><p class="v14-balance-note">School tier: 2/3/4/5/6 teammates = +1/+2/+3/+4/+5. Duo + rivalry links combined cap at +12 effective OVR.</p></section>`;
 }
-function drawFromSchool(school='ALL SCHOOLS',avoidSchool=null){return Draft.makeOffer({roster:SPIKE_ROSTER,existing:(state.v3.run?.picks||[]).map(player).filter(Boolean),targetSchool:school==='ALL SCHOOLS'?null:school,avoidSchool,cardFromIndex:(i,v)=>{
+function regionalUnlockPanel(){return `<section class="v14-regions"><div class="v14-chem-header"><div><span class="eyebrow">REGIONAL SCOUTING</span><h2>UNLOCK MORE SCHOOLS</h2></div><button class="btn ghost sm" data-go="career">SCHOOL BATTLES →</button></div><div class="v14-region-grid">${REGION_UNLOCKS.map(t=>`<div class="v14-region ${state.career>=t.wins?'ready':'locked'}"><b>${escapeHtml(t.school)}</b><small>${state.career>=t.wins?'✓ Available in school scouting':`Clear ${t.wins} career stages to unlock`}</small></div>`).join('')}</div></section>`;}
+function homeSpotlights(){
+ const latest=owned().at(-1),best=owned().reduce((a,b)=>!a||b.power>a.power?b:a,null);
+ const unlocked=QUEST_LEGENDS.filter(c=>state.items.some(x=>x.key===c.key)).length;
+ return `<section class="v14-home-cards">
+ <div class="v14-home-banner pro"><small>NEW SEASON · LIMITED CONTRACTS</small><h2>THE PROFESSIONAL LEAGUE</h2><p>Only actual Pro athletes are in Professional packs. Elite and Apex outcomes are rare.</p><button class="btn sm" data-go="shop">EXPLORE PRO PACKS →</button></div>
+ <div class="v14-home-banner quest"><small>QUEST EXCLUSIVES · ${unlocked}/${QUEST_LEGENDS.length} UNLOCKED</small><h2>THE LEGEND ROAD</h2><p>Thunder Ace Bokuto, Court King Kageyama, Sky Breaker Hinata and more.</p><button class="btn sm" data-go="quests">VIEW LEGEND QUESTS →</button></div>
+ <div class="v14-home-banner latest"><small>YOUR COLLECTION · ${owned().length} CARDS</small><h2>${latest?escapeHtml(latest.name):'YOUR NEXT RECRUIT'}</h2><p>${latest?`${latest.power} OVR · ${escapeHtml(latest.school)} · ${escapeHtml(latest.variant)}`:'Complete a school scout to collect your first card.'}</p><button class="btn sm" data-go="collection">OPEN COLLECTION →</button></div>
+ </section>`;
+}
+function home(){
+ return `<section class="v5-hero"><div class="v5-hero-accent">SEASON 14 · RIVALRY ROAD</div><div class="v5-hero-inner"><div><div class="eyebrow">THE ULTIMATE ANIME VOLLEYBALL SQUAD BUILDER</div><h1>BUILD YOUR<br><em>DREAM SIX.</em></h1><p>Draft a school. Choose your stars. Combine rival chemistry and staff bonuses. Challenge the best Haikyuu teams — or your friends.</p><div class="hero-actions"><button class="btn" data-go="roll">START FREE SCHOOL DRAFT →</button><button class="btn ghost" data-go="duels">⚔ FRIEND DUELS</button><button class="btn ghost" data-go="nationals">🏆 SPRING NATIONALS</button></div></div><div class="v5-hero-stats"><span>YOUR TEAM</span><strong>${ovr()} <small>OVR</small></strong><span>${starting().length}/6 PLAYERS LOCKED IN</span><b>${f(state.coins)} COINS IN THE VAULT</b></div></div></section>
+ <div class="v3-stats"><div><small>ACTIVE TEAM OVR</small><strong>${ovr()}</strong><span>School, Pro & chemistry</span></div><div><small>CHARACTER COLLECTION</small><strong>${owned().length}</strong><span>${new Set(owned().map(c=>c.key)).size} unique cards</span></div><div><small>COACH / MANAGER</small><strong>${Number(!!coach())} / ${Number(!!manager())}</strong><span>One of each</span></div><div><small>CAREER WINS</small><strong>${state.wins}</strong><span>${state.losses} losses</span></div></div>
+ ${courtBoard(state.squad.map(player),{caption:'YOUR ACTIVE SQUAD'})}
+ ${chemistryPanel()}
+ ${regionalUnlockPanel()}<div class="v3-panels"><div class="v3-feature"><span class="eyebrow">SCHOOL SCOUTS & QUEST LEGENDS</span><h3>DRAFT FOUR. PICK ONE.</h3><p>Each school player has ONE High School card. No repeated characters in your offers or squad. Special Legend cards are separate quest rewards. Timeskip and Pro cards come from packs and quests.</p><button class="btn sm" data-go="roll">OPEN DRAFT →</button></div><div class="v3-feature"><span class="eyebrow">BUILD YOUR STAFF</span><h3>ONE COACH + ONE MANAGER</h3><p>Coaches enhance your team. Managers increase rewards. Collect staff in six rarities.</p><button class="btn sm ghost" data-go="staff">STAFF ROOM →</button></div><div class="v3-feature"><span class="eyebrow">NEW · SPRING HIGH</span><h3>HOW FAR WILL YOUR SIX GO?</h3><p>Enter the six-round Spring High Nationals, see your predicted finish, and try to reach the national final.</p><button class="btn sm ghost" data-go="nationals">NATIONALS BRACKET →</button></div></div>`;
+}
+function drawFromSchool(school='ALL SCHOOLS',avoidSchool=null){return Draft.makeOffer({roster:SPIKE_ROSTER,allowedSchools:unlockedSchools(),existing:(state.v3.run?.picks||[]).map(player).filter(Boolean),targetSchool:school==='ALL SCHOOLS'?null:school,avoidSchool,cardFromIndex:(i,v)=>{
  const original=SPIKE_ROSTER[i];
  const stage=v===1&&SPIKE_NATIONALS_SCHOOLS.includes(original.school)?1:0;
  return BY_KEY[`${original.id}-${stage}`];
 },versionSampler:()=>0,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i),rand:Math.random});}
 function startRun(){if(state.v3.run){popup('<h2 class="h1">START A NEW RUN?</h2><p>Your unfinished six-card draft will be replaced. Cards you already claimed stay in your collection.</p><div class="flexgap"><button class="btn" data-v="confirmNewRun">START FRESH</button><button class="btn ghost" data-v="close">CANCEL</button></div>');return;}newRun()}
 function newRun(){state.v3.run={picks:[],started:Date.now(),bonusPaid:false};state.v3.lastSchool=null;state.v3.offer=null;newRunOffer();}
-function newRunOffer(sameSchool=false){if(!state.v3.run)return;const old=state.v3.offer;state.v3.offer=drawFromSchool(sameSchool&&old?old.school:'ALL SCHOOLS',sameSchool?null:old?.school||state.v3.lastSchool);save();show('roll')}
-function runPick(key){const run=state.v3.run,arr=state.v3.offer?.cards||[];if(!run||run.picks.length>=6){notice('Start a new squad run first.');return;}const c=arr.find(x=>x.key===key);if(!c){notice('Pick one of the offered cards.');return;}if(!Draft.eligible(run.picks.map(player).filter(Boolean),c))return notice('Choose an undrafted athlete in a missing position.');const o=addCard(key);run.picks.push(o.uid);state.v3.lastSchool=state.v3.offer.school;state.v3.offer=null;state.v3.packs++;state.rolls=(state.rolls||0)+1;track('picks');if(o.power>=90)track('rare');if(o.stage===3)track('pro');if(run.picks.length===6){finishRun();return;}newRunOffer();}
-function finishRun(){const run=state.v3.run,cards=run.picks.map(player).filter(Boolean);const reward=500+Math.round(avg(cards)*7)+Math.max(0,chem(cards,null).total*12);const rewardGems=[85,90,95,99].filter(n=>avg(cards)+Math.min(11,Math.floor(chem(cards,coach()).total/3))>=n&&!state.v3.highOvrClaimed[n]);for(const n of rewardGems){state.v3.highOvrClaimed[n]=true;state.gems+={85:20,90:35,95:60,99:100}[n];}state.coins+=reward;state.v3.coinsWon+=reward;state.v3.runs++;state.v3.squadCrafts++;track('runs');const arranged=Draft.lineup(cards);state.squad=arranged?arranged.map(x=>x.uid):run.picks.slice(0,6);state.v3.run=null;state.v3.offer=null;save();show('squad');popup(`<div class="eyebrow">SQUAD RUN COMPLETE</div><h2 class="h1">+${f(reward)} COINS${rewardGems.length?' · +'+rewardGems.reduce((s,n)=>s+({85:20,90:35,95:60,99:100}[n]),0)+' GEMS':''}</h2><p>You recruited six permanent players, equipped them as your new active squad, and earned money for the completed run.</p><div class="v3-card-grid mini">${cards.map(c=>card(c,{tiny:true})).join('')}</div><div class="flexgap"><button class="btn" data-v="close">VIEW SQUAD</button><button class="btn ghost" data-go="shop">OPEN PRO SHOP</button></div>`);}
+function newRunOffer(sameSchool=false){if(!state.v3.run)return;const old=state.v3.offer;state.v3.offer=drawFromSchool(sameSchool&&old?old.school:'ALL SCHOOLS',sameSchool?null:old?.school||state.v3.lastSchool);revealSeq++;save();show('roll')}
+function runPick(key){endLegendReveal();const run=state.v3.run,arr=state.v3.offer?.cards||[];if(!run||run.picks.length>=6){notice('Start a new squad run first.');return;}const c=arr.find(x=>x.key===key);if(!c){notice('Pick one of the offered cards.');return;}if(!Draft.eligible(run.picks.map(player).filter(Boolean),c))return notice('Choose an undrafted athlete in a missing position.');const o=addCard(key);run.picks.push(o.uid);state.v3.lastSchool=state.v3.offer.school;state.v3.offer=null;state.v3.packs++;state.rolls=(state.rolls||0)+1;track('picks');if(o.power>=90)track('rare');if(o.stage===3)track('pro');if(run.picks.length===6){if(Links.evaluate(run.picks.map(player).filter(Boolean)).links.length)track('chemistry');finishRun();return;}newRunOffer();}
+function finishRun(){const run=state.v3.run,cards=run.picks.map(player).filter(Boolean);const reward=500+Math.round(avg(cards)*7)+Math.max(0,chem(cards,null).total*12);const rewardGems=[85,90,95,99].filter(n=>avg(cards)+Math.min(11,Math.floor(chem(cards,coach()).total/3))>=n&&!state.v3.highOvrClaimed[n]);for(const n of rewardGems){state.v3.highOvrClaimed[n]=true;state.gems+={85:20,90:35,95:60,99:100}[n];}state.coins+=reward;state.v3.coinsWon+=reward;state.v3.runs++;state.v3.squadCrafts++;track('runs');const arranged=Draft.lineup(cards);state.squad=arranged?arranged.map(x=>x.uid):run.picks.slice(0,6);state.v3.run=null;state.v3.offer=null;if(Links.evaluate(cards).links.length)state.v3.chemistryRuns=(state.v3.chemistryRuns||0)+1;save();show('squad');const nat=nationalsForecast();popup(`<div class="eyebrow">SQUAD RUN COMPLETE</div><h2 class="h1">+${f(reward)} COINS${rewardGems.length?' · +'+rewardGems.reduce((s,n)=>s+({85:20,90:35,95:60,99:100}[n]),0)+' GEMS':''}</h2><p>You recruited six permanent players, equipped them as your new active squad, and earned money for the completed run.</p>${nat?`<div class="v11-draft-forecast">🏆 <b>SPRING HIGH FORECAST:</b> ${escapeHtml(nat.medianFinish)} · ${(nat.championChance*100).toFixed(1)}% championship chance</div>`:''}<div class="v3-card-grid mini">${cards.map(c=>card(c,{tiny:true})).join('')}</div><div class="flexgap"><button class="btn" data-go="nationals">🏆 SEE NATIONALS FORECAST</button><button class="btn ghost" data-v="close">VIEW SQUAD</button><button class="btn ghost" data-go="shop">PRO SHOP</button></div>`);}
+
+
+function endLegendReveal(){clearTimeout(legendTimer);const overlay=document.querySelector('#v12-legend-overlay');if(overlay&&typeof overlay.remove==='function')overlay.remove();}
+function queueDraftReveal(){
+ if(view!=='roll'||!state.v3.offer||!state.v3.run)return;
+ const offered=state.v3.offer;
+ const sign=[offered.school,...offered.cards.map(c=>c.key),state.v3.run.picks.length,revealSeq].join('|');
+ if(sign===lastDraftSignature)return;
+ lastDraftSignature=sign;
+ const nodes=$$('#view .v12-scout-card');
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ nodes.forEach((node,i)=>{node.classList.remove('v12-show');node.style.setProperty('--i',i);if(reduced)node.classList.add('v12-show');});
+ if(reduced){endLegendReveal();return;}
+ // Four choices reveal in sequence. Using CSS avoids many JS timers.
+ (typeof requestAnimationFrame==='function'?requestAnimationFrame:fn=>fn())(()=>nodes.forEach(n=>n.classList.add('v12-show')));
+ const star=offered.cards.find(c=>c.power>=95);
+ if(!star||typeof document.createElement!=='function')return;
+ endLegendReveal();
+ legendTimer=setTimeout(()=>{
+  if(view!=='roll'||sign!==lastDraftSignature)return;
+  const cover=document.createElement('div');cover.id='v12-legend-overlay';cover.className='v12-legend-overlay';
+  cover.innerHTML=`<div class="v12-cinematic-frame"><span class="eyebrow">✦ LEGENDARY SCOUT DISCOVERY</span><div class="v12-cinematic-ovr">${star.power}</div><div class="v12-cinematic-rank">${star.power>=99?'MYTHIC REVEAL':'RARE STAR FOUND'}</div><h2>${escapeHtml(star.name)}</h2><p>One of your four cards is a superstar. Choose wisely.</p><button class="btn" data-v="skipLegendReveal">CONTINUE TO CARDS →</button></div>`;
+  document.body.appendChild(cover);
+  legendTimer=setTimeout(endLegendReveal,3400);
+ },850);
+}
 function rollPage(){
- // Resume a pre-V10 in-progress draft after converting old duplicate offers.
  if(state.v3.run&&!state.v3.offer&&state.v3.run.picks.length<6){
   state.v3.offer=drawFromSchool('ALL SCHOOLS',state.v3.lastSchool);
  }
- const r=state.v3.run,offer=state.v3.offer,chosen=r?.picks.map(player).filter(Boolean)||[],need=Draft.needs(chosen);
- return head('SCOUTING / SCHOOL ROLLS','DRAFT YOUR DREAM SIX','Scout up to four DIFFERENT athletes from one school. Pick one; your next school arrives free. Earn extra school rolls and rerolls from quests.')+
- `<div class="v5-odds-strip"><b>SCHOOL PLAYERS <span>100%</span></b><b>NATIONALS <span>QUESTS</span></b><b>TIMESKIP <span>SHOP</span></b><b>PRO LEAGUE <span>SHOP</span></b></div>
- <div class="v3-runbar"><div><strong>${r?'ROUND '+(chosen.length+1)+' / 6':'READY TO SCOUT'}</strong><span>${chosen.length}/6 drafted · ${state.v3.runs} runs completed</span></div><div><span>EXTRA SCHOOL ROLLS / CARD REROLLS</span><strong>${state.tickets} / ${state.v3.rerolls}</strong></div><button class="btn ghost sm" data-v="startRun">${r?'NEW RUN':'START A RUN'}</button></div>
- <div class="v5-draft-layout"><div class="v5-draft-main">${offer&&r?`<div class="v3-school-banner" style="--team:${SPIKE_COLORS[offer.school]||'#608b9c'}"><div class="eyebrow">NOW SCOUTING · PICK ${chosen.length+1}/6</div><h2>${escapeHtml(offer.school)}</h2><p>${escapeHtml(SCHEMES[offer.school]||'Develop team chemistry and deadly combinations.')}</p></div>
- <div class="v3-card-grid v5-offer-grid">${offer.cards.map(c=>card(c,{click:'chooseOffer',disabled:!Draft.eligible(chosen,c)})).join('')}</div><div class="v3-actionrow"><button class="btn ghost" data-v="changeSchool" ${state.tickets<1?'disabled':''}>↻ NEW SCHOOL (${state.tickets} LEFT)</button><button class="btn" data-v="rerollOffer" ${state.v3.rerolls<1?'disabled':''}>⟳ REROLL ${offer.cards.length} CARDS (${state.v3.rerolls} LEFT)</button></div>`:
- `<div class="v3-feature v5-start-panel"><span class="eyebrow">START YOUR JOURNEY</span><h2>YOUR FIRST ROLL IS FREE.</h2><p>After every character you pick, the next school is also free. Extra school rolls and rerolls are earned through quests.</p><button class="btn" data-v="startRun">◈ SCOUT A SCHOOL →</button></div>`}
- <div class="v4-needs"><b>POSITIONS TO FILL</b>${need.length?need.map(x=>`<span>${x}</span>`).join(''):'<span>ALL FILLED</span>'}<small>Every school offer includes at least one player for an open role.</small></div></div>
- <aside class="v5-draft-board">${courtBoard(chosen,{caption:'DRAFT BOARD'})}<div class="v5-board-caption"><b>TEAM PROGRESS ${chosen.length}/6</b><span>Front: OH / M / OP<br>Back: M or L / OH / S</span></div></aside></div>`;
+ const run=state.v3.run,offer=state.v3.offer,chosen=run?.picks.map(player).filter(Boolean)||[];
+ const required=Draft.needs(chosen);
+ const colors=offer?SPIKE_COLORS[offer.school]||'#76a9c5':'#738ac4';
+ const chemInfo=chem(chosen,null);
+ return `<section class="v12-draft-world" style="--school-color:${colors}">
+  <div class="v12-world-lights" aria-hidden="true"></div>
+  <div class="v12-header"><span class="eyebrow">THE SPRING HIGH · SCHOOL SCOUTING</span><h1>BUILD A <em>VOLLEYBALL SQUAD.</em></h1><p>Roll a school. Reveal four unique athletes. Pick one player, and your next school roll is free.</p></div>
+  <div class="v12-stage-top"><div class="v12-score"><span>YOUR DRAFT OVR</span><b>${chosen.length?Math.round(avg(chosen)):0}</b><small>${chosen.length}/6 STARTERS</small></div><div class="v12-progress"><span>SCOUT ROUND ${run?chosen.length+1:'—'} / 6</span><div class="v12-progress-track"><div style="width:${chosen.length/6*100}%"></div></div></div>
+   <div class="v12-currency"><span>✦ ${f(state.tickets)} EXTRA SCHOOL ROLLS</span><span>⟲ ${f(state.v3.rerolls)} CARD REROLLS</span></div></div>
+  <div class="v12-stage-grid">
+    <aside class="v12-scout-side">
+      <div class="v12-scout-banner"><small>NOW SCOUTING</small><strong>${escapeHtml(offer?.school||'THE NEXT TEAM')}</strong><span>${escapeHtml(SCHEMES[offer?.school]||'School volleyball · High School cards')}</span></div>
+      <div class="v12-scout-actions">
+       <button class="v12-control primary" data-v="startRun">${run?'✦ RESTART DRAFT':'✦ START FREE DRAFT'}</button>
+       <button class="v12-control" data-v="changeSchool" ${!run||state.tickets<1?'disabled':''}>↻ DIFFERENT SCHOOL <b>${state.tickets}</b></button>
+       <button class="v12-control" data-v="rerollOffer" ${!run||state.v3.rerolls<1?'disabled':''}>⟳ REFRESH 4 CARDS <b>${state.v3.rerolls}</b></button>
+       <button class="v12-control ghost" data-go="quests">✧ EARN MORE ROLLS</button>
+       <button class="v12-control ghost" data-go="collection">▣ YOUR COLLECTION</button>
+      </div>
+      <div class="v12-scout-guide"><b>SCOUTING RULES</b><span>100% High School scout pool · one card per athlete.</span><span>At least one choice fills a missing slot.</span><span>Quest-exclusive cards are earned, not rolled.</span></div>
+    </aside>
+    <div class="v12-offer-side">
+      <div class="v12-section-title"><span>${offer?'PICK ONE CHARACTER':'WAITING FOR YOUR SCOUT'}</span><small>${offer?offer.cards.length+' choices':'4 choices per round'}</small></div>
+      ${offer&&run?`<div class="v12-offer-list">${offer.cards.map((c,i)=>{
+       const disabled=!Draft.eligible(chosen,c);const tone=rarity(c).color;
+       return `<button class="v12-scout-card ${disabled?'ineligible':''}" style="--i:${i};--card-color:${tone}" data-v="chooseOffer" data-key="${escapeHtml(c.key)}" ${disabled?'disabled title="This position is already filled"':''}>
+        <div class="v12-scout-art" data-img-name="${escapeHtml(c.name)}"><img class="v13-scout-card-art" loading="lazy" src="${escapeHtml(v13CardPath(c))}" alt="${escapeHtml(c.name)} collectible card"></div>
+        <div class="v12-scout-description"><span>${escapeHtml(c.school)} · ${escapeHtml(c.position)}</span><strong>${escapeHtml(c.name)}</strong><small>${escapeHtml(c.variant)} · ${escapeHtml(c.ability)}</small></div>
+        <div class="v12-card-power"><b>${c.power}</b><small>OVR</small><span>${disabled?'LOCKED':'PICK'}</span></div></button>`}).join('')}</div>`:
+      `<div class="v12-start-art"><span>✦</span><strong>YOUR NEXT LEGEND STARTS HERE</strong><p>Get four athletes from a randomly selected school. Build six positions, win coins and enter Nationals.</p><button class="btn" data-v="startRun">START DRAFT →</button></div>`}
+      <div class="v12-position-line"><b>STILL NEEDED</b>${required.length?required.map(role=>`<span>${role}</span>`).join(''):'<span>FULL SIX COMPLETE</span>'}</div>
+    </div>
+    <div class="v12-court-column">
+      ${courtBoard(chosen,{caption:'YOUR DRAFT COURT'})}
+      <div class="v12-chem-bars"><div><b>✦ SCHOOL CHEMISTRY</b><strong>+${chemInfo.schoolBonus} OVR</strong></div><div><b>⚡ FRIENDS & RIVALS</b><strong>+${chemInfo.duoBonus} OVR</strong></div><small>${chemInfo.duos.length?chemInfo.duos.map(x=>x[2]).join(' · '):'Recruit connected players to unlock glowing chemistry bonuses.'}</small></div>
+    </div>
+  </div>
+  ${regionalUnlockPanel()}
+  <div class="v12-draft-bottom"><div><b>QUEST LEGENDS</b><small>Bokuto Thunder and other special editions are earned through challenges, not ordinary school rolls.</small></div><button class="btn sm" data-go="quests">OPEN LEGEND ROAD →</button></div>
+ </section>`;
 }
  function rerollOffer(){if(!state.v3.run)return notice('Start a squad run first');if(state.v3.rerolls<=0)return notice('Earn more rerolls from quests');state.v3.rerolls--;newRunOffer(true);}
  function changeSchool(){if(!state.v3.run)return notice('Start a squad run first');if(state.tickets<=0)return notice('Earn more Rolls from quests');state.tickets--;newRunOffer(false);}
 function collectSelect(i,slotType){const c=player(i);if(!c)return;const otherStarters=state.squad.filter(uid=>uid&&uid!==i).map(player);if(otherStarters.some(x=>x?.name===c.name))return notice('You can only field one version of each athlete.');const places=slotType==='bench'?state.bench:state.squad;const slot=slotType==='bench'?selectionSlot-6:selectionSlot;if(slotType!=='bench'&&!slotCompatible(slot,c)){notice('This court slot needs a '+POS[slot]+' player.');return;}for(const arr of [state.squad,state.bench]){const prev=arr.indexOf(i);if(prev>=0)arr[prev]=null;}places[slot]=i;save();show('squad');}
 function squadPage(){const sy=chem(),valid=owned().filter(c=>`${c.name} ${c.school} ${c.variant}`.toLowerCase().includes(filters.toLowerCase())).sort((a,b)=>b.power-a.power);
  return head('TEAM MANAGEMENT','YOUR COURT, YOUR RULES','Choose any of the six marked court positions, then tap a compatible player below.')+
- `<div class="v3-stats"><div><small>SQUAD POWER</small><strong>${ovr()}</strong><span>Effective overall</span></div><div><small>SCHOOL CHEMISTRY</small><strong>+${sy.schoolBonus}%</strong><span>${escapeHtml(sy.main[0])} · ${sy.main[1]} players</span></div><div><small>RIVAL / DUO CHEMISTRY</small><strong>+${sy.duoBonus}%</strong><span>${sy.duos.length} connections · +${sy.awakeningBonus} awakening</span></div><div><small>STAFF BOOSTS</small><strong>+${Math.round(sy.staffBonus)}%</strong><span>${coach()?.name||'No coach'} + ${manager()?.name||'No manager'}</span></div></div>
+ `<div class="v11-squad-shortcut"><div><b>🏆 SPRING HIGH NATIONALS</b><small>Predict how far this lineup can go against Japan's top schools.</small></div><button class="btn sm" data-go="nationals" ${starting().length!==6?'disabled':''}>${starting().length===6?'VIEW NATIONALS FORECAST →':'EQUIP 6 PLAYERS'}</button></div>`+
+ `<div class="v3-stats"><div><small>SQUAD POWER</small><strong>${ovr()}</strong><span>Effective overall</span></div><div><small>SCHOOL CHEMISTRY</small><strong>+${sy.schoolBonus} OVR</strong><span>${escapeHtml(sy.main[0])} · ${sy.main[1]} players</span></div><div><small>RIVAL / DUO CHEMISTRY</small><strong>+${sy.duoBonus} OVR</strong><span>${sy.duos.length} connections · +${sy.awakeningBonus} awakening</span></div><div><small>STAFF BOOSTS</small><strong>+${Math.round(sy.staffBonus)}%</strong><span>${coach()?.name||'No coach'} + ${manager()?.name||'No manager'}</span></div></div>
+ ${chemistryPanel()}
  ${courtBoard(state.squad.map(player),{interactive:true,selected:selectionSlot,caption:'SELECT A POSITION TO EDIT'})}
  <div class="v5-court-subnav"><span>SELECTED: <b>${COURT_POS[selectionSlot]?.label||'BENCH'}</b></span><button class="btn sm ghost" data-v="autoSquad">AUTO BEST SIX</button><button class="btn sm ghost" data-v="clearSlot">REMOVE PLAYER</button></div>
  <div class="sectionbar"><h2>BENCH / RESERVES</h2></div><div class="v3-slot-grid reserve">${state.bench.map((uid,i)=>`<button class="v3-slot ${selectionSlot===6+i?'active':''}" data-v="selectSlot" data-idx="${6+i}"><small>BENCH ${i+1}</small><b>${uid?escapeHtml(player(uid)?.name||'Unknown'):'EMPTY'}</b><span>${uid?(player(uid)?.power||0)+' OVR':'ADD SUBSTITUTE'}</span></button>`).join('')}</div>
@@ -235,7 +354,8 @@ function squadPage(){const sy=chem(),valid=owned().filter(c=>`${c.name} ${c.scho
 }
 function slotCompatible(i,c){return i===0||i===4?c.position==='OH':i===1?c.position==='MB':i===2?c.position==='OP':i===3?['MB','L'].includes(c.position):i===5?c.position==='S':true;}
 
-function collectionPage(){const arr=owned().filter(x=>`${x.name} ${x.school} ${x.variant}`.toLowerCase().includes(filters.toLowerCase())).sort((a,b)=>b.power-a.power);return head('PLAYER ARCHIVE','YOUR PERMANENT COLLECTION',`${owned().length} cards · ${new Set(owned().map(x=>x.key)).size} unique variants · ${CATALOG.length} total available`)+`<div class="toolbar"><input id="inventorySearch" value="${escapeHtml(filters)}" placeholder="Search characters, teams, versions"/><button class="btn ghost sm" data-go="squad">EQUIP SQUAD</button></div>${arr.length?`<div class="v3-card-grid">${arr.slice(0,170).map(x=>card(x,{click:'viewCard'})).join('')}</div>`:'<div class="empty">Nothing here yet. Start drafting characters.</div>'}`}
+let collectionCategory='all';
+function collectionPage(){const arr=owned().filter(x=>`${x.name} ${x.school} ${x.variant}`.toLowerCase().includes(filters.toLowerCase())).filter(x=>collectionCategory==='all'||(collectionCategory==='quest'?x.questOnly:collectionCategory==='school'?x.stage===0:collectionCategory==='premium'?x.stage===2||x.stage===3:false)).sort((a,b)=>b.power-a.power);return head('PLAYER ARCHIVE','YOUR PERMANENT COLLECTION',`${owned().length} cards · ${new Set(owned().map(x=>x.key)).size} unique variants · ${CATALOG.length} total available`)+`<div class="v12-collection-tabs">${[['all','ALL CARDS'],['school','SCHOOL'],['premium','TIMESKIP / PRO'],['quest','QUEST EXCLUSIVE']].map(([key,label])=>`<button class="${collectionCategory===key?'active':''}" data-v="collectionCategory" data-category="${key}">${label}</button>`).join('')}</div><div class="toolbar"><input id="inventorySearch" value="${escapeHtml(filters)}" placeholder="Search characters, teams, versions"/><button class="btn ghost sm" data-go="squad">EQUIP SQUAD</button></div>${arr.length?`<div class="v3-card-grid">${arr.slice(0,170).map(x=>card(x,{click:'viewCard'})).join('')}</div>`:'<div class="empty">Nothing here yet. Start drafting characters.</div>'}`}
 function staffPage(){const all=ownedCoaches(),group=coachTab==='managers'?'manager':'coach',arr=all.filter(x=>x.type===group),current=group==='manager'?manager():coach();return head('TACTICAL STAFF','COACHES & MANAGERS','Equip exactly ONE coach and ONE manager. Both have six rarity levels and different boosts.')+
  `<div class="v5-staff-grid"><div class="v5-active-staff"><small>YOUR COACH</small><strong>${coach()?escapeHtml(coach().name):'NOT ASSIGNED'}</strong><span>${coach()?`+${coach().value}% ${coach().buff}`:'Boosts skills and chemistry'}</span></div><div class="v5-active-staff"><small>YOUR MANAGER</small><strong>${manager()?escapeHtml(manager().name):'NOT ASSIGNED'}</strong><span>${manager()?`+${manager().value}% ${manager().buff}`:'Boosts rewards and momentum'}</span></div></div>
  <div class="v3-tabs"><button class="${group==='coach'?'active':''}" data-v="staffTab" data-tab="coaches">COACHES</button><button class="${group==='manager'?'active':''}" data-v="staffTab" data-tab="managers">MANAGERS</button></div>
@@ -305,17 +425,24 @@ function shopPick(key){const pending=state.v3.pendingPack;if(!pending||pending.k
  popup(`<div class="eyebrow">${duplicate?'DUPLICATE CARD CONVERTED':'PERMANENT RECRUIT ACQUIRED'}</div><h2 class="h1">${escapeHtml(cardObj.name.toUpperCase())}</h2><div class="v3-single">${card(cardObj)}</div><p>${duplicate?`You already own this exact card, so you received ${f(duplicateCoins)} coins instead. Your collection stays unique.`:`${escapeHtml(cardObj.variant)} · ${cardObj.power} OVR. Saved permanently to your collection.`}</p><button class="btn" data-v="close">CONTINUE</button>`);
 }
 function track(metric,n=1){rollover();state.v3.quests[metric]=(state.v3.quests[metric]||0)+n;state.v3.weekly[metric]=(state.v3.weekly[metric]||0)+n;}
-const DAILY=[['pick1','First Scouting Pick','Choose your first school character today','picks',1,{tickets:2,rerolls:1}],['pick3','Build Momentum','Recruit three characters in one day','picks',3,{tickets:2,rerolls:2}],['practice','Daily Practice','Finish one school or bot duel','duels',1,{tickets:2,coins:350}],['run1','Squad Architect','Complete one six-player draft','runs',1,{coins:500,tickets:1}],['draft4','Talent Scout','Pick four characters','picks',4,{coins:380,rerolls:2}],['duel1','Enter the Court','Complete a duel','duels',1,{coins:400,gems:12}],['win1','First Point','Win one duel','wins',1,{coins:650,tickets:2}],['staff1','Coach Recruitment','Recruit one coach','staff',1,{coins:700,gems:30}],['rare1','Spot a Star','Recruit one 90+ OVR card','rare',1,{tokens:1,gems:25}],['pack1','Pack Opening Day','Open one Timeskip or Pro pack','packsOpened',1,{coins:750,gems:10}],['run2','Double Draft Payday','Finish two squad drafts today','runs',2,{coins:1800,tickets:1}],['duel3','Three-Game Bonus','Finish three duels today','duels',3,{coins:1350,rerolls:2}]];
-const WEEKLY=[['tenpicks','School Recruiter','Pick ten characters this week','picks',10,{tickets:6,rerolls:4}],['twoWins','Winning Scout','Win two duels this week','wins',2,{tickets:4,coins:1300}],['week3','Squad Streak','Finish 3 squad drafts','runs',3,{coins:2200,tickets:4}],['week10','Court Veteran','Play 10 duels','duels',10,{coins:2800,rerolls:5}],['week5','Win Five','Win 5 duels','wins',5,{coins:3600,gems:80}],['week15','Special Scout','Pick 15 characters','picks',15,{tokens:2}],['weekpro','Professional Path','Obtain 2 pro cards','pro',2,{coins:6200}],['wpack3','Pack Collector','Open 3 premium packs this week','packsOpened',3,{coins:3200,gems:35}],['wruns7','Seven Squads','Complete seven full drafts this week','runs',7,{coins:8000,tickets:5}],['wduels12','Tournament Earnings','Finish 12 duels','duels',12,{coins:10500,proTokens:1}]];
+const DAILY=[['pick1','First Scouting Pick','Choose your first school character today','picks',1,{tickets:2,rerolls:1}],['pick3','Build Momentum','Recruit three characters in one day','picks',3,{tickets:2,rerolls:2}],['practice','Daily Practice','Finish one school or bot duel','duels',1,{tickets:2,coins:350}],['national1','National Debut','Complete one Spring High tournament run','nationalsRuns',1,{tickets:2,coins:500}],['nationwin','Tournament Momentum','Win one Spring High tournament match','nationalsWins',1,{rerolls:2,coins:650}],['run1','Squad Architect','Complete one six-player draft','runs',1,{coins:500,tickets:1}],['draft4','Talent Scout','Pick four characters','picks',4,{coins:380,rerolls:2}],['duel1','Enter the Court','Complete a duel','duels',1,{coins:400,gems:12}],['win1','First Point','Win one duel','wins',1,{coins:650,tickets:2}],['staff1','Coach Recruitment','Recruit one coach','staff',1,{coins:700,gems:30}],['rare1','Spot a Star','Recruit one 90+ OVR card','rare',1,{tokens:1,gems:25}],['pack1','Pack Opening Day','Open one Timeskip or Pro pack','packsOpened',1,{coins:750,gems:10}],['run2','Double Draft Payday','Finish two squad drafts today','runs',2,{coins:1800,tickets:1}],['chemistry','Connected Six','Complete a squad run with an active duo or rivalry link','chemistry',1,{tickets:3,rerolls:3,gems:15}],['duel3','Three-Game Bonus','Finish three duels today','duels',3,{coins:1350,rerolls:2}]];
+const WEEKLY=[['tenpicks','School Recruiter','Pick ten characters this week','picks',10,{tickets:6,rerolls:4}],['twoWins','Winning Scout','Win two duels this week','wins',2,{tickets:4,coins:1300}],['week3','Squad Streak','Finish 3 squad drafts','runs',3,{coins:2200,tickets:4}],['week10','Court Veteran','Play 10 duels','duels',10,{coins:2800,rerolls:5}],['week5','Win Five','Win 5 duels','wins',5,{coins:3600,gems:80}],['week15','Special Scout','Pick 15 characters','picks',15,{tokens:2}],['weeknat','National Tournament Veteran','Win four Spring High matches this week','nationalsWins',4,{coins:3000,tickets:3}],['weekpro','Professional Path','Obtain 2 pro cards','pro',2,{coins:6200}],['wpack3','Pack Collector','Open 3 premium packs this week','packsOpened',3,{coins:3200,gems:35}],['wruns7','Seven Squads','Complete seven full drafts this week','runs',7,{coins:8000,tickets:5}],['wduels12','Tournament Earnings','Finish 12 duels','duels',12,{coins:10500,proTokens:1}]];
 const QUESTLINE=[['m0','Your First Recruit','Pick your first character',()=>state.items.length>=1,{tickets:3,rerolls:2}],['m1','The First Six','Complete your first squad draft',()=>state.v3.runs>=1,{coins:1200}],['m2','Seasoned Coach','Recruit three staff members',()=>state.coaches.length>=3,{tokens:1,gems:25}],['m3','National Prospect','Win 10 matches',()=>state.wins>=10,{coins:7000}],['m4','Volleyball Collector','Own 25 different character cards',()=>owned().length>=25,{tokens:2}],['m5','True Rivals','Win 20 matches against players or bots',()=>state.wins>=20,{proTokens:1}],['m6','Professional Champion','Win 40 matches',()=>state.wins>=40,{proTokens:2}],['m7','The Greatest Squad','Complete 25 squad runs',()=>state.v3.runs>=25,{proTokens:2}],
- ['m8','First National Star','Complete 3 squad drafts',()=>state.v3.runs>=3,{coins:1500,cardName:'Shoyo Hinata',cardStage:1}],
+ ['nationalm1','Quarterfinal Breakthrough','Reach Top 8 at Spring High',()=>state.v3.nationals.bestWins>=3,{tokens:1,coins:2500}],['nationalm2','National Champion','Win the Spring High final',()=>state.v3.nationals.bestWins>=6,{tokens:2,proTokens:1,coins:12000}],['m8','First National Star','Complete 3 squad drafts',()=>state.v3.runs>=3,{coins:1500,cardName:'Shoyo Hinata',cardStage:1}],
  ['m9','The Setter Journey','Win 12 matches',()=>state.wins>=12,{coins:7000,cardName:'Tobio Kageyama',cardStage:1}],
  ['m10','Timeskip Challenger','Complete 12 squad drafts',()=>state.v3.runs>=12,{coins:10500,cardName:'Kenma Kozume',cardStage:2}],
  ['m11','Pro Road','Win 60 matches',()=>state.wins>=60,{coins:25000,cardName:'Shoyo Hinata',cardStage:3}],
  ['m12','Elite Hunter','Open 75 card packs',()=>state.v3.packsOpened>=75,{coins:18000,cardName:'Atsumu Miya',cardStage:3,cardTier:'elite'}],
- ['m13','Apex Legend','Win 250 matches',()=>state.wins>=250,{coins:50000,cardName:'Wakatoshi Ushijima',cardStage:3,cardTier:'apex'}]
+ ['m13','Apex Legend','Win 250 matches',()=>state.wins>=250,{coins:50000,cardName:'Wakatoshi Ushijima',cardStage:3,cardTier:'apex'}],
+ // Unique, earned-only forms. These are NOT included in school scouting or shops.
+ ['ql-bokuto','Thunder Ace Trial','Win 50 matches and complete 20 chemistry-linked squads',()=>state.wins>=50&&state.v3.chemistryRuns>=20,{questKey:'legend-bokuto-thunder',coins:7000}],
+ ['ql-hinata','Sky Breaker Journey','Reach the Spring High semifinals and complete 10 drafts',()=>state.v3.nationals.bestWins>=4&&state.v3.runs>=10,{questKey:'legend-hinata-sky',tickets:7}],
+ ['ql-kenma','The Perfect Strategist','Finish 18 full six-player drafts',()=>state.v3.runs>=18,{questKey:'legend-kenma-oracle',rerolls:10}],
+ ['ql-kageyama','King of Setters','Win 60 matches and become National Champion',()=>state.wins>=60&&state.v3.nationals.bestWins>=6,{questKey:'legend-kageyama-king',coins:11000}],
+ ['ql-ushijima','Unstoppable Left Arm','Become Nationals champion and win 100 matches',()=>state.v3.nationals.bestWins>=6&&state.wins>=100,{questKey:'legend-ushijima-power',coins:18000}]
 ];
 function claimedRewards(reward){state.coins+=(reward.coins||0);state.gems+=(reward.gems||0);state.tickets+=(reward.tickets||0);state.v3.rerolls+=(reward.rerolls||0);state.v3.quickTokens+=(reward.tokens||0);state.v3.proTokens=(state.v3.proTokens||0)+(reward.proTokens||0);
+ if(reward.questKey&&QUEST_LEGEND_MAP[reward.questKey])addCard(reward.questKey,'quest-reward');
  if(reward.cardName){const matches=CATALOG.filter(x=>x.name===reward.cardName&&x.stage===reward.cardStage&&(x.packTier||'standard')===(reward.cardTier||'standard'));const c=matches.find(x=>reward.cardStage===3&&x.proOnly)||matches[0];if(c){addCard(c.key);if(c.stage===3){state.v3.proOwned++;}}}
 }
 // Earned Nationals passes are guaranteed scout recruits, not shop packs.
@@ -327,10 +454,144 @@ function redeemNationalsPass(){
  state.v3.quickTokens--;const gained=addCard(chosen.key);if(!gained)return;
  save();render();popup(`<div class="eyebrow">NATIONALS SCOUT PASS REDEEMED</div><h2 class="h1">NEW NATIONALS ATHLETE</h2><div class="v3-single">${card(gained)}</div><p>${escapeHtml(gained.name)} · ${gained.power} OVR. Added permanently to your collection.</p><button class="btn" data-v="close">CONTINUE</button>`);
 }
-function questRows(rows,period){return rows.map(([key,name,desc,metric,target,reward])=>{const full=period==='milestone'?metric():Math.min(target,Number(state.v3[period==='weekly'?'weekly':'quests'][metric]||0));const complete=period==='milestone'?full:full>=target;const tracker=period==='milestone'?'milestoneClaimed':period==='weekly'?'weeklyClaimed':'claimed';const taken=!!state.v3[tracker][key];return `<div class="v3-quest"><div><b>${name}</b><p>${desc}</p><small>${period==='milestone'?(complete?'COMPLETE':'LOCKED'):`${full}/${target}`} • ${reward.coins?'◉ '+f(reward.coins):''}${reward.tokens?' ✦ '+reward.tokens+' Nationals passes':''}${reward.gems?' 💎 '+reward.gems:''}${reward.tickets?' ↻ '+reward.tickets+' rolls':''}${reward.rerolls?' ⟳ '+reward.rerolls+' rerolls':''}${reward.proTokens?' ★ '+reward.proTokens+' PRO tokens':''}${reward.cardName?' 🏐 '+escapeHtml(reward.cardTier?reward.cardTier.toUpperCase()+' ':'')+escapeHtml(reward.cardName)+' ('+escapeHtml(VERSIONS[reward.cardStage])+')':''}</small></div><button class="btn sm" data-v="claimQuest" data-quest="${period}|${key}" ${taken||!complete?'disabled':''}>${taken?'CLAIMED':complete?'CLAIM':'IN PROGRESS'}</button></div>`}).join('')}
-function questsPage(){return head('PROGRESSION','SCOUT ROLLS & CHARACTER JOURNEYS','Complete simple daily quests to get more school rolls and four-card rerolls. Win duels to earn coins and unlock special characters.')+`<div class="v3-stats"><div><small>SCHOOL ROLLS</small><strong>${f(state.tickets)}</strong></div><div><small>FOUR-CARD REROLLS</small><strong>${f(state.v3.rerolls)}</strong></div><div><small>NATIONALS SCOUT PASSES</small><strong>${state.v3.quickTokens||0}</strong></div><div><small>PRO TOKENS</small><strong>${state.v3.proTokens||0}</strong></div><div><small>COMPLETE RUNS</small><strong>${state.v3.runs}</strong></div></div><div class="v3-actionrow"><button class="btn" data-v="spendToken" data-token="nation" ${(state.v3.quickTokens||0)<1?'disabled':''}>USE NATIONALS PASS</button><button class="btn" data-v="spendToken" data-token="professional" ${(state.v3.proTokens||0)<1?'disabled':''}>USE PRO TOKEN</button></div><div class="v6-quest-tip"><strong>♛ REWARDS YOU CAN EARN</strong><span>Coins to buy packs · Gems for staff & cosmetics · Named character cards from Legend Road. The 1% / 0.1% probabilities apply to pack openings, not quest rewards.</span></div><div class="v3-tabs"><button data-v="questTab" data-tab="daily" class="${tab==='daily'?'active':''}">DAILY</button><button data-v="questTab" data-tab="weekly" class="${tab==='weekly'?'active':''}">WEEKLY</button><button data-v="questTab" data-tab="milestone" class="${tab==='milestone'?'active':''}">LEGEND ROAD</button></div><div class="v3-quest-panel">${tab==='daily'?questRows(DAILY,'daily'):tab==='weekly'?questRows(WEEKLY,'weekly'):questRows(QUESTLINE.map(x=>[x[0],x[1],x[2],x[3],1,x[4]]),'milestone')}</div>`}
+function questRows(rows,period){return rows.map(([key,name,desc,metric,target,reward])=>{const full=period==='milestone'?metric():Math.min(target,Number(state.v3[period==='weekly'?'weekly':'quests'][metric]||0));const complete=period==='milestone'?full:full>=target;const tracker=period==='milestone'?'milestoneClaimed':period==='weekly'?'weeklyClaimed':'claimed';const taken=!!state.v3[tracker][key];return `<div class="v3-quest"><div><b>${name}</b><p>${desc}</p><small>${period==='milestone'?(complete?'COMPLETE':'LOCKED'):`${full}/${target}`} • ${reward.coins?'◉ '+f(reward.coins):''}${reward.tokens?' ✦ '+reward.tokens+' Nationals passes':''}${reward.gems?' 💎 '+reward.gems:''}${reward.tickets?' ↻ '+reward.tickets+' rolls':''}${reward.rerolls?' ⟳ '+reward.rerolls+' rerolls':''}${reward.proTokens?' ★ '+reward.proTokens+' PRO tokens':''}${reward.cardName?' 🏐 '+escapeHtml(reward.cardTier?reward.cardTier.toUpperCase()+' ':'')+escapeHtml(reward.cardName)+' ('+escapeHtml(VERSIONS[reward.cardStage])+')':''}${reward.questKey?' ✦ EXCLUSIVE: '+escapeHtml(QUEST_LEGEND_MAP[reward.questKey]?.title||'Legend') :''}</small></div><button class="btn sm" data-v="claimQuest" data-quest="${period}|${key}" ${taken||!complete?'disabled':''}>${taken?'CLAIMED':complete?'CLAIM':'IN PROGRESS'}</button></div>`}).join('')}
+function legendRoadPanel(){
+ return `<section class="v12-legend-road"><div class="v12-panel-intro"><span class="eyebrow">UNTRADEABLE · EARNED ONLY</span><h2>LEGEND ROAD · QUEST CARDS</h2><p>Unique alternate cards are not in school rolls, Timeskip packs or Professional packs. Complete their difficult quests to recruit them permanently.</p></div>
+ <div class="v12-legend-grid">${QUEST_LEGENDS.map(legend=>{
+  const quest=QUESTLINE.find(q=>q[4]?.questKey===legend.key);
+  const claimed=quest&&state.v3.milestoneClaimed?.[quest[0]];
+  const unlocked=Boolean(quest?.[3]());
+  const ownedCard=Boolean(state.items.find(i=>i.key===legend.key));
+  return `<article class="v12-legend-reward ${ownedCard?'obtained':''}">
+    <div class="v12-legend-face" data-img-name="${escapeHtml(legend.name)}"><img src="${escapeHtml(legend.portrait)}" loading="lazy" alt="${escapeHtml(legend.name)}"></div>
+    <div class="v12-legend-detail"><div class="eyebrow">${ownedCard?'✓ OWNED':'QUEST EXCLUSIVE'} · ${legend.power} OVR</div><h3>${escapeHtml(legend.title)}</h3><p>${escapeHtml(quest?.[2]||'Complete the challenge')}</p>
+      <button class="btn sm ${unlocked&&!claimed?'':'ghost'}" ${!unlocked||claimed?'disabled':''} data-v="claimQuest" data-quest="milestone|${quest?.[0]||''}">${claimed||ownedCard?'COLLECTED':unlocked?'CLAIM CHARACTER':'LOCKED · KEEP PLAYING'}</button>
+    </div></article>`}).join('')}</div></section>`;
+}
+function questsPage(){return head('PROGRESSION','SCOUT ROLLS & CHARACTER JOURNEYS','Complete simple daily quests to get more school rolls and four-card rerolls. Win duels to earn coins and unlock special characters.')+`<div class="v3-stats"><div><small>SCHOOL ROLLS</small><strong>${f(state.tickets)}</strong></div><div><small>FOUR-CARD REROLLS</small><strong>${f(state.v3.rerolls)}</strong></div><div><small>NATIONALS SCOUT PASSES</small><strong>${state.v3.quickTokens||0}</strong></div><div><small>PRO TOKENS</small><strong>${state.v3.proTokens||0}</strong></div><div><small>COMPLETE RUNS</small><strong>${state.v3.runs}</strong></div></div><div class="v3-actionrow"><button class="btn" data-v="spendToken" data-token="nation" ${(state.v3.quickTokens||0)<1?'disabled':''}>USE NATIONALS PASS</button><button class="btn" data-v="spendToken" data-token="professional" ${(state.v3.proTokens||0)<1?'disabled':''}>USE PRO TOKEN</button></div><div class="v6-quest-tip"><strong>♛ REWARDS YOU CAN EARN</strong><span>Coins to buy packs · Gems for staff & cosmetics · Named character cards from Legend Road. The 1% / 0.1% probabilities apply to pack openings, not quest rewards.</span></div>${legendRoadPanel()}<div class="v3-tabs"><button data-v="questTab" data-tab="legends" class="${tab==='legends'?'active':''}">QUEST LEGENDS</button><button data-v="questTab" data-tab="daily" class="${tab==='daily'?'active':''}">DAILY</button><button data-v="questTab" data-tab="weekly" class="${tab==='weekly'?'active':''}">WEEKLY</button><button data-v="questTab" data-tab="milestone" class="${tab==='milestone'?'active':''}">LEGEND ROAD</button></div><div class="v3-quest-panel">${tab==='legends'?'<p class="v12-quest-tip">These five rare cards are earned through achievements, never pulled in a standard school roll. See the challenges above.</p>':tab==='daily'?questRows(DAILY,'daily'):tab==='weekly'?questRows(WEEKLY,'weekly'):questRows(QUESTLINE.map(x=>[x[0],x[1],x[2],x[3],1,x[4]]),'milestone')}</div>`}
 function claimQuest(key){const [period,idKey]=key.split('|');const tracker=period==='milestone'?'milestoneClaimed':period==='weekly'?'weeklyClaimed':'claimed';if(state.v3[tracker][idKey])return;
  const list=period==='milestone'?QUESTLINE:period==='weekly'?WEEKLY:DAILY;const quest=list.find(x=>x[0]===idKey);if(!quest)return;const ok=period==='milestone'?quest[3]():Number(state.v3[period==='weekly'?'weekly':'quests'][quest[3]]||0)>=quest[4];if(!ok)return notice('Quest not finished');state.v3[tracker][idKey]=true;claimedRewards(period==='milestone'?quest[4]:quest[5]);save();render();notice('QUEST COMPLETE — rewards collected!');}
+// ━━━ V11 SPRING HIGH NATIONALS — predicted placement + persistent tournament run ━━━
+function nationalsPower(cards=starting()){
+ if(!Array.isArray(cards)||cards.length!==6)return 0;
+ const base=avg(cards);const bonuses=chem(cards,coach());
+ // Real cards matter most; strong rival/school chemistry and staff help.
+ return clamp(base+bonuses.schoolBonus*.32+bonuses.duoBonus*.19+
+  bonuses.staffBonus*.17+bonuses.awakeningBonus*.22+bonuses.benchBonus*.08,55,110);
+}
+function nationalsKey(){return Nationals?Nationals.snapshotKey(starting(),state.coach,state.manager):'';}
+function nationalsSuggested(){
+ if(!Nationals||starting().length!==6)return null;
+ const existing=state.v3.nationals.active;
+ if(existing&&!existing.finished)return existing.bracket;
+ return Nationals.makeBracket(Nationals.hashString(nationalsKey()+'|'+(state.v3.nationals.runs||0)));
+}
+function nationalsStage(wins){return wins>=6?'NATIONAL CHAMPION':wins===5?'RUNNER-UP':wins===4?'TOP 4':wins===3?'TOP 8':wins===2?'TOP 16':wins===1?'SECOND ROUND':'FIRST ROUND';}
+function nationalsLabel(wins){return wins===6?'CHAMPIONS':wins===5?'FINALISTS':wins===4?'TOP FOUR':wins===3?'QUARTERFINALISTS':wins===2?'TOP SIXTEEN':wins===1?'SECOND ROUND':'FIRST ROUND EXIT';}
+function nationalsForecast(){
+ if(!Nationals)return null;
+ const active=state.v3.nationals.active;
+ if(starting().length!==6&&!active)return null;
+ const bracket=active&&!active.finished?active.bracket:nationalsSuggested()||active?.bracket;
+ const power=active&&!active.finished?active.power:nationalsPower();
+ if(!Nationals.validateBracket(bracket))return null;
+ return {...Nationals.projection(power,bracket),power,bracket};
+}
+function nationalsPage(){
+ if(!Nationals)return head('NATIONALS','SPRING HIGH','Tournament engine could not load. Refresh to retry.');
+ const n=state.v3.nationals;
+ if(starting().length!==6&&!n.active)return head('THE ROAD TO NATIONALS','SPRING HIGH NATIONALS','Your journey begins when your six-player team is ready.')+
+ `<section class="v11-empty-nationals"><div class="v11-trophy">🏆</div><h2>COMPLETE YOUR SQUAD FIRST</h2><p>Draft your six starting players: 2 outside hitters, 1 setter, 1 opposite and 2 middle/blocking roles (one may be a libero). Then see how far they could reach in the Spring High Nationals.</p><button class="btn" data-go="roll">START A SCHOOL DRAFT →</button><button class="btn ghost" data-go="squad">MANAGE YOUR TEAM</button></section>`;
+ const active=n.active;
+ const fc=nationalsForecast();
+ const power=active?.power||(fc?.power||0);
+ const cardSix=active?.players?.length?active.players:starting();
+ const bracket=active?.bracket||fc?.bracket||[];
+ const shownProjection=Nationals.projection(power,bracket);
+ const stages=shownProjection?.stages||[];
+ const wins=active?.wins||0;
+ const complete=Boolean(active?.finished);
+ const ongoing=Boolean(active&&!active.finished);
+ const row=stages.map((s,i)=>{
+  const match=active?.results?.[i];const current=ongoing&&wins===i;
+  return `<div class="v11-bracket-row ${match?.win?'won':''} ${match&&!match.win?'lost':''} ${current?'current':''} ${ongoing&&i>wins?'upcoming':''}">
+   <div class="v11-round-tag"><span>${escapeHtml(Nationals.ROUNDS[i].short)}</span><small>${escapeHtml(s.name)}</small></div>
+   <div class="v11-round-school"><b>${escapeHtml(bracket[i]?.name||'UNKNOWN')}</b><small>${match?`SETS ${escapeHtml(match.score)} · ${match.win?'WIN':'LOSS'}`:`${s.power} OVR · ${Math.round(s.winChance*100)}% MATCH WIN CHANCE`}</small></div>
+   <div class="v11-round-status">${match?match.win?'✓ WON':'✕ OUT':current?'⚔ NEXT':ongoing&&i>wins?'🔒':'◇'}</div>
+  </div>`;
+ }).join('');
+ const highest=n.bestWins||0;
+ const history=(n.history||[]).slice(0,5).map(x=>`<div class="v11-history-row"><strong>${escapeHtml(nationalsStage(x.wins))}</strong><small>${escapeHtml(x.date||'')} · ${Math.round(x.power||0)} OVR · ${Number(x.coins)||0} coins earned</small></div>`).join('');
+ const rewardPreview=[180,250,360,550,850,1500].map((num,i)=>`<span class="v11-prize-chip ${highest>=i+1?'collected':''}">${escapeHtml(Nationals.ROUNDS[i].short)} +${f(num)} ${highest>=i+1?'✓':''}</span>`).join('');
+ const championOdds=shownProjection?.championChance||0;
+ const championText=championOdds>0&&championOdds<.001?'<0.1%':(100*championOdds).toFixed(1)+'%';
+ const badge=complete?active.wins===6?'👑 NATIONAL CHAMPION':`🏐 ${nationalsStage(active.wins)}`:ongoing?`ROUND ${wins+1} OF 6`:`${fc?.medianFinish||'FIRST ROUND'}`;
+ return head('HAIKYUU LEGENDS / SPRING HIGH','HOW FAR WILL YOUR TEAM GO?','An alternate-history six-round, single-elimination tournament inspired by the Spring High Nationals. Your chemistry, players and coach affect each match.')+
+ `<section class="v11-nationals-hero"><div class="v11-national-emblem">🏆</div><div class="v11-nationals-intro"><div class="eyebrow">THE ROAD TO THE NATIONAL CHAMPIONSHIP</div><h2>${escapeHtml(badge)}</h2><p>${ongoing?'Your original lineup is locked until this tournament ends.':complete?'The tournament is over. Improve your squad and try again.':'Based on your active six and their chemistry, see the predicted finish — then test your chances.'}</p></div><div class="v11-national-score"><small>TEAM STRENGTH</small><strong>${power.toFixed(1)}</strong><span>Effective OVR</span></div></section>
+ <div class="v11-nationals-overview"><div><small>PROJECTED FINISH</small><b>${escapeHtml(shownProjection?.medianFinish||'—')}</b><span>Median predicted outcome</span></div><div><small>CHAMPIONSHIP ODDS</small><b>${escapeHtml(championText)}</b><span>Entire tournament</span></div><div><small>PERSONAL BEST</small><b>${escapeHtml(highest?nationalsStage(highest):'UNRANKED')}</b><span>${n.runs||0} tournament runs</span></div><div><small>ACTIVE RUN</small><b>${active?`${wins} / 6 WINS`:'NOT STARTED'}</b><span>${ongoing?'In progress':complete?'Finished':'Select start below'}</span></div></div>
+ <div class="v11-bracket-layout"><section class="v11-panel"><div class="v11-section-head"><div><div class="eyebrow">SIX ELIMINATION ROUNDS</div><h3>YOUR NATIONALS BRACKET</h3></div><span class="v11-badge">${ongoing?'● IN PROGRESS':'✦ SPRING HIGH'}</span></div><div class="v11-bracket-list">${row}</div>
+ <div class="v11-action-area">${ongoing?`<button class="btn v11-main-cta" data-v="nationalsNext">⚔ PLAY ${escapeHtml(Nationals.ROUNDS[wins].name)} →</button><button class="btn ghost sm" data-v="nationalsAuto">▶ SIMULATE REST OF TOURNAMENT</button><button class="btn ghost sm" data-v="nationalsRetire">WITHDRAW FROM RUN</button>`:
+ `<button class="btn v11-main-cta" data-v="nationalsStart" ${starting().length!==6?'disabled':''}>🏆 ${active?'START ANOTHER TOURNAMENT':'BEGIN THE NATIONALS'} →</button><button class="btn ghost sm" data-go="squad">EDIT SQUAD</button>`}</div>
+ <p class="v11-disclaimer">Matches are simulated, not scripted or actual canon results. Semifinals and final use best-of-five sets; earlier rounds use best-of-three.</p></section>
+ <aside class="v11-sidebar"><section class="v11-panel"><div class="v11-section-head"><div class="eyebrow">YOUR DREAM TEAM</div><b>${cardSix.length} STARTERS</b></div><div class="v11-lineup">${cardSix.map(p=>`<div class="v11-lineup-item"><div class="v11-lineup-image" data-img-name="${escapeHtml(p.name)}"><img src="${escapeHtml(p.portrait||'')}" alt="${escapeHtml(p.name)}" loading="lazy"></div><span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.position)} · ${escapeHtml(p.school)}</small></span><strong>${Number(p.power)+(Number(p.level)||0)}</strong></div>`).join('')}</div></section>
+ <section class="v11-panel"><div class="eyebrow">ONE-TIME NATIONALS PRIZES</div><h3>CHAMPIONSHIP REWARDS</h3><p>First time you clear each stage, earn coins. Win the final to unlock a Nationals Scout Pass. Repeat matches give a small daily-capped bonus.</p><div class="v11-rewards">${rewardPreview}</div></section>
+ </aside></div>
+ ${active?.results?.length?`<section class="v11-panel v11-results-panel"><div class="v11-section-head"><h3>MATCH RESULTS</h3><small>Score is sets won, not rally points</small></div><div class="v11-results-list">${active.results.map((r,i)=>`<div class="v11-result"><div><b>${escapeHtml(Nationals.ROUNDS[i].name)} · ${escapeHtml(r.school)}</b><span>${escapeHtml(r.sets.join(' · '))}</span></div><strong class="${r.win?'positive':'negative'}">${escapeHtml(r.score)} ${r.win?'WIN':'LOSS'}</strong></div>`).join('')}</div>${complete?`<div class="v11-finish-banner">${active.wins===6?'🏆 YOU ARE THE NATIONAL CHAMPIONS!':`Tournament ended: ${escapeHtml(nationalsStage(active.wins))}`}</div>`:''}</section>`:''}
+ ${history?`<section class="v11-panel v11-history-panel"><div class="v11-section-head"><h3>PREVIOUS TOURNAMENTS</h3><small>Most recent five</small></div>${history}</section>`:''}`;
+}
+function nationalsStart(){
+ if(!Nationals)return notice('Tournament files are still loading.');
+ if(starting().length!==6)return notice('Equip your full six-player squad first.');
+ const n=state.v3.nationals;if(n.active&&!n.active.finished)return notice('Finish your current tournament first.');
+ if(n.day!==nowDay()){n.day=nowDay();n.dailyEntries=0;}
+ const bracket=nationalsSuggested();if(!Nationals.validateBracket(bracket))return notice('Could not generate a bracket.');
+ n.active={players:starting().map(p=>({name:p.name,key:p.key,position:p.position,school:p.school,power:p.power,level:p.level||0,portrait:p.portrait||''})),
+   bracket, wins:0,results:[],power:nationalsPower(),started:Date.now(),finished:false,
+   bonusEligible:n.dailyEntries<3,coinsWon:0};
+ n.dailyEntries++;n.runs++;save();show('nationals');notice('National tournament started! Your lineup is locked for this run.');
+}
+function nationalsNext(silent=false){
+ if(!Nationals)return;
+ const n=state.v3.nationals,run=n.active;
+ if(!run||run.finished)return notice('Start a tournament to play.');
+ const round=run.wins,enemy=run.bracket[round];if(!enemy||round>=6)return;
+ const result=Nationals.simulateMatch(run.power,enemy.power,round);
+ const earned=result.win?(round+1>n.bestWins?Nationals.ROUNDS[round].prize:0)+(run.bonusEligible?70:0):0;
+ if(result.win){
+  run.wins++;state.coins+=earned;run.coinsWon+=earned;
+  n.bestWins=Math.max(n.bestWins,run.wins);
+  track('nationalsWins');
+  if(run.wins===6&&!n.championPassClaimed){n.championPassClaimed=true;run.earnedPass=true;state.v3.quickTokens=(state.v3.quickTokens||0)+1;}
+ }
+ run.results.push({...result,school:enemy.name,power:enemy.power,coins:earned});
+ if(!result.win||run.wins===6){
+  run.finished=true;track('nationalsRuns');
+  n.history.unshift({wins:run.wins,power:run.power,date:nowDay(),coins:run.coinsWon,results:run.results.map(({school,score,win})=>({school,score,win}))});
+  n.history=n.history.slice(0,10);
+ }
+ save();if(silent)return result;show('nationals');
+ popup(`<div class="eyebrow">${escapeHtml(Nationals.ROUNDS[round].name)} · SPRING HIGH</div><h2 class="h1">${result.win?'🏐 MATCH WON':'✕ ELIMINATED'}</h2><div class="v11-modal-score"><span>YOUR SIX</span><strong>${escapeHtml(result.score)}</strong><span>${escapeHtml(enemy.name)}</span></div><div class="v11-set-list">${result.sets.map((s,i)=>`<span>SET ${i+1}<b>${escapeHtml(s)}</b></span>`).join('')}</div><p>${result.win?`You advance to ${escapeHtml(Nationals.ROUNDS[round].advance)}!`:`You finished ${escapeHtml(nationalsStage(run.wins))}.`}${earned?` Earned ${f(earned)} coins.`:''}${run.earnedPass?' You also earned a guaranteed Nationals Scout Pass for your first championship win.':''}</p><button class="btn" data-v="nationalsClose">${run.finished?'VIEW TOURNAMENT RESULTS':'NEXT ROUND →'}</button>`);
+}
+function nationalsSimulateAll(){
+ const n=state.v3.nationals,run=n.active;
+ if(!run||run.finished)return notice('Start a Nationals run first.');
+ let played=0;
+ while(!run.finished&&played<6){nationalsNext(true);played++;}
+ show('nationals');
+ popup(`<div class="eyebrow">SPRING HIGH / TOURNAMENT SUMMARY</div><h2 class="h1">${run.wins===6?'👑 NATIONAL CHAMPIONS!':'🏆 '+escapeHtml(nationalsStage(run.wins))}</h2><p>Your squad won ${run.wins} of the six elimination rounds. ${run.wins===6?'You conquered the entire tournament!':'Try a stronger squad or build better chemistry for your next attempt.'}</p><div class="v11-results-list">${run.results.map((m,i)=>`<div class="v11-result"><div><b>${escapeHtml(Nationals.ROUNDS[i].name)} · ${escapeHtml(m.school)}</b><span>${escapeHtml(m.sets.join(' · '))}</span></div><strong class="${m.win?'positive':'negative'}">${escapeHtml(m.score)} ${m.win?'WIN':'LOSS'}</strong></div>`).join('')}</div><p>Total earned: ${f(run.coinsWon)} coins.${run.earnedPass?' + 1 Nationals Scout Pass.':''}</p><button class="btn" data-v="nationalsClose">VIEW RESULTS</button>`);
+}
+function nationalsRetire(){
+ const run=state.v3.nationals.active;if(!run||run.finished)return;
+ popup(`<div class="eyebrow">WITHDRAW FROM NATIONALS?</div><h2 class="h1">END CURRENT RUN</h2><p>You will keep rewards already earned but cannot resume this bracket. You can start again with a new team or the same squad.</p><div class="flexgap"><button class="btn" data-v="nationalsConfirmRetire">WITHDRAW</button><button class="btn ghost" data-v="close">KEEP PLAYING</button></div>`);
+}
+function nationalsConfirmRetire(){
+ const n=state.v3.nationals,run=n.active;if(!run||run.finished)return;
+ run.finished=true; // Withdrawing isn't a completed tournament quest.
+ n.history.unshift({wins:run.wins,power:run.power,date:nowDay(),coins:run.coinsWon,withdrew:true});
+ n.history=n.history.slice(0,10);save();close();show('nationals');
+}
+// ━━━ END NATIONALS ━━━
+
 function duelPage(){return head('COMPETITIVE ARENA','DUEL YOUR FRIENDS','Saved teams or customizable from-scratch drafts: free school roll after every player selection.')+
  `<div class="v3-duel-modes"><button class="v3-mode ${duelMode==='saved'?'active':''}" data-v="duelMode" data-mode="saved"><strong>⚔ SAVED SQUAD</strong><p>Use your strongest permanent lineup and active coach.</p></button><button class="v3-mode ${duelMode==='fresh'?'active':''}" data-v="duelMode" data-mode="fresh"><strong>🎴 FRIENDLY FRESH DRAFT</strong><p>Draft a new squad of six, one card from four each round.</p></button></div>
  ${duelMode==='fresh'?`<div class="v4-custom"><h2>FRIENDLY DUEL SETTINGS</h2><p>These apply equally to both players. Your first school and every school after a pick are always FREE.</p><div class="v4-controls"><label>EXTRA SCHOOL ROLLS <input type="number" min="0" max="30" id="extraRolls" value="${friendSettings.extraRolls}"></label><label>FOUR-CARD REROLLS <input type="number" min="0" max="30" id="friendRerolls" value="${friendSettings.rerolls}"></label><label class="v4-check"><input type="checkbox" id="friendCoaches" ${friendSettings.coaches?'checked':''}> Enable coach boosts</label></div></div>`:''}
@@ -426,7 +687,7 @@ async function resolvePortrait(el){
  }
  await remotePending.get(name);
 }
-function actionEvent(e){const t=e.target.closest('[data-go],[data-v],[data-view]');if(!t){if(e.target.id==='overlay')close();return;}if(t.dataset.go||t.dataset.view){close();show(t.dataset.go||t.dataset.view);return;}const v=t.dataset.v;switch(v){case'close':close();break;case'startRun':startRun();break;case'confirmNewRun':close();newRun();break;case'chooseOffer':runPick(t.dataset.key);break;case'rerollOffer':rerollOffer();break;case'changeSchool':changeSchool();break;case'skin':buyCosmetic(t.dataset.skin);break;case'staffRoll':staffRoll();break;case'staffTab':coachTab=t.dataset.tab==='managers'?'managers':'coaches';render();break;case'chooseCoach':chooseCoach(t.dataset.coach);break;case'equipCoach':{const c=ownedCoaches().find(x=>x.uid===t.dataset.coach);if(!c)return;if(c.type==='manager')state.manager=c.uid;else state.coach=c.uid;save();render();notice((c.type==='manager'?'Manager':'Coach')+' equipped.');break;}case'shopBuy':buyPack(t.dataset.pack);break;case'shopPick':shopPick(t.dataset.key);break;case'revealPending':showPendingPack();break;case'viewCard':infoCard(t.dataset.uid);break;case'openSquad':close();show('squad');break;case'selectSlot':selectionSlot=+t.dataset.idx;render();break;case'equipPlayer':collectSelect(t.dataset.uid,selectionSlot>=6?'bench':'squad');break;case'clearSlot':if(selectionSlot>=6)state.bench[selectionSlot-6]=null;else state.squad[selectionSlot]=null;save();render();break;case'autoSquad':{const sorted=owned().sort((a,b)=>b.power-a.power),used=new Set(),usedNames=new Set();state.squad=POS.map((p,i)=>{const x=sorted.find(c=>slotCompatible(i,c)&&!used.has(c.uid)&&!usedNames.has(c.name));if(x){used.add(x.uid);usedNames.add(x.name);}return x?.uid||null});save();render();notice('Best eligible six selected.');break;}case'savePreset':{const idx=+t.dataset.idx;state.savedTeams[idx]={squad:[...state.squad],bench:[...state.bench],coach:state.coach,manager:state.manager,savedAt:Date.now()};save();render();notice('Saved squad '+(idx+1));break;}case'loadPreset':{const o=state.savedTeams[+t.dataset.idx];if(!o)return;const keep=new Set(state.items.map(c=>c.uid));state.squad=o.squad.map(x=>keep.has(x)?x:null);state.bench=(o.bench||[]).map(x=>keep.has(x)?x:null);state.coach=o.coach;state.manager=o.manager||null;save();render();notice('Squad loaded');break;}case'questTab':tab=t.dataset.tab;render();break;case'claimQuest':claimQuest(t.dataset.quest);break;case'spendToken':{if(t.dataset.token!=='professional'){redeemNationalsPass();break;}if((state.v3.proTokens||0)<1)return;if(buyPack('professional',true)){state.v3.proTokens--;save();}break;}case'duelMode':duelMode=t.dataset.mode;render();break;case'createRoom':connect('create');break;case'joinRoom':connect('join',($('#roomCode')?.value||'').trim().toUpperCase());break;case'ready':if(ws?.readyState===WebSocket.OPEN){const me=room?.players?.[room.youIndex];ws.send(JSON.stringify({type:'ready',ready:!me?.ready}));}break;case'onlinePick':if(ws?.readyState===WebSocket.OPEN&&offer?.cards.some(x=>x.key===t.dataset.key&&offer.needed.includes(x.position)))ws.send(JSON.stringify({type:'draft_pick',key:t.dataset.key}));break;case'onlineReroll':if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'draft_reroll'}));break;case'onlineSchoolRoll':if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'draft_school_roll'}));break;case'leaveRoom':ws?.send(JSON.stringify({type:'leave'}));ws?.close();room=null;offer=null;duel=null;close();render();break;case'copyInvite':{const url=new URL(location.href);url.searchParams.set('join',room.code);if(navigator.clipboard)navigator.clipboard.writeText(url.href).then(()=>notice('Invite link copied'),()=>prompt('Copy invitation link',url.href));else prompt('Copy invitation link',url.href);break;}case'rematch':ws?.send(JSON.stringify({type:'rematch'}));notice('Rematch requested.');break;case'bot':botMatch(({easy:67,medium:80,hard:93})[t.dataset.difficulty]);break;case'careerFight':botMatch(CAREER_OVR[+t.dataset.idx],+t.dataset.idx);break;case'stopBot':clearInterval(botTick);duel=null;close();break;}}
+function actionEvent(e){const t=e.target.closest('[data-go],[data-v],[data-view]');if(!t){if(e.target.id==='overlay')close();return;}if(t.dataset.go||t.dataset.view){close();show(t.dataset.go||t.dataset.view);return;}const v=t.dataset.v;switch(v){case'close':close();break;case'startRun':startRun();break;case'confirmNewRun':close();newRun();break;case'chooseOffer':runPick(t.dataset.key);break;case'rerollOffer':rerollOffer();break;case'changeSchool':changeSchool();break;case'skin':buyCosmetic(t.dataset.skin);break;case'staffRoll':staffRoll();break;case'staffTab':coachTab=t.dataset.tab==='managers'?'managers':'coaches';render();break;case'chooseCoach':chooseCoach(t.dataset.coach);break;case'equipCoach':{const c=ownedCoaches().find(x=>x.uid===t.dataset.coach);if(!c)return;if(c.type==='manager')state.manager=c.uid;else state.coach=c.uid;save();render();notice((c.type==='manager'?'Manager':'Coach')+' equipped.');break;}case'shopBuy':buyPack(t.dataset.pack);break;case'shopPick':shopPick(t.dataset.key);break;case'revealPending':showPendingPack();break;case'viewCard':infoCard(t.dataset.uid);break;case'openSquad':close();show('squad');break;case'selectSlot':selectionSlot=+t.dataset.idx;render();break;case'equipPlayer':collectSelect(t.dataset.uid,selectionSlot>=6?'bench':'squad');break;case'clearSlot':if(selectionSlot>=6)state.bench[selectionSlot-6]=null;else state.squad[selectionSlot]=null;save();render();break;case'autoSquad':{const sorted=owned().sort((a,b)=>b.power-a.power),used=new Set(),usedNames=new Set();state.squad=POS.map((p,i)=>{const x=sorted.find(c=>slotCompatible(i,c)&&!used.has(c.uid)&&!usedNames.has(c.name));if(x){used.add(x.uid);usedNames.add(x.name);}return x?.uid||null});save();render();notice('Best eligible six selected.');break;}case'savePreset':{const idx=+t.dataset.idx;state.savedTeams[idx]={squad:[...state.squad],bench:[...state.bench],coach:state.coach,manager:state.manager,savedAt:Date.now()};save();render();notice('Saved squad '+(idx+1));break;}case'loadPreset':{const o=state.savedTeams[+t.dataset.idx];if(!o)return;const keep=new Set(state.items.map(c=>c.uid));state.squad=o.squad.map(x=>keep.has(x)?x:null);state.bench=(o.bench||[]).map(x=>keep.has(x)?x:null);state.coach=o.coach;state.manager=o.manager||null;save();render();notice('Squad loaded');break;}case'collectionCategory':collectionCategory=t.dataset.category||'all';render();break;case'skipLegendReveal':endLegendReveal();break;case'questTab':tab=t.dataset.tab;render();break;case'claimQuest':claimQuest(t.dataset.quest);break;case'spendToken':{if(t.dataset.token!=='professional'){redeemNationalsPass();break;}if((state.v3.proTokens||0)<1)return;if(buyPack('professional',true)){state.v3.proTokens--;save();}break;}case'nationalsStart':nationalsStart();break;case'nationalsNext':nationalsNext();break;case'nationalsAuto':nationalsSimulateAll();break;case'nationalsRetire':nationalsRetire();break;case'nationalsConfirmRetire':nationalsConfirmRetire();break;case'nationalsClose':close();show('nationals');break;case'duelMode':duelMode=t.dataset.mode;render();break;case'createRoom':connect('create');break;case'joinRoom':connect('join',($('#roomCode')?.value||'').trim().toUpperCase());break;case'ready':if(ws?.readyState===WebSocket.OPEN){const me=room?.players?.[room.youIndex];ws.send(JSON.stringify({type:'ready',ready:!me?.ready}));}break;case'onlinePick':if(ws?.readyState===WebSocket.OPEN&&offer?.cards.some(x=>x.key===t.dataset.key&&offer.needed.includes(x.position)))ws.send(JSON.stringify({type:'draft_pick',key:t.dataset.key}));break;case'onlineReroll':if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'draft_reroll'}));break;case'onlineSchoolRoll':if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'draft_school_roll'}));break;case'leaveRoom':ws?.send(JSON.stringify({type:'leave'}));ws?.close();room=null;offer=null;duel=null;close();render();break;case'copyInvite':{const url=new URL(location.href);url.searchParams.set('join',room.code);if(navigator.clipboard)navigator.clipboard.writeText(url.href).then(()=>notice('Invite link copied'),()=>prompt('Copy invitation link',url.href));else prompt('Copy invitation link',url.href);break;}case'rematch':ws?.send(JSON.stringify({type:'rematch'}));notice('Rematch requested.');break;case'bot':botMatch(({easy:67,medium:80,hard:93})[t.dataset.difficulty]);break;case'careerFight':botMatch(CAREER_OVR[+t.dataset.idx],+t.dataset.idx);break;case'stopBot':clearInterval(botTick);duel=null;close();break;}}
 document.addEventListener('click',actionEvent);document.addEventListener('change',e=>{if(e.target.id==='schoolChoice'){chosenSchool=e.target.value;if(!SCHOOLS.includes(chosenSchool))chosenSchool='ALL SCHOOLS';if(state.v3.run&&state.v3.offer){if(chosenSchool!=='ALL SCHOOLS'&&state.coins<80){notice('Need 80 coins to target a school');chosenSchool='ALL SCHOOLS';render();return;}newRunOffer();}}});document.addEventListener('input',e=>{if(e.target.id==='inventorySearch'){filters=e.target.value;const pos=e.target.selectionStart;render();const input=$('#inventorySearch');if(input){input.focus();input.setSelectionRange(pos,pos)}}});$('#profileBtn').addEventListener('click',()=>popup(`<div class="eyebrow">PLAYER PROFILE</div><h2 class="h1">${escapeHtml(state.name)}</h2><label for="renameInput">DISPLAY NAME</label><input id="renameInput" class="field" maxlength="18" value="${escapeHtml(state.name)}"/><button class="btn" data-v="rename">SAVE NAME</button><p>Level ${state.level} • ${state.wins} wins • ${state.v3.runs} squad runs. Progress saves in your browser; connect Supabase for cloud saving.</p>`));document.addEventListener('click',e=>{if(e.target.closest('[data-v="rename"]')){state.name=($('#renameInput')?.value||'ROOKIE').replace(/[^\w -]/g,'').trim().slice(0,18)||'ROOKIE';save();close();render();}},true);
 // New accounts begin with a free draft, not a pre-completed squad. Existing browser saves remain unchanged.
 const invited=new URLSearchParams(location.search).get('join');render();if(invited&&/^[A-Z0-9]{6}$/i.test(invited)){show('duels');setTimeout(()=>connect('join',invited.toUpperCase()),500);}

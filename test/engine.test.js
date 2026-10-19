@@ -6,9 +6,9 @@ const createSquad=(n,school='IRON CROWS')=>Array.from({length:6},(_,i)=>({
  name:'PLAYER_'+i,id:'p'+i,power:n,attack:n,defense:n,set:n,position:slots[i],school}));
 assert.deepStrictEqual(sanitizeSquad([]),[]);
 assert.deepStrictEqual(sanitizeSquad(createSquad(75).slice(0,5)),[]);
-assert.strictEqual(sanitizeSquad(createSquad(1000))[0].attack,100);
+assert.strictEqual(sanitizeSquad(createSquad(1000))[0].attack,115);
 assert.strictEqual(sanitizeSquad(createSquad(-100))[0].defense,60);
-assert.strictEqual(teamwork(sanitizeSquad(createSquad(78))).schoolBonus,12);
+assert.strictEqual(teamwork(sanitizeSquad(createSquad(78))).schoolBonus,5);
 const mixed=sanitizeSquad(createSquad(75).map((p,i)=>({...p,school:'SCHOOL_'+i})));
 assert.strictEqual(teamwork(mixed).schoolBonus,0);
 const room={rally:0,score:[0,0],stats:[{aces:0,blocks:0,digs:0,spikes:0},{aces:0,blocks:0,digs:0,spikes:0}],players:[

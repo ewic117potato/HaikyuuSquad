@@ -1,0 +1,18 @@
+/* V13 — exported Roblox-inspired collectible cards for every game catalog entry */
+.v13-illustrated-card{display:block;position:relative;aspect-ratio:2/3;min-height:0!important;border:0!important;border-radius:15px!important;overflow:hidden;line-height:0;background:#0b1427!important;box-shadow:0 6px 22px #08091ccc,0 0 15px color-mix(in srgb,var(--rarity),transparent 85%)!important;isolation:isolate;padding:0!important}
+.v13-illustrated-card::before,.v13-illustrated-card::after{display:none!important}
+.v13-illustrated-card .v13-card-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .3s ease,filter .3s ease;border:0;border-radius:0}
+.v13-illustrated-card:hover:not(:disabled) .v13-card-image{transform:scale(1.04);filter:brightness(1.13)}
+.v13-illustrated-card:hover{transform:translateY(-5px)}
+.v13-card-level,.v13-card-selected{position:absolute;bottom:7px;right:5px;z-index:3;border-radius:7px;background:#121534ec;color:#fff3bc;padding:6px 7px;font-size:10px;font-weight:900;line-height:1.2;box-shadow:0 2px 15px #0008}
+.v13-card-selected{bottom:auto;top:8px;background:#246849;color:#fff}
+.v13-illustrated-card.compact{min-height:0!important}
+.v13-illustrated-staff{padding:0!important;display:block!important;position:relative!important;overflow:hidden;border:1px solid var(--rarity)!important;border-radius:12px;aspect-ratio:2/3;min-height:0!important;box-shadow:0 9px 25px #0007!important;background:#0d1531!important;line-height:0}
+.v13-illustrated-staff .v13-staff-card-image{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.v13-illustrated-staff:hover .v13-staff-card-image{transform:scale(1.035)}
+.v13-gallery-link{display:block;text-decoration:none}
+@media(max-width:600px){.v13-card-level,.v13-card-selected{font-size:8px;padding:3px 4px}.v13-illustrated-staff{min-width:0}}
+@media(prefers-reduced-motion:reduce){.v13-illustrated-card .v13-card-image,.v13-illustrated-staff .v13-staff-card-image{transition:none}}
+
+/* School draft choice thumbnails use the actual collectible images. */
+.v12-scout-art img.v13-scout-card-art{width:100%;height:100%;inset:0;object-fit:cover;object-position:center;border:1px solid #dce8ff6c;border-radius:6px}

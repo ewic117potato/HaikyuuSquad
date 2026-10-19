@@ -7,15 +7,15 @@ const {SPIKE_ROSTER,SPIKE_COACHES,SPIKE_SCHOOL_TEAMS,SPIKE_PRO_TEAMS,SPIKE_NATIO
 const B=require('../public/balance');const D=require('../public/draft-rules');const P=require('../public/pack-engine');
 assert.equal(SPIKE_SCHOOL_TEAMS.length,10);
 const school=SPIKE_ROSTER.filter(x=>!x.proOnly),pro=SPIKE_ROSTER.filter(x=>x.proOnly);
-assert.equal(new Set(school.map(x=>x.school)).size,10);
-assert(school.every(x=>SPIKE_SCHOOL_TEAMS.includes(x.school)));
+assert.equal(new Set(school.map(x=>x.school)).size,14);
+assert(school.every(x=>SPIKE_SCHOOL_TEAMS.includes(x.school)||['NOHEBI','JOHZENJI','TSUBAKIHARA','TOKONAMI'].includes(x.school)));
 assert(pro.every(x=>SPIKE_PRO_TEAMS.includes(x.school)));
-assert(!SPIKE_ROSTER.some(x=>/NIYAMA GIRLS|YUKIGAOKA|KITAGAWA DAIICHI|TOKONAMI|UBUGAWA|OHGIMINAMI/.test(x.school)));
+assert(!SPIKE_ROSTER.some(x=>/NIYAMA GIRLS|YUKIGAOKA|KITAGAWA DAIICHI|UBUGAWA|OHGIMINAMI/.test(x.school)));
 assert(!school.some(x=>['Kanoka Amanai','Natsu Hinata'].includes(x.name)));
 assert(!school.some(x=>x.name==='Shoyo Hinata'&&x.pos!=='MB'));
 assert(!school.some(x=>x.name==='Daichi Sawamura'&&x.pos!=='OP'));
 assert(!school.some(x=>x.name==='Gao Hakuba'&&x.pos!=='OP'));
-assert(SPIKE_COACHES.every(x=>SPIKE_SCHOOL_TEAMS.includes(x.school)||SPIKE_PRO_TEAMS.includes(x.school)));
+assert(SPIKE_COACHES.every(x=>SPIKE_SCHOOL_TEAMS.includes(x.school)||['NOHEBI','JOHZENJI','TSUBAKIHARA','TOKONAMI'].includes(x.school)||SPIKE_PRO_TEAMS.includes(x.school)));
 const original=new Set();
 for(const [i,p] of SPIKE_ROSTER.entries()){
  assert(Number.isInteger(p.id));assert(!original.has(p.id),'Legacy card ID duplicate');original.add(p.id);
@@ -23,7 +23,7 @@ for(const [i,p] of SPIKE_ROSTER.entries()){
  for(const s of p.proOnly?[3]:[0,1,2]){
   const c=B.buildCard(p,i,s);
   assert.equal(c.key,`${p.id}-${s}`);
-  assert(c.power>=60&&c.power<=100);
+  assert(c.power>=60&&c.power<=(s===3?109:103));
   if(s===0&&!p.proOnly&&c.power>90)assert(B.ALLOWED_OVER_90.has(p.name),'A bench player is rated like an ace');
  }
 }
@@ -37,7 +37,7 @@ for(let i=0;i<500;i++){
     const base=SPIKE_ROSTER[j];const legitimateStage=stage===1&&SPIKE_NATIONALS_SCHOOLS.includes(base.school)?1:0;
     return B.buildCard(base,j,legitimateStage);
    },versionSampler:B.versionForRoll,weightForIndex:j=>B.weightFor(SPIKE_ROSTER[j],j)});
-  assert(SPIKE_SCHOOL_TEAMS.includes(roll.school));
+  assert(SPIKE_SCHOOL_TEAMS.includes(roll.school)||['NOHEBI','JOHZENJI','TSUBAKIHARA','TOKONAMI'].includes(roll.school));
   assert(roll.cards.every(x=>x.school===roll.school&&!x.proOnly&&x.stage<=1));
   assert(roll.cards.every(x=>x.stage===0||SPIKE_NATIONALS_SCHOOLS.includes(x.school)));
   const useful=roll.cards.filter(x=>D.eligible(picks,x));assert(useful.length);
@@ -47,9 +47,9 @@ for(let i=0;i<500;i++){
 }
 const doc={body:{dataset:{}},querySelector:()=>({textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},dataset:{},style:{},addEventListener(){}}),querySelectorAll:()=>[],addEventListener(){}};
 const ctx=vm.createContext({document:doc,console,crypto:crypto.webcrypto,localStorage:{getItem:()=>null,setItem(){}},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,clearInterval(){},Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
-for(const fn of ['roster-data.js','balance.js','draft-rules.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+fn,'utf8'),ctx);
+for(const fn of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+fn,'utf8'),ctx);
 const evaluate=str=>vm.runInContext(str,ctx);
-assert.equal(evaluate('SCHOOLS.length'),10);
+assert.equal(evaluate('SCHOOLS.length'),14);
 assert(evaluate('BASE_CATALOG.every(c=>c.stage===0||c.stage===1&&SPIKE_NATIONALS_SCHOOLS.includes(c.school)||c.stage===2&&SpikePacks.TIMESKIP_NAMES.has(c.name)||c.stage===3&&c.proOnly)'));
 assert(evaluate('!CATALOG.some(c=>c.school==="NIYAMA GIRLS" || c.school==="KITAGAWA DAIICHI")'));
 assert(evaluate('!CATALOG.some(c=>c.stage===3 && !c.proOnly)'));

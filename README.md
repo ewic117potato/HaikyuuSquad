@@ -1,3 +1,54 @@
+# V14 RIVALRY ROAD — START WITH `V14_START_HERE.md`
+
+The newest release includes curated school ratings (Hinata 92), shared rivalry chemistry, regional-school unlocks and 492 collectible card designs. Some images remain simplified; online portraits and live multiplayer still require real deployment testing.
+
+---
+
+# V13 COMPLETE CARD COLLECTION — OPEN `V13_UPDATE_GUIDE.md` FIRST
+
+This full replacement release includes 419 styled card images, a built-in gallery, and Pro/Quest ratings reaching 105+. Original V12 notes follow.
+
+---
+
+# V12 UPDATE — SEE `V12_UPDATE_GUIDE.md` FIRST
+
+Video-inspired school scouting, separate one-time quest Legend cards, four-card sequential reveals and 95+ reveal cutscenes. Existing game and deployment instructions follow.
+
+---
+
+# HAIKYUU LEGENDS V11 — SPRING HIGH NATIONALS 🏆
+
+**Full replacement of V10.** New playable single-player tournament based on the Spring High National Championship from *Haikyuu!!*. It keeps all the V10 features, the same browser save key, the existing Supabase optional cloud-save schema, and friend duels on Render.
+
+## What the new mode does
+
+- After building your full six-player squad, the completion screen shows an **estimated Nationals finish** (e.g. Top 16 / Top 8 / Finalist) and a championship probability.
+- Open **🏆 Spring Nationals** from the left sidebar, Dashboard, or Squad. Preview a **six-round single-elimination tournament** with named opposing Haikyuu schools, each with its own estimated strength.
+- **Two ways to play:** play each round separately and see every best-of-three/best-of-five match, or click **Simulate Rest of Tournament** to find out how far the squad would reach in one go.
+- Player strength, school chemistry, rivalry chemistry, the equipped coach, bench and card rarity buffs influence the chances of progressing. Strong teams usually progress further but can be upset.
+- A team is snapshotted when you enter Nationals, so editing your saved squads later cannot change an in-progress tournament.
+- Track your **personal best, attempts, matches and last 10 tournament finishes**. An unfinished tournament can be resumed after refresh.
+- Every newly cleared round offers a **one-time coin prize**. Your first Nationals title awards a **Nationals Scout Pass**; the first three tournament attempts each day can also earn a limited small bonus per win. Abandoning does not complete the daily tournament quest.
+- **Daily and weekly quests** award School Rolls, Rerolls and coins for Nationals participation and victories. Two permanent Legend Road quests award additional Nationals rewards at Top 8 and Champion milestones.
+
+**Format:** Inspired by the *Haikyuu!!* Spring Tournament (first/second/third rounds, quarterfinal, semifinal, final). The tournament is a fictional alternate bracket built for your custom dream team, **not** an exact reenactment of the anime's historic matches or official player ratings.
+
+## Install through GitHub Desktop (no Node.js on your PC)
+
+1. Download and unzip the complete **V11** project.
+2. Open GitHub Desktop → your game repository → **Repository → Show in Explorer**.
+3. Copy **everything inside** the extracted V11 folder into your repo, replacing old files. Ensure `package.json`, `server.js`, `public/`, and `test/` are at the repository root. Do not touch `.git`.
+4. Click **Commit to main → Push origin**. Render auto-deploys if configured, or use Manual Deploy → Deploy latest commit. Build: `npm install`; Start: `npm start`; Root Directory empty when files live at root.
+5. Refresh the game, draft a full six, open **Spring Nationals**. Existing cloud credentials (if configured) need no changes.
+
+## Testing
+
+`npm run test:v11` passed locally. This covers 500 distinct bracket seeds, simulated 3- and 5-set matches, probability calibration, full six-round wins, an elimination, saving an in-progress run, first-clear protections and older V10–V3 regression suites. The new UI was also checked with a headless desktop and narrow mobile viewport. A deployed Render/Supabase session still needs live testing with real users.
+
+**Security note:** Nationals runs and rewards are currently calculated and saved by the browser client, not a secure server-authoritative economy. This is suitable for a friend-group prototype, not a cheat-proof public ranked competition. Online anime image availability is unchanged from V10; some portraits still use fallbacks.
+
+---
+
 # HAIKYUU LEGENDS V10 — ONE CARD PER PLAYER + SCOUT QUESTS
 
 **Complete GitHub / Render / optional Supabase replacement project.** No Node.js installation is required on your PC when deploying through GitHub Desktop and Render.

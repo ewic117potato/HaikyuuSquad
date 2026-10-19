@@ -29,14 +29,14 @@ function validTeam(cards){
 }
 function lineup(cards){if(!validTeam(cards))return null;const arr=[...cards],take=role=>arr.splice(arr.findIndex(c=>c.position===role),1)[0];return [take('OH'),take('MB'),take('OP'),arr.find(c=>c.position==='L')?take('L'):take('MB'),take('OH'),take('S')];}
 function numSetting(x,def=0){if(x===undefined||x===null||x==='')return def;const n=Number(x);return Number.isInteger(n)?Math.max(0,Math.min(30,n)):def;}
-function makeOffer({roster,existing=[],targetSchool=null,avoidSchool=null,rand=Math.random,cardFromIndex,versionSampler=null,weightForIndex=null}){
+function makeOffer({roster,existing=[],targetSchool=null,avoidSchool=null,allowedSchools=null,rand=Math.random,cardFromIndex,versionSampler=null,weightForIndex=null}){
  const needed=needs(existing);
  if(!needed.length)throw new Error('Squad already complete');
  const draftedNames=new Set(existing.map(x=>String(x.name||'').trim().toLowerCase()).filter(Boolean));
  // One school card per named athlete. Never use a professional-team entry in school scouting.
  const unique=new Map();
  roster.forEach((c,i)=>{
-  if(c.proOnly||draftedNames.has(String(c.name||'').trim().toLowerCase()))return;
+  if(c.proOnly||(Array.isArray(allowedSchools)&&!allowedSchools.includes(c.school))||draftedNames.has(String(c.name||'').trim().toLowerCase()))return;
   const identity=c.school+'|'+String(c.name||'').trim().toLowerCase();
   if(!unique.has(identity))unique.set(identity,{c,i});
  });

@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "10.0.0",
+  "version": "14.0.0",
   "private": true,
-  "description": "Haikyuu Legends V10: one unique school character card per athlete, no repeat drafts, duplicate-safe inventory, daily/weekly quests for rolls and rerolls.",
+  "description": "Haikyuu Legends V14 rivalry season: curated roster, Hinata 92, 492 collectible cards, regional scouting, synced chemistry and more recognizable card art.",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -15,7 +15,11 @@
     "test:v7": "node test/portraits.test.js && npm run test:v6",
     "test:v8": "node test/v8-astral.test.js && npm run test:v7",
     "test:v9": "node test/v9-school.test.js && npm run test:v8",
-    "test:v10": "node test/v10-unique-quests.test.js && npm run test:v9"
+    "test:v10": "node test/v10-unique-quests.test.js && npm run test:v9",
+    "test:v11": "node test/v11-nationals.test.js && npm run test:v10",
+    "test:v12": "node test/v12-video-style.test.js && npm run test:v11",
+    "test:v13": "node test/v13-card-pack.test.js && npm run test:v12",
+    "test:v14": "node test/v14-rivalry-roster.test.js && npm run test:v13"
   },
   "dependencies": {
     "ws": "^8.18.0"

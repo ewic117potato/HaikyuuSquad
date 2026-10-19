@@ -10,14 +10,14 @@ assert.equal(find('Wakatoshi Ushijima').power,99);
 assert.equal(find('Tobio Kageyama').power,96);
 assert.equal(find('Kenma Kozume').power,89);
 assert.equal(find('Kotaro Bokuto').power,96);
-assert.equal(find('Shoyo Hinata').power,88);
+assert.equal(find('Shoyo Hinata').power,92);
 assert.equal(B.STAGE_CHANCES[0],100);assert.equal(B.STAGE_CHANCES[1],0);
 assert.equal(B.STAGE_CHANCES[2]+B.STAGE_CHANCES[3],0);
 for(const [i,c] of SPIKE_ROSTER.entries())for(const stage of c.proOnly?[3]:[0,1,2,3]){
  const power=B.ratingFor(c,i,stage);
- assert(power>=60&&power<=100);
+ assert(power>=60&&power<=109);
  if(!(c.name in B.OVERRIDES))assert(power<=89,`Unknown ${c.name} is wrongly rated ${power}`);
- if(power>=95)assert(B.ALLOWED_OVER_90.has(c.name),`Non-star ${c.name} hit ${power}`);
+ if(power>=95&&stage<=1)assert(B.ALLOWED_OVER_90.has(c.name),`Non-star ${c.name} hit ${power}`);
  assert(fs.existsSync(`public/portraits/${String(c.id).padStart(2,'0')}.svg`),`Missing ${c.name} illustration`);
 }
 assert(SPIKE_COACHES.length>=15&&SPIKE_COACHES.length<30);
@@ -40,7 +40,7 @@ for(let trial=0;trial<200;trial++){
 }
 const storage={};const elements={};function el(id){return elements[id]||(elements[id]={value:'',textContent:'',innerHTML:'',dataset:{},classList:{add(){},remove(){},toggle(){}},style:{},addEventListener(){},focus(){},setSelectionRange(){}})}
 const ctx=vm.createContext({document:{body:{dataset:{}},querySelector:el,querySelectorAll:()=>[],addEventListener(){}},console,crypto:crypto.webcrypto,localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout(){return 0;},clearTimeout(){},setInterval(){return 0;},clearInterval(){},Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
-for(const name of ['roster-data.js','balance.js','draft-rules.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+name,'utf8'),ctx);
+for(const name of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+name,'utf8'),ctx);
 const run=js=>vm.runInContext(js,ctx);
 assert.equal(run('SHOP.length'),2);assert.equal(run('SHOP.map(x=>x.id).join(",")'),'timeskip,professional');
 assert(run('shopPage()').includes('TIMESKIP CHRONICLES'));
@@ -65,4 +65,4 @@ run('claimQuest("milestone|m11")');
 assert(run('owned().some(x=>x.name==="Shoyo Hinata" && x.stage===3 && x.proOnly)')); 
 assert(fs.readFileSync('public/index.html','utf8').includes('v8-astral.css'));
 assert(fs.readFileSync('public/v8-astral.css','utf8').includes('.v8-pack-art'));
-console.log('PASS: V8 premium-only packs, strict 60–100 rankings, Kenma 89 / Ushijima 99, 200 complete drafts, online-portrait fallbacks, old-save correction, earned Nationals pass and Astral UI.');
+console.log('PASS: V8 premium-only packs, strict school ratings, 105+ professional ratings, Kenma 89 / Ushijima 99, 200 complete drafts, online-portrait fallbacks, old-save correction, earned Nationals pass and Astral UI.');

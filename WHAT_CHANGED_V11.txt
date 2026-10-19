@@ -1,0 +1,5 @@
+HAIKYUU LEGENDS V11 – SPRING HIGH NATIONALS
+
+New Spring Nationals screen after drafting 6; predicted bracket stage and championship odds; six match national elimination run; optional one-click instant simulation; anime school opponents; best-of-three and best-of-five sets; chemistry and player strength influence outcomes; rewards and quests; persistent bracket and tournament history. Keeps V10 systems and local/cloud save schema.
+
+To install: Copy all contents to your existing GitHub Desktop repo root and Commit to main > Push origin. Do not put files inside an extra folder.
