@@ -1,4 +1,4 @@
-name: Spike Legends Game Checks
+name: Haikyuu Legends V8 Game Checks
 on:
   push:
     branches: [main]
@@ -14,8 +14,8 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify V4 economy, free rolls, staff and online drafts
-        run: npm run test:v6
+      - name: Verify V8 balance, packs, visuals, staff and online drafts
+        run: npm run test:v8
       - name: Test match engine
         run: npm run test:engine
       - name: Test multiplayer server and room sync

@@ -17,13 +17,13 @@ function upgradeCard(base,tier){if(!base||!['elite','apex'].includes(tier))throw
 }
 function weightedChoose(items,rng=Math.random){if(!items?.length)throw Error('Empty pack pool');
  // Even among normal cards, higher rating = harder to pull.
- const weights=items.map(c=>{const score=c.packTier==='apex'?100:c.packTier==='elite'?98:c.power;return score>=100?1:score>=98?2:score>=95?4:score>=90?7:score>=85?10:16;});
+ const weights=items.map(c=>{const score=c.packTier==='apex'?100:c.packTier==='elite'?98:c.power;return score>=100?.10:score>=98?.25:score>=95?.65:score>=90?1.8:score>=85?5:16;});
  const sum=weights.reduce((a,b)=>a+b,0);let x=Math.min(.999999999999,Math.max(0,Number(rng())||0))*sum;
  for(let i=0;i<items.length;i++){x-=weights[i];if(x<0)return items[i];}return items.at(-1);
 }
-function drawPack(catalog,stage,rng=Math.random){if(![1,2,3].includes(stage))throw Error('Unknown pack stage');
+function drawPack(catalog,stage,rng=Math.random){if(![2,3].includes(stage))throw Error('Only Timeskip and Professional packs are sold');
  const tier=rollTier(rng);
- let choices=catalog.filter(c=>c.stage===stage&&(c.packTier||'standard')===tier);
+ let choices=catalog.filter(c=>c.stage===stage&&(c.packTier||'standard')===tier&&(stage===3?c.proOnly===true:!c.proOnly));
  if(!choices.length)throw Error('No '+tier+' stage '+stage+' cards in this pack');
  return {tier,card:weightedChoose(choices,rng),odds:ODDS};
 }

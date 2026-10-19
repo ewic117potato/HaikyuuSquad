@@ -16,9 +16,9 @@ assert(Math.abs(counted.elite/2500-1)<.20,JSON.stringify(counted));
 assert(Math.abs(counted.apex/250-1)<.30,JSON.stringify(counted));
 const basic=SPIKE_ROSTER.flatMap((r,i)=>[0,1,2,3].filter(v=>!r.proOnly||v===3).map(v=>B.buildCard(r,i,v)));
 const catalog=basic.concat(basic.filter(P.eliteCandidate).map(c=>P.upgradeCard(c,'elite')),basic.filter(P.apexCandidate).map(c=>P.upgradeCard(c,'apex')));
-for(const stage of [1,2,3])for(const [tier,number] of [['apex',0],['elite',.001],['standard',.5]]){
+for(const stage of [2,3])for(const [tier,number] of [['apex',0],['elite',.001],['standard',.5]]){
  const randomValues=[number,.5];const result=P.drawPack(catalog,stage,()=>randomValues.shift()??.5);
- assert.equal(result.card.stage,stage);assert.equal(result.tier,tier);assert.equal(result.card.packTier||'standard',tier);
+ assert.equal(result.card.stage,stage);assert.equal(result.card.proOnly,stage===3);assert.equal(result.tier,tier);assert.equal(result.card.packTier||'standard',tier);
  assert(result.card.power>=60&&result.card.power<=100);
 }
 const storage={},elements=new Map();
@@ -32,7 +32,7 @@ let client=load(),run=client.run;
 run('state.coins=100000;save()');
 const before=run('state.coins');
 assert.equal(run('buyPack("professional")'),true);
-assert.equal(run('state.coins'),before-18000);
+assert.equal(run('state.coins'),before-22000);
 assert.equal(run('state.v3.packsOpened'),1);
 assert.equal(run('state.v3.pendingPack.pack'),'professional');
 assert.equal(run('buyPack("timeskip")'),false);
@@ -51,7 +51,7 @@ assert.equal(run('state.v3.proOwned'),1);
 assert.equal(run('state.v3.pendingPack'),null);
 run('shopPick("not-our-card")');assert.equal(run('state.items.length'),1);
 assert.equal(run('buyPack("timeskip")'),true);
-assert.equal(run('state.coins'),before-18000-7500);
+assert.equal(run('state.coins'),before-22000-7500);
 run('shopPick(state.v3.pendingPack.key)');
 assert.equal(run('state.v3.packsOpened'),2);
 assert.equal(run('state.items.length'),2);

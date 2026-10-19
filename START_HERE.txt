@@ -1,12 +1,34 @@
-HAIKYUU LEGENDS V6 / PRO PACK ASCENSION
+HAIKYUU LEGENDS V8 — ASTRAL COURT
+Complete replacement project for GitHub + Render + Supabase.
 
-The V6 ZIP is the whole project. Replace your existing game files in GitHub Desktop, then commit and push. Confirm Render points to that same GitHub repository.
+UPDATE YOUR EXISTING SITE (GITHUB DESKTOP)
+1. Extract this ZIP.
+2. In GitHub Desktop, select the repository CONNECTED TO YOUR RENDER WEB SERVICE.
+3. Repository -> Show in Explorer.
+4. Copy the CONTENTS of this extracted folder into that repository root, replacing files when prompted.
+   Do NOT place the entire extracted folder inside the repository.
+   Do NOT delete the hidden .git folder.
+5. GitHub Desktop -> Commit to main -> Push origin.
+6. Render should redeploy. Build: npm install | Start: npm start | Root Directory: BLANK
+   (only when package.json lives in the repository root).
+7. Open your website and refresh. /health should say astral-court-v8.
 
-NEW:
-* Coin shop: Nationals, Timeskip, Professional packs.
-* 1% Elite card chance and 0.1% Apex card chance per purchased pack.
-* Quests award coins, gems, rolls and guaranteed named characters.
-* Packs have one result each, rather than letting one opening grant four chances at Apex.
-* Unclaimed paid pack is saved until claimed, even after refresh.
+CHANGES
+- Shop sells ONLY Timeskip and Professional packs. No Nationals pack.
+- Standard school draft: 97% High School; 3% Nationals; no Timeskip/Pro cards.
+- Accurate, heavily rebalanced 60-100 OVR: Kenma 89, Kageyama 96, Ushijima 99.
+- Other players remain realistically lower, with only top players above 90.
+- Professional packs pull athletes from actual listed pro teams, not random bench players.
+- 98.9% Standard / 1% Elite / 0.1% Apex chances per purchased pack.
+- Daily / weekly quests, Nationals scout passes and Pro pack tokens retained.
+- Full Astral Court visual makeover: polished dark/lilac/gold UI, foil cards, glowing edges,
+  stadium court, rarity effects, cinematic pack covers, adaptive mobile layout.
+- Every entry has local illustrated fallback portrait. Anime portraits load ONLINE if available;
+  some obscure characters/unique versions cannot be guaranteed anime art.
+- Old progress uses the same browser save key and cloud-save code.
 
-See README.md for full instructions and limitations.
+IMPORTANT
+- This is an unofficial fan project. External anime images are copyrighted and may not load.
+- Online friend duels and cloud saving still require a working Render and Supabase setup.
+- Public competitive economy is not cheat resistant yet.
+- Run `npm run test:v8` on Render or any Node 20+ environment to verify logic.

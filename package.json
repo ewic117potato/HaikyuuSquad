@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "private": true,
-  "description": "Haikyuu Legends V7 with Haikyuu-only anime portrait matching for every player, coach and manager, and per-character fallback assets.",
+  "description": "Haikyuu Legends V8 Astral Court: rarity-balanced high school draft, exclusive Timeskip/Pro packs, magical UI, online character portraits and private friend duels.",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -12,7 +12,8 @@
     "test:v4": "node test/v4-rules.test.js && node test/v3-logic.test.js && node test/v3-server-draft.test.js && node test/engine.test.js && node test/roster.test.js",
     "test:v5": "node test/v5-overhaul.test.js && npm run test:v4",
     "test:v6": "node test/v6-premium.test.js && npm run test:v5",
-    "test:v7": "node test/portraits.test.js && npm run test:v6"
+    "test:v7": "node test/portraits.test.js && npm run test:v6",
+    "test:v8": "node test/v8-astral.test.js && npm run test:v7"
   },
   "dependencies": {
     "ws": "^8.18.0"
