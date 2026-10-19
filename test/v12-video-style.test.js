@@ -7,7 +7,7 @@ const ctx={};const storage={};const els=new Map();
 function fakeElement(key){if(!els.has(key))els.set(key,{innerHTML:'',textContent:'',value:'',dataset:{},style:{setProperty(){}},classList:{add(){},remove(){},toggle(){}},addEventListener(){},focus(){},setSelectionRange(){}});return els.get(key)}
 Object.assign(ctx,{console,crypto:crypto.webcrypto,Date,Math,URL,URLSearchParams,Intl,clearTimeout(){},setTimeout(){return 0},setInterval(){return 0},clearInterval(){},window:{scrollTo(){},matchMedia(){return {matches:true}},queueCloudSave(){}},document:{querySelector:fakeElement,querySelectorAll:()=>[],body:{dataset:{}},addEventListener(){}},localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},navigator:{},location:{origin:'http://localhost',search:''},WebSocket:function(){}});
 const context=vm.createContext(ctx);
-for(const source of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','nationals-engine.js','game-v3.js']){
+for(const source of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','nationals-engine.js','gauntlet-engine.js','game-v3.js']){
  vm.runInContext(fs.readFileSync('public/'+source,'utf8'),context,{filename:source});
 }
 const run=expr=>vm.runInContext(expr,context);

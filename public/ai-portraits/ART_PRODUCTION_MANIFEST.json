@@ -1,0 +1,778 @@
+{
+  "version": "17-preview",
+  "completed_school_characters": [
+    4,
+    1,
+    6,
+    14,
+    2,
+    3,
+    8,
+    5,
+    0,
+    7,
+    9,
+    32
+  ],
+  "complete_count": 12,
+  "school_character_total": 120,
+  "approved_visual_direction": "recognisable individual high-detail 2D sports-anime illustration with dynamic volleyball action and school-colour effects; not team-poster crops",
+  "todo": [
+    {
+      "idx": 10,
+      "name": "Osamu Miya",
+      "school": "INARIZAKI",
+      "ovr": 91,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Osamu Miya from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 11,
+      "name": "Satori Tendo",
+      "school": "SHIRATORIZAWA",
+      "ovr": 90,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Satori Tendo from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 12,
+      "name": "Hajime Iwaizumi",
+      "school": "AOBA JOHSAI",
+      "ovr": 90,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hajime Iwaizumi from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 13,
+      "name": "Asahi Azumane",
+      "school": "KARASUNO",
+      "ovr": 89,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Asahi Azumane from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 15,
+      "name": "Daichi Sawamura",
+      "school": "KARASUNO",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Daichi Sawamura from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 16,
+      "name": "Koshi Sugawara",
+      "school": "KARASUNO",
+      "ovr": 81,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Koshi Sugawara from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 17,
+      "name": "Tadashi Yamaguchi",
+      "school": "KARASUNO",
+      "ovr": 76,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Tadashi Yamaguchi from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 18,
+      "name": "Keiji Akaashi",
+      "school": "FUKURODANI",
+      "ovr": 91,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Keiji Akaashi from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 19,
+      "name": "Rintaro Suna",
+      "school": "INARIZAKI",
+      "ovr": 90,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Rintaro Suna from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 20,
+      "name": "Lev Haiba",
+      "school": "NEKOMA",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Lev Haiba from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 21,
+      "name": "Morisuke Yaku",
+      "school": "NEKOMA",
+      "ovr": 91,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Morisuke Yaku from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 22,
+      "name": "Kiyoomi Sakusa",
+      "school": "ITACHIYAMA",
+      "ovr": 97,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kiyoomi Sakusa from Haikyuu, in ITACHIYAMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 23,
+      "name": "Motoya Komori",
+      "school": "ITACHIYAMA",
+      "ovr": 93,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Motoya Komori from Haikyuu, in ITACHIYAMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 24,
+      "name": "Korai Hoshiumi",
+      "school": "KAMOMEDAI",
+      "ovr": 97,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Korai Hoshiumi from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 25,
+      "name": "Sachiro Hirugami",
+      "school": "KAMOMEDAI",
+      "ovr": 92,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Sachiro Hirugami from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 26,
+      "name": "Kenjiro Shirabu",
+      "school": "SHIRATORIZAWA",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kenjiro Shirabu from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 27,
+      "name": "Eita Semi",
+      "school": "SHIRATORIZAWA",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Eita Semi from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 28,
+      "name": "Tsutomu Goshiki",
+      "school": "SHIRATORIZAWA",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Tsutomu Goshiki from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 29,
+      "name": "Shinsuke Kita",
+      "school": "INARIZAKI",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Shinsuke Kita from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 30,
+      "name": "Aran Ojiro",
+      "school": "INARIZAKI",
+      "ovr": 94,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Aran Ojiro from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 31,
+      "name": "Kenji Futakuchi",
+      "school": "DATE TECH",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kenji Futakuchi from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 33,
+      "name": "Kanji Koganegawa",
+      "school": "DATE TECH",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kanji Koganegawa from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 34,
+      "name": "Yuji Terushima",
+      "school": "JOHZENJI",
+      "ovr": 84,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yuji Terushima from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 36,
+      "name": "Akinori Konoha",
+      "school": "FUKURODANI",
+      "ovr": 84,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Akinori Konoha from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 37,
+      "name": "Yamato Sarukui",
+      "school": "FUKURODANI",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yamato Sarukui from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 38,
+      "name": "Reon Ohira",
+      "school": "SHIRATORIZAWA",
+      "ovr": 87,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Reon Ohira from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 39,
+      "name": "Hayato Yamagata",
+      "school": "SHIRATORIZAWA",
+      "ovr": 84,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hayato Yamagata from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 40,
+      "name": "Issei Matsukawa",
+      "school": "AOBA JOHSAI",
+      "ovr": 70,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Issei Matsukawa from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 41,
+      "name": "Takahiro Hanamaki",
+      "school": "AOBA JOHSAI",
+      "ovr": 77,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Takahiro Hanamaki from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 42,
+      "name": "Kentaro Kyotani",
+      "school": "AOBA JOHSAI",
+      "ovr": 71,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kentaro Kyotani from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 43,
+      "name": "Kaname Moniwa",
+      "school": "DATE TECH",
+      "ovr": 78,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kaname Moniwa from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 44,
+      "name": "Nobuyuki Kai",
+      "school": "NEKOMA",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Nobuyuki Kai from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 45,
+      "name": "Shohei Fukunaga",
+      "school": "NEKOMA",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Shohei Fukunaga from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 46,
+      "name": "So Inuoka",
+      "school": "NEKOMA",
+      "ovr": 80,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of So Inuoka from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 47,
+      "name": "Naoyasu Kuguri",
+      "school": "NOHEBI",
+      "ovr": 79,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Naoyasu Kuguri from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 48,
+      "name": "Michinari Akagi",
+      "school": "INARIZAKI",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Michinari Akagi from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 49,
+      "name": "Hitoshi Ginjima",
+      "school": "INARIZAKI",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hitoshi Ginjima from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 50,
+      "name": "Gao Hakuba",
+      "school": "KAMOMEDAI",
+      "ovr": 86,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Gao Hakuba from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 52,
+      "name": "Chikara Ennoshita",
+      "school": "KARASUNO",
+      "ovr": 75,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Chikara Ennoshita from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 53,
+      "name": "Hisashi Kinoshita",
+      "school": "KARASUNO",
+      "ovr": 72,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hisashi Kinoshita from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 54,
+      "name": "Kazuhito Narita",
+      "school": "KARASUNO",
+      "ovr": 72,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kazuhito Narita from Haikyuu, in KARASUNO school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 55,
+      "name": "Taketora Yamamoto",
+      "school": "NEKOMA",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Taketora Yamamoto from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 56,
+      "name": "Tamahiko Teshiro",
+      "school": "NEKOMA",
+      "ovr": 76,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Tamahiko Teshiro from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 57,
+      "name": "Yuki Shibayama",
+      "school": "NEKOMA",
+      "ovr": 75,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yuki Shibayama from Haikyuu, in NEKOMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 58,
+      "name": "Shigeru Yahaba",
+      "school": "AOBA JOHSAI",
+      "ovr": 79,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Shigeru Yahaba from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 59,
+      "name": "Shinji Watari",
+      "school": "AOBA JOHSAI",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Shinji Watari from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 60,
+      "name": "Yutaro Kindaichi",
+      "school": "AOBA JOHSAI",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yutaro Kindaichi from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 61,
+      "name": "Akira Kunimi",
+      "school": "AOBA JOHSAI",
+      "ovr": 78,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Akira Kunimi from Haikyuu, in AOBA JOHSAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 62,
+      "name": "Yutaka Obara",
+      "school": "DATE TECH",
+      "ovr": 60,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yutaka Obara from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 63,
+      "name": "Takehito Sasaya",
+      "school": "DATE TECH",
+      "ovr": 67,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Takehito Sasaya from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 64,
+      "name": "Yasushi Kamasaki",
+      "school": "DATE TECH",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yasushi Kamasaki from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 65,
+      "name": "Taro Onagawa",
+      "school": "DATE TECH",
+      "ovr": 64,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Taro Onagawa from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 66,
+      "name": "Jingo Fukiage",
+      "school": "DATE TECH",
+      "ovr": 71,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Jingo Fukiage from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 67,
+      "name": "Kosuke Sakunami",
+      "school": "DATE TECH",
+      "ovr": 61,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kosuke Sakunami from Haikyuu, in DATE TECH school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 68,
+      "name": "Tatsuki Washio",
+      "school": "FUKURODANI",
+      "ovr": 86,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Tatsuki Washio from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 69,
+      "name": "Shuichi Anahori",
+      "school": "FUKURODANI",
+      "ovr": 76,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Shuichi Anahori from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 70,
+      "name": "Haruki Komi",
+      "school": "FUKURODANI",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Haruki Komi from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 71,
+      "name": "Wataru Onaga",
+      "school": "FUKURODANI",
+      "ovr": 80,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Wataru Onaga from Haikyuu, in FUKURODANI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 72,
+      "name": "Taichi Kawanishi",
+      "school": "SHIRATORIZAWA",
+      "ovr": 81,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Taichi Kawanishi from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 73,
+      "name": "Kai Akakura",
+      "school": "SHIRATORIZAWA",
+      "ovr": 75,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kai Akakura from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 74,
+      "name": "Yusho Sagae",
+      "school": "SHIRATORIZAWA",
+      "ovr": 73,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yusho Sagae from Haikyuu, in SHIRATORIZAWA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 75,
+      "name": "Kazuma Bobata",
+      "school": "JOHZENJI",
+      "ovr": 66,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kazuma Bobata from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 76,
+      "name": "Takeharu Futamata",
+      "school": "JOHZENJI",
+      "ovr": 73,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Takeharu Futamata from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 77,
+      "name": "Katsumichi Higashiyama",
+      "school": "JOHZENJI",
+      "ovr": 63,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Katsumichi Higashiyama from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 78,
+      "name": "Rintaro Numajiri",
+      "school": "JOHZENJI",
+      "ovr": 70,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Rintaro Numajiri from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 79,
+      "name": "Nobuyoshi Izaka",
+      "school": "JOHZENJI",
+      "ovr": 60,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Nobuyoshi Izaka from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 80,
+      "name": "Arata Tsuchiyu",
+      "school": "JOHZENJI",
+      "ovr": 67,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Arata Tsuchiyu from Haikyuu, in JOHZENJI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 93,
+      "name": "Ren Omimi",
+      "school": "INARIZAKI",
+      "ovr": 84,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Ren Omimi from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 94,
+      "name": "Yuto Kosaku",
+      "school": "INARIZAKI",
+      "ovr": 64,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yuto Kosaku from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 95,
+      "name": "Heisuke Riseki",
+      "school": "INARIZAKI",
+      "ovr": 71,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Heisuke Riseki from Haikyuu, in INARIZAKI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 96,
+      "name": "Suguru Daisho",
+      "school": "NOHEBI",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Suguru Daisho from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 97,
+      "name": "Yoshiya Takachiho",
+      "school": "NOHEBI",
+      "ovr": 68,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yoshiya Takachiho from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 98,
+      "name": "Kazuma Numai",
+      "school": "NOHEBI",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kazuma Numai from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 99,
+      "name": "Koji Hiroo",
+      "school": "NOHEBI",
+      "ovr": 65,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Koji Hiroo from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 100,
+      "name": "Isumi Sakishima",
+      "school": "NOHEBI",
+      "ovr": 72,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Isumi Sakishima from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 101,
+      "name": "So Akama",
+      "school": "NOHEBI",
+      "ovr": 62,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of So Akama from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 102,
+      "name": "Akihiko Seguro",
+      "school": "NOHEBI",
+      "ovr": 69,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Akihiko Seguro from Haikyuu, in NOHEBI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 103,
+      "name": "Tsukasa Iizuna",
+      "school": "ITACHIYAMA",
+      "ovr": 92,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Tsukasa Iizuna from Haikyuu, in ITACHIYAMA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 104,
+      "name": "Kazuki Maruyama",
+      "school": "TSUBAKIHARA",
+      "ovr": 66,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kazuki Maruyama from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 105,
+      "name": "Sakae Echigo",
+      "school": "TSUBAKIHARA",
+      "ovr": 73,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Sakae Echigo from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 106,
+      "name": "Chiharu Tsukioka",
+      "school": "TSUBAKIHARA",
+      "ovr": 63,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Chiharu Tsukioka from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 107,
+      "name": "Motoki Teradomari",
+      "school": "TSUBAKIHARA",
+      "ovr": 88,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Motoki Teradomari from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 108,
+      "name": "Dai Mikawa",
+      "school": "TSUBAKIHARA",
+      "ovr": 60,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Dai Mikawa from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 109,
+      "name": "Togo Iwamuro",
+      "school": "TSUBAKIHARA",
+      "ovr": 67,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Togo Iwamuro from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 110,
+      "name": "Yoshitomo Atema",
+      "school": "TSUBAKIHARA",
+      "ovr": 74,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yoshitomo Atema from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 111,
+      "name": "Yushi Maiko",
+      "school": "TSUBAKIHARA",
+      "ovr": 64,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yushi Maiko from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 112,
+      "name": "Akifumi Kaikake",
+      "school": "TSUBAKIHARA",
+      "ovr": 71,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Akifumi Kaikake from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 113,
+      "name": "Aoi Himekawa",
+      "school": "TSUBAKIHARA",
+      "ovr": 61,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Aoi Himekawa from Haikyuu, in TSUBAKIHARA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 121,
+      "name": "Wakatsu Kiryu",
+      "school": "MUJINAZAKA",
+      "ovr": 97,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Wakatsu Kiryu from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 122,
+      "name": "Nozomu Mami",
+      "school": "MUJINAZAKA",
+      "ovr": 83,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Nozomu Mami from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 123,
+      "name": "Keisuke Unnan",
+      "school": "MUJINAZAKA",
+      "ovr": 85,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Keisuke Unnan from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 124,
+      "name": "Naoharu Ezota",
+      "school": "MUJINAZAKA",
+      "ovr": 72,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Naoharu Ezota from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 125,
+      "name": "Michiru Usuri",
+      "school": "MUJINAZAKA",
+      "ovr": 89,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Michiru Usuri from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 126,
+      "name": "Subaru Hondo",
+      "school": "MUJINAZAKA",
+      "ovr": 69,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Subaru Hondo from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 127,
+      "name": "Haruma Bishin",
+      "school": "MUJINAZAKA",
+      "ovr": 76,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Haruma Bishin from Haikyuu, in MUJINAZAKA school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 128,
+      "name": "Keiichiro Kanbayashi",
+      "school": "KAMOMEDAI",
+      "ovr": 81,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Keiichiro Kanbayashi from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 129,
+      "name": "Liam Tokura",
+      "school": "KAMOMEDAI",
+      "ovr": 77,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Liam Tokura from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 130,
+      "name": "Izuru Nozawa",
+      "school": "KAMOMEDAI",
+      "ovr": 82,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Izuru Nozawa from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 131,
+      "name": "Aikichi Suwa",
+      "school": "KAMOMEDAI",
+      "ovr": 84,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Aikichi Suwa from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 133,
+      "name": "Hikaru Komaki",
+      "school": "TOKONAMI",
+      "ovr": 77,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hikaru Komaki from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 134,
+      "name": "Kazuma Chaya",
+      "school": "TOKONAMI",
+      "ovr": 67,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kazuma Chaya from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 135,
+      "name": "Hayato Ikejiri",
+      "school": "TOKONAMI",
+      "ovr": 78,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hayato Ikejiri from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 136,
+      "name": "Hiroki Tamagawa",
+      "school": "TOKONAMI",
+      "ovr": 64,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Hiroki Tamagawa from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 137,
+      "name": "Yoshiharu Haga",
+      "school": "TOKONAMI",
+      "ovr": 71,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Yoshiharu Haga from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 138,
+      "name": "Rikuto Shibuya",
+      "school": "TOKONAMI",
+      "ovr": 61,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Rikuto Shibuya from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 139,
+      "name": "Taiga Sakurai",
+      "school": "TOKONAMI",
+      "ovr": 68,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Taiga Sakurai from Haikyuu, in TOKONAMI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 178,
+      "name": "Isao Norikura",
+      "school": "KAMOMEDAI",
+      "ovr": 75,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Isao Norikura from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    },
+    {
+      "idx": 179,
+      "name": "Kazuyoshi Bessho",
+      "school": "KAMOMEDAI",
+      "ovr": 80,
+      "prompt": "Single character full-colour high-detail 2D anime volleyball action portrait of Kazuyoshi Bessho from Haikyuu, in KAMOMEDAI school volleyball uniform, recognizable face and hairstyle, appropriate energetic volleyball pose, school-coloured cinematic motion and lighting effects, dark gym background, one person only, no text, no logo, no typography, vertical 3:4."
+    }
+  ]
+}

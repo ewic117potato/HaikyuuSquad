@@ -8,6 +8,7 @@ vm.runInContext(fs.readFileSync('public/balance.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/draft-rules.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/team-chemistry.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/pack-engine.js','utf8'),context);
+vm.runInContext(fs.readFileSync('public/gauntlet-engine.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/game-v3.js','utf8'),context);
 function get(e){return vm.runInContext(e,context)}
 assert.equal(get('SPIKE_ROSTER.length')>=100,true);

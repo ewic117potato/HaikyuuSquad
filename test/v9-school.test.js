@@ -47,14 +47,16 @@ for(let i=0;i<500;i++){
 }
 const doc={body:{dataset:{}},querySelector:()=>({textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){}},dataset:{},style:{},addEventListener(){}}),querySelectorAll:()=>[],addEventListener(){}};
 const ctx=vm.createContext({document:doc,console,crypto:crypto.webcrypto,localStorage:{getItem:()=>null,setItem(){}},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,clearInterval(){},Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
-for(const fn of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+fn,'utf8'),ctx);
+for(const fn of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','gauntlet-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+fn,'utf8'),ctx);
 const evaluate=str=>vm.runInContext(str,ctx);
 assert.equal(evaluate('SCHOOLS.length'),14);
 assert(evaluate('BASE_CATALOG.every(c=>c.stage===0||c.stage===1&&SPIKE_NATIONALS_SCHOOLS.includes(c.school)||c.stage===2&&SpikePacks.TIMESKIP_NAMES.has(c.name)||c.stage===3&&c.proOnly)'));
 assert(evaluate('!CATALOG.some(c=>c.school==="NIYAMA GIRLS" || c.school==="KITAGAWA DAIICHI")'));
 assert(evaluate('!CATALOG.some(c=>c.stage===3 && !c.proOnly)'));
-assert.equal(evaluate('CAREER_SCHOOLS.includes("TOKONAMI")'),false);
-assert(evaluate('schoolOpponentRoster("KARASUNO",98).some(c=>c.power<90)'), 'Career opponents must have character-specific ratings');
+assert.equal(evaluate('CAREER_SCHOOLS.includes("TOKONAMI")'),true);
+assert.equal(evaluate('CAREER_SCHOOLS.length'),57);
+assert(evaluate('schoolOpponentRoster("KARASUNO",98).every(c=>c.power>=60&&c.power<=118)'), 'Career opponents must have sane position-specific ratings');
+assert(evaluate('schoolOpponentRoster("KARASUNO",106).reduce((n,c)=>n+c.power,0)>schoolOpponentRoster("KARASUNO",75).reduce((n,c)=>n+c.power,0)'), 'Late-school battles must actually scale opponent strength');
 assert.equal(evaluate('BY_KEY["8-0"].name'),'Kenma Kozume');
 assert(evaluate('BASE_CATALOG.some(c=>c.name==="Shoyo Hinata"&&c.stage===3&&c.proOnly)'));
 assert(evaluate('shopPage()').includes('TIMESKIP CHRONICLES'));

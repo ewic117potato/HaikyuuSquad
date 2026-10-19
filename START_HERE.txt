@@ -1,37 +1,19 @@
-HAIKYUU LEGENDS V15 — NEON ARENA
-Read V15_START_HERE.md first. Upload the contents of the extracted folder, not an extra nested directory.
+HAIKYUU LEGENDS V20 — REFINED ARENA
+=================================
 
-HAIKYUU LEGENDS V8 — ASTRAL COURT
-Complete replacement project for GitHub + Render + Supabase.
+1. In the deployed game, click SAVE BACKUP > EXPORT SAVE to preserve progress.
+2. Extract this ZIP.
+3. Copy the CONTENTS of the extracted folder into your GitHub Desktop repository's main folder.
+4. In GitHub Desktop: Commit to main > Push origin.
+5. Check Render deploy logs for Live status.
+6. Open the website and test school scouting, a manual bot duel, Auto Play,
+   quests, collection and saved teams. Use SAVE BACKUP to restore a JSON save if needed.
 
-UPDATE YOUR EXISTING SITE (GITHUB DESKTOP)
-1. Extract this ZIP.
-2. In GitHub Desktop, select the repository CONNECTED TO YOUR RENDER WEB SERVICE.
-3. Repository -> Show in Explorer.
-4. Copy the CONTENTS of this extracted folder into that repository root, replacing files when prompted.
-   Do NOT place the entire extracted folder inside the repository.
-   Do NOT delete the hidden .git folder.
-5. GitHub Desktop -> Commit to main -> Push origin.
-6. Render should redeploy. Build: npm install | Start: npm start | Root Directory: BLANK
-   (only when package.json lives in the repository root).
-7. Open your website and refresh. /health should say astral-court-v8.
+Render: Root Directory blank | Build npm install | Start npm start
+NOTE: package.json must be visible on the repository's main GitHub page.
 
-CHANGES
-- Shop sells ONLY Timeskip and Professional packs. No Nationals pack.
-- Standard school draft: 97% High School; 3% Nationals; no Timeskip/Pro cards.
-- Accurate, heavily rebalanced 60-100 OVR: Kenma 89, Kageyama 96, Ushijima 99.
-- Other players remain realistically lower, with only top players above 90.
-- Professional packs pull athletes from actual listed pro teams, not random bench players.
-- 98.9% Standard / 1% Elite / 0.1% Apex chances per purchased pack.
-- Daily / weekly quests, Nationals scout passes and Pro pack tokens retained.
-- Full Astral Court visual makeover: polished dark/lilac/gold UI, foil cards, glowing edges,
-  stadium court, rarity effects, cinematic pack covers, adaptive mobile layout.
-- Every entry has local illustrated fallback portrait. Anime portraits load ONLINE if available;
-  some obscure characters/unique versions cannot be guaranteed anime art.
-- Old progress uses the same browser save key and cloud-save code.
+Main improvements: 1x/2x/4x automatic matches; pause/resume; tactical hints;
+keyboard 1–4 commands; claim-all quests; save export/import; reusable staff
+recruitment choices; high-OVR match correction; responsive UI polish.
 
-IMPORTANT
-- This is an unofficial fan project. External anime images are copyrighted and may not load.
-- Online friend duels and cloud saving still require a working Render and Supabase setup.
-- Public competitive economy is not cheat resistant yet.
-- Run `npm run test:v8` on Render or any Node 20+ environment to verify logic.
+Complete instructions and limitations: README.md

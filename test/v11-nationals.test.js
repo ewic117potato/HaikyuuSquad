@@ -34,7 +34,7 @@ const context=vm.createContext({document:{body:{dataset:{}},querySelector:elemen
  localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},navigator:{},location:{search:'',origin:'http://localhost'},
  setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,clearInterval(){},Date,Math:math,URL,URLSearchParams,Intl,
  window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
-for(const name of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','nationals-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+name,'utf8'),context);
+for(const name of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','nationals-engine.js','gauntlet-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+name,'utf8'),context);
 const run=code=>vm.runInContext(code,context);
 assert(run("nationalsPage().includes('COMPLETE YOUR SQUAD FIRST')"));
 run('newRun()');

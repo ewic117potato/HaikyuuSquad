@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict');
+const P=require('../public/v20-quality.js');
+assert.equal(P.speed(8),1);assert.equal(P.interval(4),263);
+assert.equal(P.CHOICE_ADVICE.set.dump.includes('second-touch'),true);
+assert.equal(P.recommend('set',[{position:'S',set:104},{position:'MB',power:90}],[{defense:75}]),'dump');
+const [d,w]=[[['a','A','A','picks',4,{tickets:20}],['b','B','B','wins',2,{}]],[['x','X','X','wins',3,{tickets:30}]]];
+assert.deepEqual(P.questStatus(d,'daily',{quests:{picks:4,wins:2}},{}),{claimable:2,claimed:0,total:2});
+assert.deepEqual(P.questStatus(w,'weekly',{weekly:{wins:3}},{x:true}),{claimable:0,claimed:1,total:1});
+assert.throws(()=>P.safeBackup({hello:1}),/not a compatible/i);
+const b=P.safeBackup({items:[{key:'0-0',uid:'abc'}],squad:['abc','abc',null,null,null,null],v3:{claimed:{a:1}},coins:100,gems:10,tickets:40,name:'Traveler',career:42});
+assert.equal(b.squad[0],'abc');assert.equal(b.career,42);assert.equal(b.coins,100);assert.equal(b.v3.claimed.a,1);
+assert.equal(Object.prototype.hasOwnProperty.call(b,'__proto__'),false);
+console.log('PASS V20 quality: autospeed, strategy tips, quest availability and validated save backups.');

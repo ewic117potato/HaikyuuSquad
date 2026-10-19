@@ -1,6 +1,7 @@
 'use strict';
 // The match server owns rally outcomes; browsers receive the same generated event.
 const Links=require('../public/team-chemistry.js');
+const Tactics=require('../public/tactical-engine.js');
 const STYLES={balanced:[1,1,1],power:[1.16,.90,.96],iron:[.91,1.17,.98],tempo:[1.05,.95,1.12]};
 const clamp=(n,low,high)=>Math.max(low,Math.min(high,n));
 const PICK=['THUNDER SPIKE','LIGHTNING QUICK','CROSS-COURT ROCKET','PERFECT IRON WALL','JUMP SERVE ACE','MIRACLE DIG','PHANTOM DECOY','BACK-ROW ATTACK'];
@@ -38,33 +39,36 @@ function teamScore(player,rally){const squad=player.squad;const s=STYLES[player.
  const awaken=Math.min(12,squad.reduce((sum,c)=>sum+(c.awakening||0),0)*.45);
  return atk+def+set+sy.schoolBonus*.32+sy.duoBonus*.36+sy.aligned*.24+extra+schoolMatch*.18+awaken-fatigue;
 }
-function chooseRally(room,rng=Math.random){
+function chooseRally(room,rng=Math.random,tacticPlans={}){
+ // Both clients receive this one server-authoritative simulated rally.
  const players=room.players;
+ const plan=players.map((p,i)=>{
+  const selected=Tactics.autoPlan(p.squad,players[1-i].squad,rng);
+  if(p.strategy==='power'){selected.serve='jump';selected.attack='power';}
+  if(p.strategy==='iron')selected.defense='commit';
+  if(p.strategy==='tempo')selected.set='quick';
+  const override=i===0?tacticPlans.home:tacticPlans.away;
+  if(override&&typeof override==='object')for(const phase of Object.keys(Tactics.OPTIONS))
+    if(Tactics.OPTIONS[phase].some(o=>o.id===override[phase]))selected[phase]=override[phase];
+  return selected;
+ });
+ const synergy=players.map(p=>{
+  const links=teamwork(p.squad);
+  return links.schoolBonus+links.duoBonus+Math.min(16,Number(p.coachBuff)||0)*.40;
+ });
+ const ev=Tactics.simulate(players.map(p=>p.squad),room.score,room.rally,synergy,{home:plan[0],away:plan[1],serveSide:room.serving===0||room.serving===1?room.serving:undefined},rng);
+ const winner=ev.winner,actor=ev.actor,setter=ev.setter;
  const chance=clamp(.5+(teamScore(players[0],room.rally)-teamScore(players[1],room.rally))*.012,.11,.89);
- const winner=rng()<chance?0:1;
- const team=players[winner].squad;
- const eligible=team.filter(x=>['OH','OP','MB'].includes(x.position));
- const actor=(eligible.length?eligible:team)[Math.floor(rng()*(eligible.length||team.length))];
- const setter=team.find(x=>x.position==='S')||team[5];
- const attackerRating=Number(actor.attack)||actor.power;
- const defenderTeam=players[1-winner].squad;
- const blocker=defenderTeam.find(p=>p.position==='MB')||defenderTeam[1];
- const defender=defenderTeam.find(p=>p.position==='L')||defenderTeam[3];
- const attackerHigh=attackerRating>=97;
- const action=PICK[Math.floor(rng()*PICK.length)];
- const phases=[`${(players[room.rally%2].squad[0]||actor).name} serves`,`${defender.name} receives`,`${setter.name} sets ${actor.name}`,`${actor.name} challenges ${blocker.name}`,action];
  room.rally++;room.score[winner]++;
  const event={type:'rally',rally:room.rally,winner,score:room.score.slice(),
-   action,actor:actor.name,setter:setter.name,defender:blocker.name,phases,highlight:attackerHigh||rng()<.3,
-   message:action==='PERFECT IRON WALL'?`${actor.name} shuts down the angle with a monster block!`:
-     action==='MIRACLE DIG'?`${setter.name} sets after a desperate defensive recovery!`:
-     `${setter.name} sets for ${actor.name}: ${action}!`,
-   strategies:players.map(p=>p.strategy),timestamp:Date.now(),serve:room.rally%2,
-   chance:+chance.toFixed(3)};
- if(room.boxScore){room.boxScore[winner][actor.name]=(room.boxScore[winner][actor.name]||0)+1;}
- if(action.includes('ACE'))room.stats[winner].aces++;
- else if(action.includes('WALL'))room.stats[winner].blocks++;
- else if(action.includes('DIG'))room.stats[winner].digs++;
+   action:ev.action,actor,setter,defender:ev.defender,phases:ev.phases,
+   highlight:ev.method==='dump'||String(ev.action).includes('ACE')||rng()<.20,
+   message:ev.phases.at(-1),strategies:players.map(p=>p.strategy),
+   timestamp:Date.now(),serve:ev.serve,chance:+chance.toFixed(3),method:ev.method};
+ if(room.boxScore)room.boxScore[winner][actor]=(room.boxScore[winner][actor]||0)+1;
+ if(ev.action.includes('ACE'))room.stats[winner].aces++;
+ else if(ev.action.includes('BLOCK'))room.stats[winner].blocks++;
+ else if(ev.action.includes('DIG'))room.stats[winner].digs++;
  else room.stats[winner].spikes++;
  return event;
 }

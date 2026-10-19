@@ -28,7 +28,7 @@ assert(['MB','L'].includes(arranged[3].position));assert.equal(arranged[4].posit
 const nodes={};function element(k){return nodes[k]||(nodes[k]={textContent:'',innerHTML:'',dataset:{},value:'',classList:{add(){},remove(){},toggle(){}},style:{},addEventListener(){}});}
 const local={};const d={body:{dataset:{}},querySelector:element,querySelectorAll:()=>[],addEventListener(){}};
 const context=vm.createContext({document:d,console,crypto:require('node:crypto').webcrypto,localStorage:{getItem:k=>local[k]||null,setItem:(k,v)=>local[k]=v},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout(){return 0;},clearTimeout(){},setInterval(){return 0;},clearInterval(){},fetch:async()=>({ok:false,json:async()=>({})}),Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
-for(const src of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+src,'utf8'),context);
+for(const src of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','gauntlet-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+src,'utf8'),context);
 const val=expr=>vm.runInContext(expr,context);
 assert.equal(val("COURT_POS.map(x=>x.label).join(' | ')"),'OH | M | OP | M / L | OH | S');
 assert.equal((val('courtBoard([])').match(/v5-court-slot /g)||[]).length,6);

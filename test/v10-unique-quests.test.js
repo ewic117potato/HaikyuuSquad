@@ -66,7 +66,7 @@ const elements=new Map();function element(k){if(!elements.has(k))elements.set(k,
 const context=vm.createContext({document:{body:{dataset:{}},querySelector:element,querySelectorAll:()=>[],addEventListener(){}},console,crypto:crypto.webcrypto,
  localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout:()=>0,clearTimeout(){},setInterval:()=>0,clearInterval(){},Date,Math,URL,URLSearchParams,Intl,
  window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
-for(const name of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+name,'utf8'),context);
+for(const name of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','gauntlet-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+name,'utf8'),context);
 const run=code=>vm.runInContext(code,context);
 assert.equal(run('state.items.length'),2,'Migration must collapse duplicate card keys');
 assert.equal(run('state.items[0].level'),3,'Highest duplicate card upgrade must survive');

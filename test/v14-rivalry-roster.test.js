@@ -52,7 +52,7 @@ assert(fs.readFileSync('server/match-engine.js','utf8').includes("require('../pu
 // Confirm region progression gates (don't require the multiplayer database).
 const storage={};const nodes={};const el=k=>nodes[k]||(nodes[k]={innerHTML:'',value:'',textContent:'',dataset:{},style:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},focus(){},setSelectionRange(){}});
 const context=vm.createContext({document:{querySelector:el,querySelectorAll:()=>[],body:{dataset:{}},addEventListener(){}},console,crypto:crypto.webcrypto,localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout(){return 0;},clearTimeout(){},setInterval(){return 0;},clearInterval(){},fetch:async()=>({ok:false,json:async()=>({})}),WebSocket:function(){}});
-for(const filename of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','nationals-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+filename,'utf8'),context,{filename});
+for(const filename of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','nationals-engine.js','gauntlet-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+filename,'utf8'),context,{filename});
 const run=e=>vm.runInContext(e,context);
 assert.equal(run('unlockedSchools().length'),10);
 for(const [value,count] of [[2,11],[4,12],[6,13],[8,14]]){run('state.career='+value);assert.equal(run('unlockedSchools().length'),count);}

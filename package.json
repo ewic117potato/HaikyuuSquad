@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "16.0.0",
+  "version": "20.0.0",
   "private": true,
-  "description": "Haikyuu Legends V16: six position face-off reveals before friend and bot matches, improved stat-aware rally events and commentary.",
+  "description": "Haikyuu Legends V20 Refined Arena: tactical coaching QoL, faster autoplay, quest rewards, safe save exports, and improved responsive UI.",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -21,7 +21,10 @@
     "test:v13": "node test/v13-card-pack.test.js && npm run test:v12",
     "test:v14": "node test/v14-rivalry-roster.test.js && npm run test:v13",
     "test:v15": "node test/v15-neon-arena.test.js && npm run test:v14",
-    "test:v16": "node test/v16-showdown.test.js && npm run test:v15"
+    "test:v16": "node test/v16-showdown.test.js && npm run test:v15",
+    "test:v18": "node test/v18-gauntlet.test.js && npm run test:v16",
+    "test:v19": "node test/v19-tactics.test.js && node test/v19-server.test.js && npm run test:v18",
+    "test:v20": "node test/v20-quality.test.js && node test/v20-game.test.js && npm run test:v19"
   },
   "dependencies": {
     "ws": "^8.18.0"

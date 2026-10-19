@@ -25,7 +25,7 @@ const storage={},elements=new Map();
 function el(key){if(!elements.has(key))elements.set(key,{value:'',textContent:'',innerHTML:'',dataset:{},classList:{add(){},remove(){},toggle(){}},style:{},addEventListener(){},focus(){},setSelectionRange(){}});return elements.get(key);}
 function load(){const context=vm.createContext({document:{body:{dataset:{}},querySelector:el,querySelectorAll:()=>[],addEventListener(){}},console,crypto:crypto.webcrypto,
  localStorage:{getItem:key=>storage[key]||null,setItem:(key,val)=>storage[key]=val},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout(){return 0;},clearTimeout(){},setInterval(){return 0;},clearInterval(){},Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
- for(const file of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+file,'utf8'),context);
+ for(const file of ['roster-data.js','balance.js','draft-rules.js','team-chemistry.js','pack-engine.js','gauntlet-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+file,'utf8'),context);
  return {context,run:js=>vm.runInContext(js,context)};
 }
 let client=load(),run=client.run;

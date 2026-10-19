@@ -44,6 +44,7 @@
       if(row?.payload && remoteDate>localDate) {
         state=Object.assign(DEFAULT(),row.payload);
         state.v3=Object.assign(DEFAULT().v3,state.v3||{});
+        state.v3.autoSpeed=typeof SpikeQuality!=='undefined'?SpikeQuality.speed(state.v3.autoSpeed):1;state.v3.fastReveals=Boolean(state.v3.fastReveals);
         // V11: a cloud save created by an earlier game version might not have the Nationals record.
         state.v3.nationals=Object.assign({runs:0,bestWins:0,history:[],active:null,day:new Date().toISOString().slice(0,10),dailyEntries:0},state.v3.nationals||{});
         migrateUniqueInventory(state);
