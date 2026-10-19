@@ -7,17 +7,17 @@ const PAIRS=[['Shoyo Hinata','Tobio Kageyama',7],['Shoyo Hinata','Kenma Kozume',
 const safeName=x=>String(x||'ATHLETE').replace(/[^\w \-]/g,'').trim().slice(0,34)||'ATHLETE';
 function sanitizeSquad(squad){
  if(!Array.isArray(squad)||squad.length!==6)return [];
- const allowed=['S','OH','MB','OP','L'];const slots=['OH','MB','OP','OH','S','MB'];
+ const allowed=['S','OH','MB','OP','L'];const slots=['OH','MB','OP','MB/L','OH','S'];
  return squad.map((x,i)=>({
    name:safeName(x?.name),id:String(x?.id||'').slice(0,80),
-   power:clamp(Number(x?.power)||65,35,99),attack:clamp(Number(x?.attack)||65,35,99),
-   defense:clamp(Number(x?.defense)||65,35,99),set:clamp(Number(x?.set)||65,35,99),
-   position:allowed.includes(x?.position)?x.position:slots[i],slot:slots[i],
+   power:clamp(Number(x?.power)||65,60,100),attack:clamp(Number(x?.attack)||65,60,100),
+   defense:clamp(Number(x?.defense)||65,60,100),set:clamp(Number(x?.set)||65,60,100),
+   position:allowed.includes(x?.position)?x.position:slots[i],slot:slots[i],awakening:clamp(Number(x?.awakening)||0,0,6),
    school:String(x?.school||'Unknown').replace(/[^\w \-]/g,'').slice(0,32)
  }));
 }
 function teamwork(squad){const counts={};let aligned=0;
- for(const c of squad){counts[c.school]=(counts[c.school]||0)+1;if(c.position===c.slot)aligned++;}
+ for(const c of squad){counts[c.school]=(counts[c.school]||0)+1;if(c.position===c.slot||(c.slot==='MB/L'&&['MB','L'].includes(c.position)))aligned++;}
  const best=Math.max(0,...Object.values(counts));const schoolBonus=best>=6?12:best>=5?9:best>=4?7:best>=3?5:best>=2?3:0;
  const names=new Set(squad.map(c=>c.name));const duoBonus=PAIRS.filter(([a,b])=>names.has(a)&&names.has(b)).reduce((s,p)=>s+p[2],0);
  return {schoolBonus,duoBonus,aligned,topSchool:Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]||'UNKNOWN'};
@@ -25,14 +25,15 @@ function teamwork(squad){const counts={};let aligned=0;
 function mean(squad,key){return squad.reduce((a,c)=>a+c[key],0)/Math.max(1,squad.length);}
 function teamScore(player,rally){const squad=player.squad;const s=STYLES[player.strategy]||STYLES.balanced;
  const sy=teamwork(squad),fatigue=Math.max(0,rally-17)*.055;
- const strength=clamp(Number(player.coachBuff)||0,0,10);
+ const strength=clamp(Number(player.coachBuff)||0,0,18);
  const schoolMatch=player.coachSchool===sy.topSchool?3:0;
  const kind=player.coachType;
  const atk=mean(squad,'attack')*.48*s[0]*(kind==='attack'?1+strength/100:1);
  const def=mean(squad,'defense')*.34*s[1]*(kind==='defense'?1+strength/100:1);
  const set=mean(squad,'set')*.18*s[2]*(kind==='setting'?1+strength/100:1);
  const extra=(kind==='chemistry'?strength*.55:kind==='strategy'?strength*.42:kind==='focus'?strength*.25:kind==='speed'?strength*.25:kind==='energy'?strength*.25:strength*.12);
- return atk+def+set+sy.schoolBonus*.32+sy.duoBonus*.36+sy.aligned*.24+extra+schoolMatch*.18-fatigue;
+ const awaken=Math.min(12,squad.reduce((sum,c)=>sum+(c.awakening||0),0)*.45);
+ return atk+def+set+sy.schoolBonus*.32+sy.duoBonus*.36+sy.aligned*.24+extra+schoolMatch*.18+awaken-fatigue;
 }
 function chooseRally(room,rng=Math.random){
  const players=room.players;
@@ -41,7 +42,7 @@ function chooseRally(room,rng=Math.random){
  const team=players[winner].squad;
  const eligible=team.filter(x=>['OH','OP','MB'].includes(x.position));
  const actor=(eligible.length?eligible:team)[Math.floor(rng()*(eligible.length||team.length))];
- const setter=team.find(x=>x.position==='S')||team[4];
+ const setter=team.find(x=>x.position==='S')||team[5];
  const action=PICK[Math.floor(rng()*PICK.length)];
  room.rally++;room.score[winner]++;
  const event={type:'rally',rally:room.rally,winner,score:room.score.slice(),

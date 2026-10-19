@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Haikyuu Legends — Portrait Checker</title>
+<style>
+:root{color-scheme:dark;font:15px system-ui,Segoe UI,sans-serif;background:#0b1520;color:#ecf5ff}*{box-sizing:border-box}body{margin:0;padding:24px max(15px,calc((100vw - 1100px)/2)) 60px}a{color:#ffd3a5}h1{margin-bottom:6px}p{color:#aabdd1;line-height:1.55}.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:20px 0}button,input{font:inherit;border-radius:8px;padding:11px;border:1px solid #4d667d;background:#1a2d40;color:#fff}button{cursor:pointer;background:#ce7b37;border:0;color:#101522;font-weight:800}button:disabled{opacity:.5;cursor:wait}input{min-width:min(300px,90vw)}#results{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.card{background:#152537;border:1px solid #304963;border-radius:11px;overflow:hidden}.image{height:155px;display:grid;place-items:center;overflow:hidden;background:#1c3443}.image img{height:100%;width:100%;object-fit:cover;object-position:center 20%}.text{padding:9px}.text b{display:block;font-size:12px}.text small{display:block;color:#9fb5ca;font-size:10px;margin-top:4px}.status{margin-top:7px;font-size:10px;letter-spacing:.3px;text-transform:uppercase;color:#e5bc8f}.ok{color:#73edb6}.bad{color:#e7ac8a}#progress{font-weight:700;color:#f0c991}.info{background:#1a2e40;border-left:3px solid #ce7b37;padding:10px 13px;border-radius:4px}
+</style></head><body>
+<a href="/">← Back to game</a><h1>Character portrait checker</h1>
+<p>Check whether each character and coach has a reachable online portrait. Anime profile pictures come from AniList or MyAnimeList when available. A Haikyuu Wiki thumbnail may be manga artwork. When none is available, the game displays its original illustrated backup.</p>
+<p class="info">This checks <strong>unique characters</strong>. Their School, Nationals, Timeskip, Elite and Pro cards reuse the character's portrait unless variant-specific artwork is supplied. Not every manga-only or very minor character has an official anime portrait.</p>
+<div class="bar"><input id="search" placeholder="Search players, coaches, managers…" aria-label="Filter characters"><button id="check">Check next 12 portraits</button><span id="progress" aria-live="polite">Ready</span></div>
+<div id="results"></div>
+<script src="roster-data.js"></script><script>
+'use strict';
+const roster=[...new Map([...SPIKE_ROSTER.map((p,i)=>({...p,artIndex:i,kind:'player'})),...SPIKE_COACHES.map(p=>({...p,kind:'staff'}))].map(p=>[p.name,p])).values()];
+const grid=document.querySelector('#results'),button=document.querySelector('#check'),progress=document.querySelector('#progress'),search=document.querySelector('#search');
+const checked=new Map();let running=false;
+function entries(){const q=search.value.trim().toLowerCase();return roster.filter(x=>x.name.toLowerCase().includes(q)||x.school.toLowerCase().includes(q));}
+function render(){
+ const list=entries();const count=[...checked.values()].filter(x=>x.ok).length;
+ progress.textContent=`${checked.size}/${roster.length} checked • ${count} online portraits identified`;
+ grid.replaceChildren();
+ for(const p of list){
+  const card=document.createElement('article');card.className='card';
+  const image=document.createElement('div');image.className='image';
+  const picture=document.createElement('img');picture.alt=p.name;
+  picture.src=p.kind==='player'?`portraits/${String(p.artIndex).padStart(2,'0')}.svg`:`portraits/staff/${String(Number(p.id.split('-').at(-1))).padStart(2,'0')}.svg`;
+  const data=checked.get(p.name);
+  if(data?.ok){picture.src=data.url;picture.referrerPolicy='no-referrer';picture.onerror=()=>{picture.src=p.kind==='player'?`portraits/${String(p.artIndex).padStart(2,'0')}.svg`:`portraits/staff/${String(Number(p.id.split('-').at(-1))).padStart(2,'0')}.svg`;card.querySelector('.status').textContent='Online picture blocked • backup shown';card.querySelector('.status').className='status bad';};}
+  image.append(picture);
+  const text=document.createElement('div');text.className='text';
+  const title=document.createElement('b');title.textContent=p.name;
+  const origin=document.createElement('small');origin.textContent=p.school+' · '+p.kind;
+  const state=document.createElement('div');state.className='status '+(data?.ok?'ok':data?'bad':'');
+  state.textContent=data?(data.ok?'Online: '+data.source:'No online match • illustrated backup'):'Not checked';
+  text.append(title,origin,state);card.append(image,text);grid.append(card);
+ }
+ button.disabled=running||list.every(x=>checked.has(x.name));
+}
+async function checkOne(p){try{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);let response;
+ try{response=await fetch('/api/portrait?name='+encodeURIComponent(p.name),{signal:controller.signal});}finally{clearTimeout(timer);}
+ if(!response.ok)throw new Error('Lookup failed');const j=await response.json();checked.set(p.name,{ok:!!j.url,url:j.url||'',source:j.source||'Online'});
+ }catch{checked.set(p.name,{ok:false,url:'',source:'Unavailable'});}}
+async function checkNext(){
+ const todo=entries().filter(x=>!checked.has(x.name)).slice(0,12);
+ if(!todo.length)return;running=true;button.disabled=true;
+ // Three concurrent requests; the server deduplicates common upstream lookups.
+ for(let i=0;i<todo.length;i+=3){await Promise.all(todo.slice(i,i+3).map(checkOne));render();}
+ running=false;render();
+}
+button.addEventListener('click',checkNext);search.addEventListener('input',render);render();
+</script></body></html>

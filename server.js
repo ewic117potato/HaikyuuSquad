@@ -5,18 +5,26 @@ const path=require('path');
 const crypto=require('crypto');
 const {WebSocketServer,WebSocket}=require('ws');
 const {STYLES,sanitizeSquad,teamwork,chooseRally,isFinished}=require('./server/match-engine');
-const {SPIKE_ROSTER}=require('./public/roster-data.js');
+const {SPIKE_ROSTER,SPIKE_COACHES}=require('./public/roster-data.js');
 const Draft=require('./public/draft-rules.js');
+const Balance=require('./public/balance.js');
 const https=require('https');
-const {portraitFor}=require('./server/anime-portraits');
+const {portraitInfoFor,getStatus}=require('./server/anime-portraits');
 const PORT=process.env.PORT||3000;
 const root=path.join(__dirname,'public');
 const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
 const portraitCache=new Map();
-function sendPortrait(res,url){
- res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'public,max-age=3600'});
- res.end(JSON.stringify({url}));
+function sendPortrait(res,info){
+ res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'public,max-age=1800'});
+ res.end(JSON.stringify(info));
 }
+const rosterNames=[...new Set([...SPIKE_ROSTER,...SPIKE_COACHES].map(x=>x.name))];
+function portraitStatus(req,res){
+ const resolved=[...portraitCache.entries()];
+ res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});
+ res.end(JSON.stringify({rosterSize:SPIKE_ROSTER.length,uniquePlayers:new Set(SPIKE_ROSTER.map(x=>x.name)).size,staff:SPIKE_COACHES.length,uniquePortraitNames:rosterNames.length,checked:resolved.length,withOnlineImage:resolved.filter(([,v])=>v.info.url).length,missing:resolved.filter(([,v])=>!v.info.url).map(([name])=>name),sources:getStatus(),note:'A real anime image cannot be guaranteed for every minor or manga-only character. SVG backup art remains available.'}));
+}
+
 function fandomFallback(name){
  // Backup source only. Some fan-wiki servers block automatic lookup.
  const url='https://haikyuu.fandom.com/api.php?action=query&format=json&redirects=1&prop=pageimages&pithumbsize=420&titles='+encodeURIComponent(name);
@@ -43,17 +51,18 @@ async function apiPortrait(req,res){
  const name=new URL(req.url,'http://localhost').searchParams.get('name')||'';
  if(!/^[\p{L}\p{M} .'-]{2,60}$/u.test(name)){res.writeHead(400);res.end('{}');return;}
  const entry=portraitCache.get(name);
- if(entry&&entry.until>Date.now()){sendPortrait(res,entry.url);return;}
- let url='';
- try{url=await portraitFor(name);}catch{}
- if(!url){try{url=await fandomFallback(name);}catch{}}
- portraitCache.set(name,{url,until:Date.now()+(url?43200000:900000)});
- sendPortrait(res,url);
+ if(entry&&entry.until>Date.now()){sendPortrait(res,entry.info);return;}
+ let info={url:'',source:'none',alternates:[]};
+ try{info=await portraitInfoFor(name);}catch{}
+ if(!info.url){try{const url=await fandomFallback(name);if(url)info={url,source:'Haikyuu Wiki thumbnail (may be manga)',alternates:[]};}catch{}}
+ portraitCache.set(name,{info,until:Date.now()+(info.url?43200000:900000)});
+ sendPortrait(res,info);
 }
 const server=http.createServer((req,res)=>{
  const route=(req.url||'/').split('?')[0];
  if(route==='/api/portrait'){apiPortrait(req,res);return;}
- if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'squad-draft-v4'}));return;}
+ if(route==='/api/portrait-status'){portraitStatus(req,res);return;}
+ if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'anime-portrait-coverage-v7'}));return;}
  if(route==='/api/public-config'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({supabaseUrl:process.env.SUPABASE_URL||'',supabasePublishableKey:process.env.SUPABASE_PUBLISHABLE_KEY||''}));return;}
  let pathname;
  try{pathname=decodeURIComponent(route)}catch{res.writeHead(400);res.end('Bad request');return;}
@@ -70,17 +79,16 @@ function broadcast(room,obj){for(const p of room.players)send(p.ws,obj);}
 function code(){let out;do{out=crypto.randomBytes(3).toString('hex').toUpperCase()}while(rooms.has(out));return out;}
 function clearTimer(room){if(room.timer)clearInterval(room.timer);room.timer=null;}
 const rand=(max)=>crypto.randomInt(max);
-function draftCard(i,v){const b=SPIKE_ROSTER[i],pow=[72,84,92,97][v]+(i*7+v*3)%[10,7,5,3][v];const power=Math.min(99,pow);
- return {key:`${i}-${v}`,name:b.name,school:b.school,position:b.pos,variant:['Classic','Nationals','Timeskip','Professional'][v],portrait:`portraits/${String(i).padStart(2,'0')}.svg`,power,attack:Math.min(99,power+(b.pos==='OH'||b.pos==='OP'?4:-2)),defense:Math.min(99,power+(b.pos==='L'||b.pos==='MB'?5:-3)),set:Math.min(99,power+(b.pos==='S'?5:-4))};}
+function draftCard(i,v){return Balance.buildCard(SPIKE_ROSTER[i],i,v);}
 function newOffer(room,p){
- const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,avoidSchool:p.offer?.school||p.lastSchool||null,rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard});
+ const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,avoidSchool:p.offer?.school||p.lastSchool||null,rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:Balance.versionForRoll,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
  p.offer=result;
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,
    rerolls:p.rerolls,schoolRolls:p.schoolRolls,needed:Draft.needs(p.squad),settings:room.settings});
 }
 function rerollSameSchool(room,p){
  const result=Draft.makeOffer({roster:SPIKE_ROSTER,existing:p.squad,targetSchool:p.offer.school,
-  rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard});
+  rand:()=>rand(1000000000)/1000000000,cardFromIndex:draftCard,versionSampler:Balance.versionForRoll,weightForIndex:i=>Balance.weightFor(SPIKE_ROSTER[i],i)});
  p.offer=result;
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,
    rerolls:p.rerolls,schoolRolls:p.schoolRolls,needed:Draft.needs(p.squad),settings:room.settings});
@@ -125,7 +133,7 @@ wss.on('connection',ws=>{
     leave(ws);
     if(!target){target={code:roomCode,mode,settings:{extraRolls:Draft.numSetting(m.settings?.extraRolls,8),rerolls:Draft.numSetting(m.settings?.rerolls,5),coaches:m.settings?.coaches!==false},status:'waiting',players:[],score:[0,0],rally:0,timer:null,rematchVotes:new Set(),stats:[{},{}],boxScore:[{},{}],createdAt:Date.now()};rooms.set(roomCode,target);}
     if(target.mode==='saved'&&squad.length!==6){send(ws,{type:'error',text:'Equip six players before joining this saved-squad duel.'});return;}
-    target.players.push({ws,name:safeName(m.name),ready:false,squad,coachBuff:target.settings.coaches?Math.max(0,Math.min(10,Number(m.coachBuff)||0)):0,coachSchool:String(m.coachSchool||'').slice(0,32),coachType:String(m.coachType||'').slice(0,16),strategy:STYLES[m.strategy]?m.strategy:'balanced'});ws.roomCode=roomCode;
+    target.players.push({ws,name:safeName(m.name),ready:false,squad,coachBuff:target.settings.coaches?Math.max(0,Math.min(18,Number(m.coachBuff)||0)):0,coachSchool:String(m.coachSchool||'').slice(0,32),coachType:String(m.coachType||'').slice(0,16),strategy:STYLES[m.strategy]?m.strategy:'balanced'});ws.roomCode=roomCode;
     if(target.mode==='fresh'&&target.players.length===2)startDraft(target);else snapshot(target);return;
    }
    const room=rooms.get(ws.roomCode);if(!room)return;
@@ -150,7 +158,7 @@ wss.on('connection',ws=>{
     if(room.players.every(x=>x.picked)){
      room.draftRound++;
      if(room.draftRound===6){
-       for(const p of room.players){const ordered=Draft.lineup(p.squad);if(!ordered){send(p.ws,{type:'error',text:'Invalid final squad'});return;}p.squad=ordered.map((c,i)=>({...c,slot:['OH','MB','OP','OH','S',c.position][i]}));}
+       for(const p of room.players){const ordered=Draft.lineup(p.squad);if(!ordered){send(p.ws,{type:'error',text:'Invalid final squad'});return;}p.squad=ordered.map((c,i)=>({...c,slot:['OH','MB','OP',ordered[3].position,'OH','S'][i]}));}
        room.status='waiting';broadcast(room,{type:'draft_complete',players:room.players.map(x=>({name:x.name,squad:x.squad}))});snapshot(room);}
      else{room.players.forEach(x=>{x.picked=false;newOffer(room,x);});snapshot(room);}
     }

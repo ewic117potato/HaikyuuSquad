@@ -4,7 +4,9 @@ const nodes={};function element(name){return nodes[name]|| (nodes[name]={innerHT
 const storage={};const document={body:{dataset:{}},querySelector:element,querySelectorAll:()=>[],addEventListener(){},getElementById:element};
 const context=vm.createContext({document,console,crypto:crypto.webcrypto,localStorage:{getItem:k=>storage[k]||null,setItem:(k,v)=>storage[k]=v},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout:()=>0,clearTimeout:()=>{},setInterval:()=>0,clearInterval:()=>{},fetch:async()=>({ok:false,json:async()=>({})}),Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
 vm.runInContext(fs.readFileSync('public/roster-data.js','utf8'),context);
+vm.runInContext(fs.readFileSync('public/balance.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/draft-rules.js','utf8'),context);
+vm.runInContext(fs.readFileSync('public/pack-engine.js','utf8'),context);
 vm.runInContext(fs.readFileSync('public/game-v3.js','utf8'),context);
 function get(e){return vm.runInContext(e,context)}
 assert.equal(get('SPIKE_ROSTER.length')>=200,true);

@@ -1,0 +1,12 @@
+HAIKYUU LEGENDS V6 / PRO PACK ASCENSION
+
+The V6 ZIP is the whole project. Replace your existing game files in GitHub Desktop, then commit and push. Confirm Render points to that same GitHub repository.
+
+NEW:
+* Coin shop: Nationals, Timeskip, Professional packs.
+* 1% Elite card chance and 0.1% Apex card chance per purchased pack.
+* Quests award coins, gems, rolls and guaranteed named characters.
+* Packs have one result each, rather than letting one opening grant four chances at Apex.
+* Unclaimed paid pack is saved until claimed, even after refresh.
+
+See README.md for full instructions and limitations.

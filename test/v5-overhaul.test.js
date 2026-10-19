@@ -1,0 +1,51 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const {SPIKE_ROSTER,SPIKE_COACHES}=require('../public/roster-data');
+const B=require('../public/balance');
+const D=require('../public/draft-rules');
+function get(n){return SPIKE_ROSTER.findIndex(c=>c.name===n)}
+assert.equal(B.ratingFor(SPIKE_ROSTER[get('Wakatoshi Ushijima')],get('Wakatoshi Ushijima'),0),99);
+assert.equal(B.ratingFor(SPIKE_ROSTER[get('Tobio Kageyama')],get('Tobio Kageyama'),0),96);
+assert.deepEqual(B.STAGE_CHANCES,[95,3,1,1]);
+const counts=[0,0,0,0];for(let i=0;i<100000;i++)counts[B.versionForRoll(Math.random)]++;
+assert(counts[0]>93000&&counts[0]<97000,`School rolls should dominate: ${counts}`);
+assert(counts[1]>2000&&counts[1]<4000,`Nationals around 3%: ${counts}`);
+assert(counts[2]>600&&counts[2]<1400,`Timeskip around 1%: ${counts}`);
+assert(counts[3]>600&&counts[3]<1400,`Professional around 1%: ${counts}`);
+const catalog=SPIKE_ROSTER.flatMap((c,i)=>[0,1,2,3].filter(v=>!c.proOnly||v===3).map(v=>B.buildCard(c,i,v)));
+assert(catalog.every(c=>c.power>=60&&c.power<=100));
+let squad=[];
+for(let i=0;i<6;i++){
+ const offer=D.makeOffer({roster:SPIKE_ROSTER,existing:squad,cardFromIndex:(j,v)=>B.buildCard(SPIKE_ROSTER[j],j,v),versionSampler:B.versionForRoll});
+ assert(offer.cards.some(c=>D.eligible(squad,c)),`Draft round ${i} cannot fill a slot`);
+ squad.push(offer.cards.find(c=>D.eligible(squad,c)));
+}
+assert(D.validTeam(squad));const arranged=D.lineup(squad);
+assert.equal(arranged[0].position,'OH');assert.equal(arranged[1].position,'MB');assert.equal(arranged[2].position,'OP');
+assert(['MB','L'].includes(arranged[3].position));assert.equal(arranged[4].position,'OH');assert.equal(arranged[5].position,'S');
+const nodes={};function element(k){return nodes[k]||(nodes[k]={textContent:'',innerHTML:'',dataset:{},value:'',classList:{add(){},remove(){},toggle(){}},style:{},addEventListener(){}});}
+const local={};const d={body:{dataset:{}},querySelector:element,querySelectorAll:()=>[],addEventListener(){}};
+const context=vm.createContext({document:d,console,crypto:require('node:crypto').webcrypto,localStorage:{getItem:k=>local[k]||null,setItem:(k,v)=>local[k]=v},navigator:{},location:{search:'',origin:'http://localhost'},setTimeout(){return 0;},clearTimeout(){},setInterval(){return 0;},clearInterval(){},fetch:async()=>({ok:false,json:async()=>({})}),Date,Math,URL,URLSearchParams,Intl,window:{scrollTo(){},queueCloudSave(){}},WebSocket:function(){}});
+for(const src of ['roster-data.js','balance.js','draft-rules.js','pack-engine.js','game-v3.js'])vm.runInContext(fs.readFileSync('public/'+src,'utf8'),context);
+const val=expr=>vm.runInContext(expr,context);
+assert.equal(val("COURT_POS.map(x=>x.label).join(' | ')"),'OH | M | OP | M / L | OH | S');
+assert.equal((val('courtBoard([])').match(/v5-court-slot /g)||[]).length,6);
+val('newRun()');assert.equal(val('state.v3.offer.cards.length'),4);
+for(let i=0;i<6;i++)val('runPick(state.v3.offer.cards.find(c=>Draft.eligible(state.v3.run.picks.map(player).filter(Boolean),c)).key)');
+assert.equal(val('state.v3.runs'),1);assert.equal(val('state.squad.length'),6);
+assert.equal(val('slotCompatible(0,{position:"MB"})'),false);
+assert.equal(val('slotCompatible(3,{position:"L"})'),true);
+assert.equal(val('slotCompatible(5,{position:"S"})'),true);
+val("state.gems=999;coachTab='managers';staffRoll()");
+assert(val('state.v3.staffOffer.every(o=>staffType(SPIKE_COACHES.find(c=>c.id===o.key))===\"manager\")'));
+val('chooseCoach(state.v3.staffOffer[0].key+"|"+state.v3.staffOffer[0].tier)');
+assert.equal(val('!!manager()'),true);assert.equal(val('!!coach()'),false);
+val("coachTab='coaches';staffRoll()");
+assert(val('state.v3.staffOffer.every(o=>staffType(SPIKE_COACHES.find(c=>c.id===o.key))===\"coach\")'));
+val('chooseCoach(state.v3.staffOffer[0].key+"|"+state.v3.staffOffer[0].tier)');
+assert.equal(val('!!manager()'),true);assert.equal(val('!!coach()'),true);
+const html=val('squadPage()');assert(html.includes('TACTICAL LINEUP BOARD')&&html.includes('ONE')===false);
+const style=fs.readFileSync('public/v5.css','utf8');assert(style.includes('@media(max-width:390px)'));assert(style.includes('.v5-court-grid'));
+console.log('PASS: accurate 60–100 OVR, 95/3/1/1 school odds, court six-slot map, safe drafts, one coach & one manager, responsive styles.');

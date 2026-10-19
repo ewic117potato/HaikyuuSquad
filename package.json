@@ -1,15 +1,18 @@
 {
   "name": "spike-legends",
-  "version": "4.0.0",
+  "version": "7.0.0",
   "private": true,
-  "description": "Spike Legends V4: position-safe free school rolls, customizable duels, tiered coaches, quests and anime portraits",
+  "description": "Haikyuu Legends V7 with Haikyuu-only anime portrait matching for every player, coach and manager, and per-character fallback assets.",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
     "test:engine": "node test/engine.test.js",
     "test:roster": "node test/roster.test.js",
     "test:v3": "node test/v3-logic.test.js && node test/v3-server-draft.test.js && node test/engine.test.js && node test/roster.test.js",
-    "test:v4": "node test/v4-rules.test.js && node test/v3-logic.test.js && node test/v3-server-draft.test.js && node test/engine.test.js && node test/roster.test.js"
+    "test:v4": "node test/v4-rules.test.js && node test/v3-logic.test.js && node test/v3-server-draft.test.js && node test/engine.test.js && node test/roster.test.js",
+    "test:v5": "node test/v5-overhaul.test.js && npm run test:v4",
+    "test:v6": "node test/v6-premium.test.js && npm run test:v5",
+    "test:v7": "node test/portraits.test.js && npm run test:v6"
   },
   "dependencies": {
     "ws": "^8.18.0"
