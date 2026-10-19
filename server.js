@@ -72,6 +72,7 @@ const server=http.createServer((req,res)=>{
 });
 const wss=new WebSocketServer({server,maxPayload:12000});
 const rooms=new Map();
+const INTRO_MS=7500;
 const TICK=Math.max(80,Math.min(10000,Number(process.env.RALLY_INTERVAL_MS)||1750));
 const safeName=x=>String(x||'PLAYER').replace(/[^\w \-]/g,'').trim().slice(0,18)||'PLAYER';
 function send(ws,obj){if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify(obj));}
@@ -107,8 +108,8 @@ function finish(room){clearTimer(room);room.status='finished';const winner=room.
  broadcast(room,{type:'finish',winner,score:room.score.slice(),rallies:room.rally,stats:room.stats,mvp,at:Date.now()});}
 function nextRally(room){if(room.status!=='playing')return;const ev=chooseRally(room);broadcast(room,ev);if(isFinished(room))finish(room);}
 function begin(room){room.status='playing';room.rally=0;room.score=[0,0];room.stats=[{aces:0,blocks:0,digs:0,spikes:0},{aces:0,blocks:0,digs:0,spikes:0}];room.boxScore=[{},{}];
- broadcast(room,{type:'start',players:room.players.map(p=>({name:p.name,squad:p.squad,strategy:p.strategy,synergy:teamwork(p.squad)})),score:room.score.slice(),at:Date.now()});
- room.timer=setInterval(()=>nextRally(room),TICK);
+ broadcast(room,{type:'start',players:room.players.map(p=>({name:p.name,squad:p.squad,strategy:p.strategy,synergy:teamwork(p.squad)})),score:room.score.slice(),at:Date.now(),revealMs:INTRO_MS});
+ room.timer=setTimeout(()=>{if(room.status==='playing')room.timer=setInterval(()=>nextRally(room),TICK);},INTRO_MS+350);
 }
 function leave(ws){const room=rooms.get(ws.roomCode);ws.roomCode=null;if(!room)return;
  const wasPlaying=room.status==='playing',p=room.players.find(p=>p.ws===ws);clearTimer(room);

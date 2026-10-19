@@ -1,3 +1,7 @@
+# HAIKYUU LEGENDS V15 — NEON ARENA
+
+See **V15_START_HERE.md** for the redesigned game, download/update instructions and artwork limitations.
+
 # V14 RIVALRY ROAD — START WITH `V14_START_HERE.md`
 
 The newest release includes curated school ratings (Hinata 92), shared rivalry chemistry, regional-school unlocks and 492 collectible card designs. Some images remain simplified; online portraits and live multiplayer still require real deployment testing.

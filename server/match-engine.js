@@ -46,10 +46,16 @@ function chooseRally(room,rng=Math.random){
  const eligible=team.filter(x=>['OH','OP','MB'].includes(x.position));
  const actor=(eligible.length?eligible:team)[Math.floor(rng()*(eligible.length||team.length))];
  const setter=team.find(x=>x.position==='S')||team[5];
+ const attackerRating=Number(actor.attack)||actor.power;
+ const defenderTeam=players[1-winner].squad;
+ const blocker=defenderTeam.find(p=>p.position==='MB')||defenderTeam[1];
+ const defender=defenderTeam.find(p=>p.position==='L')||defenderTeam[3];
+ const attackerHigh=attackerRating>=97;
  const action=PICK[Math.floor(rng()*PICK.length)];
+ const phases=[`${(players[room.rally%2].squad[0]||actor).name} serves`,`${defender.name} receives`,`${setter.name} sets ${actor.name}`,`${actor.name} challenges ${blocker.name}`,action];
  room.rally++;room.score[winner]++;
  const event={type:'rally',rally:room.rally,winner,score:room.score.slice(),
-   action,actor:actor.name,setter:setter.name,highlight:rng()<.3,
+   action,actor:actor.name,setter:setter.name,defender:blocker.name,phases,highlight:attackerHigh||rng()<.3,
    message:action==='PERFECT IRON WALL'?`${actor.name} shuts down the angle with a monster block!`:
      action==='MIRACLE DIG'?`${setter.name} sets after a desperate defensive recovery!`:
      `${setter.name} sets for ${actor.name}: ${action}!`,

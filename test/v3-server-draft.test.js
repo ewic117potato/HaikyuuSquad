@@ -7,7 +7,7 @@ class FakeSocket extends events.EventEmitter {constructor(){super();this.isAlive
 const waits=[];const interval=(cb)=>{const x={cb,active:true,unref(){}};waits.push(x);return x;};
 const main=fs.readFileSync(path.resolve('server.js'),'utf8')+"\nglobalThis.__suite = {rooms, wss, nextRally};";
 const realRequire=require;
-const context={Buffer,console,process:{env:{PORT:'0'}},__dirname:process.cwd(),setInterval:interval,clearInterval:x=>x.active=false,Date,Math,URL,decodeURIComponent,encodeURIComponent,Set,Map,Object,JSON,Uint8Array};
+const context={Buffer,console,process:{env:{PORT:'0'}},__dirname:process.cwd(),setInterval:interval,clearInterval:x=>{if(x)x.active=false;},setTimeout:(cb)=>{cb();return {active:false};},Date,Math,URL,decodeURIComponent,encodeURIComponent,Set,Map,Object,JSON,Uint8Array};
 context.require=name=>name==='ws'?{WebSocketServer:FakeWSS,WebSocket:{OPEN:1}}:name==='http'?{createServer:()=>({listen(){}})}:realRequire(name.startsWith('.')?path.resolve(name):name);
 vm.runInNewContext(main,context);
 const {rooms,nextRally}=context.__suite;

@@ -43,7 +43,7 @@ const OVERRIDES=Object.freeze({
  'Reon Ohira':87,'Tsutomu Goshiki':85,'Daichi Sawamura':83,
  'Ryunosuke Tanaka':84,'Kei Tsukishima':86,'Koshi Sugawara':81,
  'Tadashi Yamaguchi':76,'Shinsuke Kita':83,'Eita Semi':85,
- 'Kenjiro Shirabu':83,'Takanobu Aone':89,'Kanji Koganegawa':83,
+ 'Kenjiro Shirabu':83,'Takanobu Aone':93,'Kanji Koganegawa':83,
  'Lev Haiba':82,'Takeru Nakashima':85,'Gao Hakuba':86,
  'Hayato Yamagata':84,'Akinori Konoha':84,'Shohei Fukunaga':83,
  'Taketora Yamamoto':85,'Chikara Ennoshita':75,'Hisashi Kinoshita':72,

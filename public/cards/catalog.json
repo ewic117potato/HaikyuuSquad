@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "generatedAt": "2026-10-19",
   "cards": [
     {
@@ -1450,7 +1450,7 @@
       "name": "Takanobu Aone",
       "school": "DATE TECH",
       "position": "MB",
-      "power": 89,
+      "power": 93,
       "rarity": 2,
       "attack": 86,
       "defense": 93,

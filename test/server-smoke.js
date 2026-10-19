@@ -7,7 +7,7 @@ const port=32579;
 const child=spawn(process.execPath,['server.js'],{cwd:process.cwd(),env:{...process.env,PORT:String(port),RALLY_INTERVAL_MS:'85'}});
 let output='';child.stdout.on('data',d=>output+=d);child.stderr.on('data',d=>output+=d);
 async function get(route){return new Promise((resolve,reject)=>http.get({host:'127.0.0.1',port,path:route},r=>{let body='';r.on('data',d=>body+=d);r.on('end',()=>resolve({status:r.statusCode,body}))}).on('error',reject));}
-async function until(fn,timeout=13000){const start=Date.now();while(Date.now()-start<timeout){try{const result=await fn();if(result)return result;}catch{}await new Promise(r=>setTimeout(r,30));}throw Error('Timeout waiting for assertion');}
+async function until(fn,timeout=24000){const start=Date.now();while(Date.now()-start<timeout){try{const result=await fn();if(result)return result;}catch{}await new Promise(r=>setTimeout(r,30));}throw Error('Timeout waiting for assertion');}
 function client(){return new Promise((resolve,reject)=>{const sock=new WebSocket(`ws://127.0.0.1:${port}`),events=[];
  sock.on('open',()=>resolve({sock,events,send:m=>sock.send(JSON.stringify(m))}));
  sock.on('message',d=>events.push(JSON.parse(d.toString())));sock.on('error',reject);
