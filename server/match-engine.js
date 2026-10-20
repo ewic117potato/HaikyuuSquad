@@ -37,7 +37,7 @@ function teamScore(player,rally){const squad=player.squad;const s=STYLES[player.
  const set=mean(squad,'set')*.18*s[2]*(kind==='setting'?1+strength/100:1);
  const extra=(kind==='chemistry'?strength*.55:kind==='strategy'?strength*.42:kind==='focus'?strength*.25:kind==='speed'?strength*.25:kind==='energy'?strength*.25:strength*.12);
  const awaken=Math.min(12,squad.reduce((sum,c)=>sum+(c.awakening||0),0)*.45);
- return atk+def+set+sy.schoolBonus*.32+sy.duoBonus*.36+sy.aligned*.24+extra+schoolMatch*.18+awaken-fatigue;
+ return atk+def+set+sy.schoolBonus*.08+sy.duoBonus*.08+sy.aligned*.24+extra+schoolMatch*.18+awaken-fatigue;
 }
 function chooseRally(room,rng=Math.random,tacticPlans={}){
  // Both clients receive this one server-authoritative simulated rally.
@@ -54,6 +54,7 @@ function chooseRally(room,rng=Math.random,tacticPlans={}){
    selected.serveZone=Tactics.aim(override.serveZone);
    selected.attackZone=Tactics.aim(override.attackZone);
    if(Number.isInteger(override.setTo)&&override.setTo>=0&&override.setTo<6)selected.setTo=override.setTo;
+   if(Number.isFinite(Number(override.timingQuality)))selected.timingQuality=clamp(Number(override.timingQuality),-1,1);
   }
   return selected;
  });
@@ -61,7 +62,7 @@ function chooseRally(room,rng=Math.random,tacticPlans={}){
   const links=teamwork(p.squad);
   return links.schoolBonus+links.duoBonus+Math.min(16,Number(p.coachBuff)||0)*.40;
  });
- const ev=Tactics.simulate(players.map(p=>p.squad),room.score,room.rally,synergy,{home:plan[0],away:plan[1],serveSide:room.serving===0||room.serving===1?room.serving:undefined},rng);
+ const ev=Tactics.simulate(players.map(p=>Links.boostedSquad(p.squad)),room.score,room.rally,[0,0],{home:plan[0],away:plan[1],serveSide:room.serving===0||room.serving===1?room.serving:undefined},rng);
  const winner=ev.winner,actor=ev.actor,setter=ev.setter;
  const chance=clamp(.5+(teamScore(players[0],room.rally)-teamScore(players[1],room.rally))*.012,.11,.89);
  room.rally++;room.score[winner]++;
@@ -69,7 +70,7 @@ function chooseRally(room,rng=Math.random,tacticPlans={}){
    action:ev.action,actor,setter,defender:ev.defender,phases:ev.phases,
    highlight:ev.method==='dump'||String(ev.action).includes('ACE')||rng()<.20,
    message:ev.phases.at(-1),strategies:players.map(p=>p.strategy),
-   timestamp:Date.now(),serve:ev.serve,serveZone:ev.serveZone,attackZone:ev.attackZone,beats:ev.beats,chance:+chance.toFixed(3),method:ev.method};
+   timestamp:Date.now(),serve:ev.serve,serveZone:ev.serveZone,attackZone:ev.attackZone,beats:ev.beats,special:ev.special,chance:+chance.toFixed(3),method:ev.method};
  if(room.boxScore)room.boxScore[winner][actor]=(room.boxScore[winner][actor]||0)+1;
  if(ev.action.includes('ACE'))room.stats[winner].aces++;
  else if(ev.action.includes('BLOCK'))room.stats[winner].blocks++;

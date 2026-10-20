@@ -13,6 +13,6 @@ try{
  G.mount(panel,game);assert(frame);frame(1500);assert(drew===1&&vertices>9000,`WebGL drew=${drew} vertices=${vertices}`);
  const event={rally:1,serve:0,beats:[{kind:'serve',side:0,zone:1,name:'Karasuno 0'},{kind:'receive',side:1,zone:1,name:'Nekoma 3'},{kind:'set',side:1,zone:4,name:'Nekoma 5'},{kind:'spike',side:1,zone:4,name:'Nekoma 0'}],action:'CROSS-COURT SPIKE'};game.events=[event];game.rally=1;G.mount(panel,game);frame(1800);assert(drew===2);
  const tracks=G.setupTracks(event,game.rosters);assert(tracks.length===4);assert(tracks[0].to[2]<0);
- panel.isConnected=false;G.unmount();assert(G.getCamera()==='broadcast');G.setCamera('side');assert(G.getCamera()==='side');
+ panel.isConnected=false;G.unmount();assert(G.getCamera()==='cinematic');G.setCamera('side');assert(G.getCamera()==='side');
  console.log('PASS V22 WebGL renderer: shaders, perspective 3D geometry, animated twelve-player scene, projected volleyball and camera switching.');
 }finally{for(const [k,v]of Object.entries(old)){if(v===undefined)delete global[k];else global[k]=v;}}

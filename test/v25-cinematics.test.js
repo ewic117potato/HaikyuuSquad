@@ -1,0 +1,33 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const v25=require('../public/v25-features.js');
+const list=[{name:'Hinata',key:'0-0',position:'MB',power:92},{name:'Kageyama',key:'4-0',position:'S',power:96},{name:'Another hitter',key:'3-0',position:'OH',power:85},{name:'Other hitter',key:'5-0',position:'OH',power:87}];
+const needed=['MB','S','OH'];
+assert.equal(v25.threshold(91),91);
+assert.equal(v25.threshold(0),0);
+assert.equal(v25.threshold('110'),110);
+assert.equal(v25.threshold(111),110);
+assert.equal(v25.threshold(2),60);
+assert.equal(v25.threshold('nonsense'),91);
+assert.deepEqual(v25.protectedCards({cards:list,needed,action:'reroll',warnAt:91}).map(x=>x.name),['Kageyama','Hinata']);
+assert.deepEqual(v25.protectedCards({cards:list,needed,action:'school',warnAt:95}).map(x=>x.name),['Kageyama']);
+assert.deepEqual(v25.protectedCards({cards:list,needed:['OH'],action:'reroll',warnAt:91}),[]);
+assert.deepEqual(v25.protectedCards({cards:list,needed,action:'pick',selectedKey:'0-0',warnAt:91}).map(x=>x.name),['Kageyama']);
+assert.deepEqual(v25.protectedCards({cards:list,needed,action:'pick',selectedKey:'4-0',warnAt:91}),[]);
+assert.deepEqual(v25.protectedCards({cards:list,needed,action:'reroll',warnAt:0}),[]);
+assert.equal(v25.tier(105),'APEX');assert.equal(v25.tier(100),'MYTHIC');assert.equal(v25.tier(95),'LEGENDARY');
+for(const speed of [1,2,4]){
+ assert(v25.replayDuration(4,speed,true)>v25.replayDuration(4,speed,false));
+ assert(v25.autoInterval(speed,true)>v25.replayDuration(4,speed,true));
+}
+assert(v25.autoInterval(4,true)<v25.autoInterval(1,true));
+const app=fs.readFileSync(path.join(__dirname,'../public/game-v3.js'),'utf8');
+const html=fs.readFileSync(path.join(__dirname,'../public/index.html'),'utf8');
+const renderer=fs.readFileSync(path.join(__dirname,'../public/v22-arena3d.js'),'utf8');
+for(const str of ['protectedOfferAction',"case'confirmRareAction'",'v25SavePrefs','v25Cinema','V25.autoInterval','v25-court-hud','v25ReplayMs'])assert(app.includes(str),str);
+assert(html.includes('v25-features.js') && html.indexOf('v25-features.js')<html.indexOf('game-v3.js'));
+assert(html.includes('v25-cinematic.css'));
+assert(renderer.includes('v25ReplayMs'));
+console.log('V25 cinematic, confirmation and replay tests passed');

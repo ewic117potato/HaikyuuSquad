@@ -31,8 +31,9 @@ try{
  const before=read(a,'tactical_confirm').length;
  message(a,{type:'tactical_choice',phase:'serve',choice:'MAGIC SERVE'});
  assert.equal(read(a,'tactical_confirm').length,before,'invalid actions must be ignored');
- message(a,{type:'tactical_choice',phase:'serve',choice:'jump',zone:1});
+ message(a,{type:'tactical_choice',phase:'serve',choice:'jump',zone:1,timingQuality:0.8});
  assert.equal(read(a,'tactical_confirm').at(-1).choice,'jump');
+ assert.equal(read(a,'tactical_confirm').at(-1).timingQuality,0.8,'Timing input must be acknowledged and used server-side');
  prompt=read(a,'tactical_prompt').at(-1);assert.equal(prompt.phase,'set');
  message(a,{type:'tactical_choice',phase:'set',choice:'dump'});
  // Dump skips this team's attack action in a synchronized turn.

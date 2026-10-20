@@ -1,9 +1,9 @@
 /* V6 Premium Pack engine. Chances are per OPENED PACK, not per preview card.
-   Shared testable module: Standard 98.9%, Elite 1%, Apex 0.1%.
+   Shared testable module: Standard 89%, Elite 10%, Apex 1%, separate hard pity per pack family.
    This game's economy is a prototype; browser state is not cheat-resistant. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.SpikePacks=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
-const ODDS=Object.freeze({standard:98.9,elite:1,apex:0.1});
+const ODDS=Object.freeze({standard:89,elite:10,apex:1});
 // Only notable characters with a documented adult storyline are included in Timeskip packs.
 // Ordinary school reserves are never arbitrarily turned into 98-OVR pros.
 const TIMESKIP_NAMES=new Set([
@@ -16,7 +16,10 @@ const TIMESKIP_NAMES=new Set([
  'Hajime Iwaizumi','Ryunosuke Tanaka','Daichi Sawamura','Asahi Azumane'
 ]);
 const APEX_NAMES=new Set(['Wakatoshi Ushijima','Tobio Kageyama','Kiyoomi Sakusa','Kotaro Bokuto','Atsumu Miya','Shoyo Hinata','Korai Hoshiumi','Wakatsu Kiryu']);
-function rollTier(rng=Math.random){const x=Math.max(0,Math.min(.999999999999,Number(rng())||0));return x<0.001?'apex':x<0.011?'elite':'standard';}
+function rollTier(rng=Math.random){const x=Math.max(0,Math.min(.999999999999,Number(rng())||0));return x<0.01?'apex':x<0.11?'elite':'standard';}
+const ELITE_PITY=20,APEX_PITY=100;
+function pityState(record){return {elite:Math.max(0,Math.min(ELITE_PITY-1,Number(record?.elite)||0)),apex:Math.max(0,Math.min(APEX_PITY-1,Number(record?.apex)||0))};}
+function rollWithPity(record={},rng=Math.random){const prior=pityState(record);let tier=rollTier(rng);if(prior.apex>=APEX_PITY-1)tier='apex';else if(prior.elite>=ELITE_PITY-1&&tier==='standard')tier='elite';return {tier,pity:{elite:tier==='standard'?prior.elite+1:0,apex:tier==='apex'?0:prior.apex+1},guaranteed:tier==='apex'&&prior.apex>=APEX_PITY-1?'apex':tier==='elite'&&prior.elite>=ELITE_PITY-1?'elite':null};}
 function eliteCandidate(c){return c.stage>=1&&c.power>=91;}
 function apexCandidate(c){return c.stage>=1&&APEX_NAMES.has(c.name);}
 function upgradeCard(base,tier){if(!base||!['elite','apex'].includes(tier))throw Error('Invalid premium card');
@@ -32,11 +35,11 @@ function weightedChoose(items,rng=Math.random){if(!items?.length)throw Error('Em
  const sum=weights.reduce((a,b)=>a+b,0);let x=Math.min(.999999999999,Math.max(0,Number(rng())||0))*sum;
  for(let i=0;i<items.length;i++){x-=weights[i];if(x<0)return items[i];}return items.at(-1);
 }
-function drawPack(catalog,stage,rng=Math.random){if(![2,3].includes(stage))throw Error('Only Timeskip and Professional packs are sold');
- const tier=rollTier(rng);
+function drawPack(catalog,stage,rng=Math.random,pity={}){if(![2,3].includes(stage))throw Error('Only Timeskip and Professional packs are sold');
+ const rolled=rollWithPity(pity,rng),tier=rolled.tier;
  let choices=catalog.filter(c=>c.stage===stage&&(c.packTier||'standard')===tier&&(stage===3?c.proOnly===true:!c.proOnly&&TIMESKIP_NAMES.has(c.name)));
  if(!choices.length)throw Error('No '+tier+' stage '+stage+' cards in this pack');
- return {tier,card:weightedChoose(choices,rng),odds:ODDS};
+ return {tier,card:weightedChoose(choices,rng),odds:ODDS,pity:rolled.pity,guaranteed:rolled.guaranteed};
 }
-return {ODDS,APEX_NAMES,TIMESKIP_NAMES,rollTier,eliteCandidate,apexCandidate,upgradeCard,weightedChoose,drawPack};
+return {ODDS,ELITE_PITY,APEX_PITY,pityState,rollWithPity,APEX_NAMES,TIMESKIP_NAMES,rollTier,eliteCandidate,apexCandidate,upgradeCard,weightedChoose,drawPack};
 });

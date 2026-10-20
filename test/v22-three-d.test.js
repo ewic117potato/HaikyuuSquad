@@ -46,5 +46,5 @@ run("duel.aim.attackZone=5;duel.plan.attackZone=5");run("tacticChoose('attack','
 assert.equal(run('duel.rally'),1);assert.equal(run('duel.events[0].serveZone'),1);
 assert.equal(run('duel.events[0].beats.length')>0,true);assert(run('duel.showOutcome'));
 const html=fs.readFileSync(base+'index.html','utf8'),preview=fs.readFileSync(base+'arena-preview.html','utf8');
-assert(html.includes('v22-arena3d.js'));assert(html.includes('v22-3d.css'));assert(html.includes('arena-preview.html'));assert(preview.includes('v22Match3D'));
+assert(html.includes('v22-arena3d.js'));assert(html.includes('v22-3d.css'));assert(html.includes('v26-showcase.html'));assert(preview.includes('v22Match3D'));
 console.log('PASS V22: 3 WebGL camera modes, court raycasting, six target zones, server-authoritative location odds, attacker selection, real 3D rally trajectories, manual match target controls and offline demo.');

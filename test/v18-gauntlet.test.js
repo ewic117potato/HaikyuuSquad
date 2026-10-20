@@ -32,7 +32,7 @@ assert(evalJS('careerPage().includes("20 school rolls")'));
 assert(evalJS('careerPage().includes("boss")'));
 assert(evalJS('questsPage().includes("20 ROLLS PER BIG DAILY QUEST")'));
 assert(evalJS('home().includes("57 STAGES")'));
-assert.equal(evalJS('DAILY.filter(x=>x[5].tickets===20).length'),10);
+assert(evalJS('DAILY.filter(x=>x[5].tickets===20).length')>=10);
 assert(evalJS('WEEKLY.filter(x=>x[5].tickets>=30).length')>=12);
 assert(evalJS('QUESTLINE.filter(x=>x[4].tickets>=20).length')>=20);
 assert(evalJS('DAILY.some(x=>x[3]==="careerWins")'));

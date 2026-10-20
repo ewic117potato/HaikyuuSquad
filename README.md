@@ -1,6 +1,4 @@
-# HAIKYUU LEGENDS V24 — CINEMATIC SCOUT & 3D RALLY
-
-See [START_V24.md](START_V24.md) for full update instructions and known limitations.
+> **LATEST: V26 Ultimate Overhaul.** Start with [`START_V26.md`](START_V26.md) for complete features, update steps and test limitations.
 
 # V23 — INSTANT FRIEND DRAFTS & END-OF-DRAFT CARD REVEAL
 

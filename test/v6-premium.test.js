@@ -4,19 +4,19 @@ const fs=require('node:fs');const vm=require('node:vm');const crypto=require('no
 const P=require('../public/pack-engine');
 const B=require('../public/balance');
 const {SPIKE_ROSTER}=require('../public/roster-data');
-assert.deepEqual(P.ODDS,{standard:98.9,elite:1,apex:0.1});
+assert.deepEqual(P.ODDS,{standard:89,elite:10,apex:1});
 assert.equal(P.rollTier(()=>0),'apex');
-assert.equal(P.rollTier(()=>0.000999),'apex');
-assert.equal(P.rollTier(()=>0.001),'elite');
-assert.equal(P.rollTier(()=>0.010999),'elite');
-assert.equal(P.rollTier(()=>0.011),'standard');
+assert.equal(P.rollTier(()=>0.009999),'apex');
+assert.equal(P.rollTier(()=>0.01),'elite');
+assert.equal(P.rollTier(()=>0.109999),'elite');
+assert.equal(P.rollTier(()=>0.11),'standard');
 let counted={standard:0,elite:0,apex:0};
 for(let i=0;i<250000;i++)counted[P.rollTier(Math.random)]++;
-assert(Math.abs(counted.elite/2500-1)<.20,JSON.stringify(counted));
-assert(Math.abs(counted.apex/250-1)<.30,JSON.stringify(counted));
+assert(Math.abs(counted.elite/25000-1)<.06,JSON.stringify(counted));
+assert(Math.abs(counted.apex/2500-1)<.15,JSON.stringify(counted));
 const basic=SPIKE_ROSTER.flatMap((r,i)=>[0,1,2,3].filter(v=>!r.proOnly||v===3).map(v=>B.buildCard(r,i,v)));
 const catalog=basic.concat(basic.filter(P.eliteCandidate).map(c=>P.upgradeCard(c,'elite')),basic.filter(P.apexCandidate).map(c=>P.upgradeCard(c,'apex')));
-for(const stage of [2,3])for(const [tier,number] of [['apex',0],['elite',.001],['standard',.5]]){
+for(const stage of [2,3])for(const [tier,number] of [['apex',0],['elite',.02],['standard',.5]]){
  const randomValues=[number,.5];const result=P.drawPack(catalog,stage,()=>randomValues.shift()??.5);
  assert.equal(result.card.stage,stage);assert.equal(result.card.proOnly,stage===3);assert.equal(result.tier,tier);assert.equal(result.card.packTier||'standard',tier);
  assert(result.card.power>=60&&result.card.power<=109);
@@ -70,6 +70,6 @@ run('claimQuest("milestone|m8")');assert.equal(run('state.items.length'),beforeQ
 run('state.wins=250');
 run('claimQuest("milestone|m13")');
 assert(run('owned().some(x=>x.name==="Wakatoshi Ushijima"&&x.stage===3&&x.packTier==="apex")'));
-assert(run('shopPage()').includes('0.1%'));
+assert(run('shopPage()').includes('1%'));
 assert(run('questsPage()').includes('CHARACTER JOURNEYS'));
 console.log('PASS: V6 pack rates, stage pools, elite/apex variants, purchases and refresh recovery, claim-once protection, coin quests, guaranteed character rewards.');

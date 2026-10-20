@@ -16,12 +16,12 @@ assert.equal(get('Tobio Kageyama',1).power,99);
 assert.equal(B.PRO_OVERRIDES['Wakatoshi Ushijima'],105);
 assert.equal(B.PRO_OVERRIDES['Tobio Kageyama'],104);
 const h=get('Shoyo Hinata'),k=get('Tobio Kageyama'),kn=get('Kenma Kozume');
-const one=Link.evaluate([h,k]);assert.equal(one.schoolBonus,1);assert(one.links.some(x=>x.label==='Freak Quick'));assert.equal(one.linkBonus,3);
-const two=Link.evaluate([h,k,kn]);assert(two.links.some(x=>x.label==='Garbage Dump Rivalry'));assert(two.rivalryBonus>=3);
+const one=Link.evaluate([h,k]);assert.equal(one.schoolBonus,2);assert(one.links.some(x=>x.label==='Freak Quick'));assert.equal(one.linkBonus,10);
+const two=Link.evaluate([h,k,kn]);assert(two.links.some(x=>x.label==='Battle of Minds'));assert(two.rivalryBonus>=8);
 const full=['Shoyo Hinata','Tobio Kageyama','Kei Tsukishima','Yu Nishinoya','Daichi Sawamura','Asahi Azumane'].map(get);
 assert.equal(Link.evaluate(full).schoolBonus,5);
 assert.equal(Engine.teamwork(full.map((c,i)=>({...c,slot:['MB','S','MB','L','OP','OH'][i]}))).schoolBonus,5);
-const synergy=Link.evaluate([...full,kn]);assert(synergy.linkBonus<=12);
+const synergy=Link.evaluate([...full,kn]);assert(synergy.linkBonus<=20);
 // Normal draft is school-only. Before region clearing, unlocked schools do not appear.
 for(let progress=0;progress<6;progress++){
  const party=[];
@@ -56,7 +56,7 @@ for(const filename of ['roster-data.js','balance.js','draft-rules.js','team-chem
 const run=e=>vm.runInContext(e,context);
 assert.equal(run('unlockedSchools().length'),10);
 for(const [value,count] of [[2,11],[4,12],[6,13],[8,14]]){run('state.career='+value);assert.equal(run('unlockedSchools().length'),count);}
-run('state.career=0');assert(run('home().includes("UNLOCK MORE SCHOOLS")'));assert(run('homeSpotlights().includes("PROFESSIONAL LEAGUE")'));assert(run('squadPage().includes("CHEMISTRY & RIVALRY")'));
+run('state.career=0');assert(run('home().includes("UNLOCK MORE SCHOOLS")'));assert(run('homeSpotlights().includes("PROFESSIONAL LEAGUE")'));assert(run('squadPage().includes("CHEMISTRY & SAME-TEAM RIVALRIES")'));
 assert(run('CATALOG.filter(c=>c.stage===0).every(c=>!c.proOnly)'));
 assert(run('QUEST_LEGENDS.every(c=>c.questOnly&&c.stage===4)'));
 console.log('PASS V14: school Hinata 92, 14 real school rosters, stage-specific ratings, shared rivalry chemistry, region unlocks, school-only drafts, 492 card files, dashboard and saved-team UI.');

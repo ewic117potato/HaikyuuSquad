@@ -1,0 +1,66 @@
+/* V26: true individual rating previews, persistent progression, timing and co-op. */
+.v26-panel,.v26-road,.v26-bond-panel{background:linear-gradient(145deg,#0e2039,#0a172b 65%,#172139);border:1px solid #608cb66b;border-radius:16px;margin:18px 0;padding:clamp(14px,3vw,24px);color:#eaf4ff}
+.v26-panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.v26-panel-header h2{font-size:clamp(20px,3vw,30px);letter-spacing:.012em;font-weight:1000;margin:4px 0 8px;color:#fff}
+.v26-panel-header h3{font-size:clamp(17px,2.4vw,23px);margin:4px 0}.v26-panel-header small{color:#a9e0ff;font-weight:900;letter-spacing:.12em}
+.v26-panel-header strong,.v26-panel-header>b{color:#ffdc9c;font-weight:1000;letter-spacing:.04em;font-size:15px}
+.v26-panel-header p,.v26-road-tip,.v26-bond-panel>p,.v26-panel p{color:#b6cce5;line-height:1.55;font-size:13px}
+.v26-progress{height:11px;background:#071223;border:1px solid #496582;border-radius:999px;overflow:hidden;position:relative;margin:7px 0 11px}
+.v26-progress>i{display:block;height:100%;background:linear-gradient(90deg,#35abd9,#6cdddb 62%,#e4e8a6);border-radius:inherit;transition:width .36s ease}
+.v26-pity-label{display:flex;align-items:center;justify-content:space-between;color:#d1e3fd;font-size:11px;font-weight:900;margin-top:11px;letter-spacing:.055em}
+.v26-pity-label b{color:#ffdb9b;font-size:12px}.v26-quest-row>div:first-child{min-width:0;flex:1}
+.v26-quest-row .v26-progress{height:8px;max-width:560px;margin:5px 0 8px}
+.v26-quest-counter{display:flex;align-items:center;justify-content:space-between;max-width:560px;gap:12px;color:#bce4f9;font-size:11px;font-weight:900}
+.v26-quest-counter b{color:#ffe7ae}
+.v26-offer-bond{display:grid;gap:3px;margin-top:8px;background:#0c213ce3;border:1px solid #4a9bcc;padding:8px 10px;border-radius:8px;text-align:left;line-height:1.2}
+.v26-offer-bond.duo{border-color:#4afad3}.v26-offer-bond.rivalry{border-color:#f26e96;background:#331b37ef}
+.v26-offer-bond strong{color:#ffdd9b;font-weight:1000;font-size:17px}
+.v26-offer-bond b{color:#a6fee6;font-weight:1000;font-size:11px}.v26-offer-bond.rivalry b{color:#ffa9c2}.v26-offer-bond span{color:#d8ecff;font-size:12px}
+.v26-offer-bond small{font-size:10px!important;color:#e9deff!important;line-height:1.3}
+.v26-synergy-offer{border:2px solid #3cd2ba!important;box-shadow:0 0 22px #13b7a143,inset 0 0 16px #19c9a31c}
+.v26-synergy-offer.rivalry{border-color:#e36d9e!important;box-shadow:0 0 24px #dc4d9a46}
+.v26-synergy-offer .v12-card-power b{font-size:clamp(24px,3vw,43px);color:#ffe6aa}
+.v26-bond-card-mark{position:absolute;z-index:5;left:5px;top:5px;max-width:calc(100% - 10px);border-radius:5px;background:#0b554bdf;border:1px solid #5bf8d8;color:#eafff8;font-size:9px;letter-spacing:.02em;padding:4px 6px;font-weight:900;pointer-events:none}
+.v26-bond-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:20px}
+.v26-player-bond{display:grid;gap:5px;border:1px solid #5b86ab;background:#092038c7;border-radius:10px;padding:12px;min-width:0}
+.v26-player-bond span{font-weight:900;font-size:13px;overflow-wrap:anywhere}.v26-player-bond b{font-size:29px;color:#ffd48a;line-height:1.1}.v26-player-bond b small{font-size:10px;color:#a0cbe2}.v26-player-bond em{font-style:normal;font-weight:900;font-size:10px;color:#73dfc7}
+.v26-chem-link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.v26-link-group{border-radius:11px;padding:14px;border:1px solid #4e738e;background:#09172a}.v26-link-group h3{font-size:13px;margin:0 0 11px;color:#c4e5ff}.v26-link-group p{font-size:12px;color:#a3bace}
+.v26-bond-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #32506b;padding:10px 0}.v26-bond-line:last-child{border-bottom:0}
+.v26-bond-line b{display:block;color:#fff;font-size:12px}.v26-bond-line small{display:block;margin-top:4px;color:#a8cce4;line-height:1.4;font-size:11px}.v26-bond-line strong{color:#83ebd5;white-space:nowrap;font-size:11px}.v26-bond-line.rivalry strong{color:#fda7cb}
+.v26-road-chapters{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;margin:18px 0}
+.v26-road-chapters button{border:1px solid #537a96;background:#132e4b;color:#dbf2ff;padding:10px 4px;border-radius:6px;font-weight:1000;cursor:pointer;min-width:0}
+.v26-road-chapters button.selected{border-color:#ffe5ac;background:#95622b;color:#fff}.v26-road-chapters button:disabled{opacity:.25;cursor:not-allowed}
+.v26-road-list{display:grid;gap:10px}.v26-road-stage{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:#10253e;border:1px solid #4d7498;border-radius:11px;padding:12px}
+.v26-road-stage>span{font-size:12px;font-weight:900;color:#8ddad4;min-width:78px}.v26-road-stage div>b{display:block;color:#fff;font-size:15px;margin-bottom:3px}.v26-road-stage small{font-size:11px;color:#a8bdd6}.v26-road-stage em{display:block;text-align:right;color:#ffdc8f;font-size:10px;font-style:normal;font-weight:900}.v26-road-stage strong{color:#80ebc3;font-size:12px}
+.v26-road-stage.locked{opacity:.50}.v26-road-stage.available{border-color:#ead092;box-shadow:0 0 23px #dec4782a}.v26-road-tip{margin-top:12px}
+.v26-friend-standard .v12-offer-list{margin-top:13px}.v26-friend-standard .v12-scout-card{min-height:180px}.v26-friend-current{display:flex;flex-wrap:wrap;gap:8px;padding:14px;margin-top:12px;border-radius:8px;background:#081629;color:#b2d4ec;font-size:12px}.v26-friend-current span{border:1px solid #486d94;padding:6px;border-radius:5px}.v26-friend-current b{color:#ffe4a0}
+.v26-timing{position:absolute;z-index:9;left:2%;right:2%;top:17%;background:linear-gradient(145deg,#09162cef,#173855f5);border:1px solid #76d9cd;border-radius:12px;padding:15px;color:#fff;box-shadow:0 8px 30px #000b}
+.v26-timing-top,.v26-timing-bottom{display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:space-between}.v26-timing-top b{color:#fff;font-size:13px}.v26-timing-top span{font-size:11px;color:#aad7e9}.v26-timing-track{height:28px;border:1px solid #e0ecfe;border-radius:7px;position:relative;background:linear-gradient(90deg,#b34f58,#af9b45 31%,#50606f 46%,#af9b45 69%,#b34f58);margin:14px 0;overflow:hidden}
+.v26-timing-perfect{position:absolute;top:0;bottom:0;background:#4bedb6a8;border-left:2px solid #b6ffb9;border-right:2px solid #b6ffb9}
+.v26-timing-marker{position:absolute;left:0;top:-3px;bottom:-3px;width:4px;z-index:3;background:#fff;box-shadow:0 0 12px #fff,0 0 4px #fff}
+.v26-timing-bottom span{font-size:11px;color:#d0eeff}.v26-timing-bottom .btn{padding:8px 18px;font-size:12px}
+.v26-raid-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.v26-raid-levels button{min-height:117px;border:1px solid #56799a;background:#102b46;border-radius:12px;color:#e2f3ff;display:flex;flex-direction:column;gap:7px;text-align:left;cursor:pointer;padding:14px}
+.v26-raid-levels button.active{border-color:#fbd28a;background:linear-gradient(155deg,#414064,#27385a);box-shadow:inset 0 0 16px #eeb36425}.v26-raid-levels strong{font-size:13px}.v26-raid-levels small{font-weight:1000;letter-spacing:.12em;color:#edcf99}.v26-raid-levels span{font-size:11px;color:#a8bed9}
+.v26-raid-lobby h3{color:#e7ce9b}.v26-raid-party{display:grid;gap:9px;margin:16px 0}.v26-raid-party>div{display:flex;justify-content:space-between;align-items:center;border:1px solid #5a7597;border-radius:8px;background:#172844;padding:12px}.v26-raid-party b{color:#a2efd7}
+.v26-raid-tactics{border:1px solid #476b8f;background:#101e38;border-radius:9px;padding:14px;margin-top:10px}.v26-raid-tactics>b{color:#ffdc9c}.v26-raid-tactics p{font-size:12px;color:#afc6dc}
+.v26-raid-tactics>div{display:flex;flex-wrap:wrap;gap:7px}.v26-raid-tactics button{border:1px solid #668fb2;background:#1b3653;color:#f2faff;border-radius:6px;padding:10px 12px;cursor:pointer;min-height:40px}.v26-raid-tactics button.chosen{background:#b1843e;color:#fff;border-color:#fbe4ba}.v26-raid-tactics button:disabled{opacity:.4;cursor:not-allowed}
+.v26-raid-roster{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:12px 0;color:#b4d1e9}.v26-raid-roster>b{width:100%;font-size:12px}.v26-raid-roster span{border-radius:6px;border:1px solid #416781;background:#0e2746;color:#efffff;padding:7px;font-size:11px}.v26-raid-roster small{display:block;color:#f4d29d;font-size:10px}
+.v26-raid-match .v22-canvas{height:min(50vw,440px);min-height:245px}.v26-raid-match .v5-duel-score{margin:10px 0}
+@media(max-width:780px){.v26-bond-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v26-road-chapters{grid-template-columns:repeat(5,minmax(0,1fr))}.v26-raid-levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.v26-bond-grid,.v26-chem-link-grid{grid-template-columns:1fr}.v26-road-stage{grid-template-columns:1fr;gap:7px}.v26-road-stage em{text-align:left}.v26-timing{padding:10px;top:11%}.v26-timing-bottom span{max-width:50%}.v26-friend-standard .v12-scout-card{min-height:160px}}
+@media(prefers-reduced-motion:reduce){.v26-progress>i{transition:none}.v26-timing-marker{box-shadow:none}}
+
+/* A chemistry-specific rally moment, triggered only by the actual simulated play. */
+.v26-special-flash{margin:12px 0;padding:13px 16px;border:1px solid rgba(246,192,91,.62);background:linear-gradient(110deg,rgba(14,22,41,.94),rgba(92,56,24,.58));border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;animation:v26SpecialIn .42s ease-out}
+.v26-special-flash b{font-size:11px;letter-spacing:.14em;color:#f8c782}
+.v26-special-flash strong{font-size:clamp(17px,2.3vw,25px);color:#fff1c6}
+.v26-special-flash small{color:#efe1d0}
+@keyframes v26SpecialIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.v26-special-flash{animation:none}}
+
+.v26-story-scene,.v26-story-intro{padding:16px 20px;background:linear-gradient(135deg,#0d2844,#1c1832);border:1px solid #476b91;border-radius:12px;margin:12px 0 18px;color:#deefff}
+.v26-story-scene>small{font-weight:950;letter-spacing:.14em;color:#f4bc76}
+.v26-story-scene p,.v26-story-intro p{font-size:14px;line-height:1.6;color:#c6d9ef}
+.v26-story-scene blockquote,.v26-story-intro blockquote{border-left:3px solid #f7b56d;margin:14px 0 2px;padding:8px 0 8px 13px;color:#ffe4ad;font-size:clamp(15px,2.8vw,22px);font-weight:800;font-style:italic}
+.v26-stage-goal{color:#91e6d5!important;font-size:11px!important;font-weight:850;display:block;margin:3px 0}

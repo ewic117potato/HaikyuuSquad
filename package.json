@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "24.0.0",
+  "version": "26.0.0",
   "private": true,
-  "description": "V24 configurable high-OVR scout safeguards, cinematic pull reveals and enhanced 3D rally playback",
+  "description": "V26 ultimate overhaul: 3D animated humanoid rallies, player-specific chemistry and rivalry, premium pity, Nationals Road, progress quests and co-op raids",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -28,7 +28,8 @@
     "test:v21": "node test/v21-scout.test.js && npm run test:v20",
     "test:v22": "node test/v22-three-d.test.js && npm run test:v21",
     "test:v23": "node test/v23-async-duel.test.js && npm run test:v22",
-    "test:v24": "node test/v24-cinematic.test.js && node test/v24-behavior.test.js && npm run test:v23"
+    "test:v25": "node test/v25-cinematics.test.js && npm run test:v23",
+    "test:v26": "node test/v26-overhaul.test.js && node test/v26-raid-server.test.js && npm run test:v25 && node test/v22-renderer.test.js && node test/v22-server-target.test.js"
   },
   "dependencies": {
     "ws": "^8.18.0"

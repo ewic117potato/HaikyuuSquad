@@ -7,6 +7,7 @@ const {WebSocketServer,WebSocket}=require('ws');
 const {STYLES,sanitizeSquad,teamwork,chooseRally,isFinished}=require('./server/match-engine');
 const {SPIKE_SCHOOL_TEAMS,SPIKE_ROSTER,SPIKE_COACHES,SPIKE_NATIONALS_SCHOOLS}=require('./public/roster-data.js');
 const Draft=require('./public/draft-rules.js');
+const Raids=require('./server/raid-engine.js');
 const Balance=require('./public/balance.js');
 const Tactics=require('./public/tactical-engine.js');
 const https=require('https');
@@ -63,7 +64,7 @@ const server=http.createServer((req,res)=>{
  const route=(req.url||'/').split('?')[0];
  if(route==='/api/portrait'){apiPortrait(req,res);return;}
  if(route==='/api/portrait-status'){portraitStatus(req,res);return;}
- if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'v21-school-scout'}));return;}
+ if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'v26-ultimate-overhaul'}));return;}
  if(route==='/api/public-config'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({supabaseUrl:process.env.SUPABASE_URL||'',supabasePublishableKey:process.env.SUPABASE_PUBLISHABLE_KEY||''}));return;}
  let pathname;
  try{pathname=decodeURIComponent(route)}catch{res.writeHead(400);res.end('Bad request');return;}
@@ -73,6 +74,60 @@ const server=http.createServer((req,res)=>{
 });
 const wss=new WebSocketServer({server,maxPayload:12000});
 const rooms=new Map();
+const raidRooms=new Map();
+function raidBroadcast(room,payload){for(const p of room.players)send(p.ws,payload);}
+function raidSnapshot(room){room.players.forEach((player,i)=>send(player.ws,{type:'raid_room',code:room.code,status:room.status,youIndex:i,boss:room.boss,players:room.players.map(x=>({name:x.name,ready:x.ready})),maxPlayers:4}));}
+function raidLeave(ws){
+ const room=raidRooms.get(ws.raidCode);ws.raidCode=null;if(!room)return;
+ room.players=room.players.filter(x=>x.ws!==ws);
+ if(!room.players.length){clearTimeout(room.timer);raidRooms.delete(room.code);return;}
+ if(room.status==='playing'){clearTimeout(room.timer);room.status='cancelled';raidBroadcast(room,{type:'raid_cancelled',text:'A teammate disconnected; the raid was cancelled. No victory rewards were issued.'});}
+ else raidSnapshot(room);
+}
+function raidEnd(room){
+ clearTimeout(room.timer);room.timer=null;room.status='finished';
+ const won=room.score[0]>room.score[1],prize=Raids.reward(room.level,won);
+ raidBroadcast(room,{type:'raid_finish',code:room.code,score:room.score.slice(),rallies:room.rally,won,reward:prize});
+}
+function raidNext(room){
+ if(room.status!=='playing')return;
+ const event=Raids.step(room);raidBroadcast(room,event);
+ if(Raids.finished(room)){raidEnd(room);return;}
+ room.timer=setTimeout(()=>{raidBroadcast(room,{type:'raid_turn',rally:room.rally+1,choices:['quick','power','tip','block','dump','float']});room.timer=setTimeout(()=>raidNext(room),2600);},1200);
+}
+function raidStart(room){
+ const team=Raids.sharedTeam(room.players);if(!team){raidBroadcast(room,{type:'error',text:'These lineups cannot form a valid six-player team. Use different characters to cover each position.'});return;}
+ room.team=team;room.enemy=Raids.bossRoster(room.level,room.players.length);
+ room.score=[0,0];room.rally=0;room.serving=0;room.pendingActions={};room.status='playing';
+ raidBroadcast(room,{type:'raid_start',name:room.boss,team,enemy:room.enemy,owners:team.map(x=>({name:x.name,owner:room.players[x.owner].name})),score:[0,0]});
+ room.timer=setTimeout(()=>{raidBroadcast(room,{type:'raid_turn',rally:1,choices:['quick','power','tip','block','dump','float']});room.timer=setTimeout(()=>raidNext(room),2600);},1200);
+}
+function raidMessage(ws,m){
+ if(m.type==='raid_create'||m.type==='raid_join'){
+  const squad=sanitizeSquad(m.squad);
+  if(squad.length!==6){send(ws,{type:'error',text:'Equip a complete squad before joining a cooperative raid.'});return;}
+  const raidCode=m.type==='raid_create'?code():String(m.code||'').toUpperCase();
+  let room=raidRooms.get(raidCode);
+  if(m.type==='raid_join'&&(!room||room.status!=='waiting'||room.players.length>=4)){send(ws,{type:'error',text:'Raid room not found, full, or already running.'});return;}
+  raidLeave(ws);leave(ws);
+  if(!room){const level=Raids.BOSSES[m.level]?m.level:'normal';room={code:raidCode,level,boss:Raids.BOSSES[level].name,status:'waiting',players:[],timer:null,createdAt:Date.now()};raidRooms.set(raidCode,room);}
+  room.players.push({ws,name:safeName(m.name),squad,ready:false});ws.raidCode=raidCode;
+  raidSnapshot(room);return;
+ }
+ const room=raidRooms.get(ws.raidCode);if(!room)return;
+ const player=room.players.find(p=>p.ws===ws);if(!player)return;
+ if(m.type==='raid_leave'){raidLeave(ws);return;}
+ if(m.type==='raid_ready'&&room.status==='waiting'){
+  player.ready=!!m.ready;raidSnapshot(room);
+  if(room.players.length>=2&&room.players.every(p=>p.ready))raidStart(room);
+  return;
+ }
+ if(m.type==='raid_action'&&room.status==='playing'&&['quick','power','tip','block','dump','float'].includes(m.action)){
+  room.pendingActions[player.name]=m.action;
+  send(ws,{type:'raid_action_ack',action:m.action});
+ }
+}
+
 const INTRO_MS=7500;
 const TICK=Math.max(80,Math.min(10000,Number(process.env.RALLY_INTERVAL_MS)||1750));
 const safeName=x=>String(x||'PLAYER').replace(/[^\w \-]/g,'').trim().slice(0,18)||'PLAYER';
@@ -196,6 +251,7 @@ wss.on('connection',ws=>{
  ws.on('pong',()=>{ws.isAlive=true;});
  ws.on('message',raw=>{let m;try{m=JSON.parse(raw.toString())}catch{return;}
   try{
+   if(typeof m.type==='string'&&m.type.startsWith('raid_')){raidMessage(ws,m);return;}
    if(m.type==='create'||m.type==='join'){
     // Validate before leaving an existing room, so an invalid request cannot destroy a match.
     const mode=m.type==='create'&&m.mode==='fresh'?'fresh':'saved';
@@ -274,8 +330,21 @@ wss.on('connection',ws=>{
     const pending=room.pendingTactics,phase=pending.phase,index=room.players.indexOf(player);
     if(player.playMode!=='manual'||m.phase!==phase||!expectedTacticPlayers(room,phase).includes(index)||pending.selected.has(index))return;
     if(!Tactics.OPTIONS[phase].some(opt=>opt.id===m.choice))return;
-    pending.plans[index][phase]=m.choice;pending.selected.add(index);
-    send(player.ws,{type:'tactical_confirm',phase,choice:m.choice});
+    pending.plans[index][phase]=m.choice;
+    // Online timing is server-bounded; no frame-perfect authority is delegated to clients.
+    const quality=Math.max(-1,Math.min(1,Number(m.timingQuality)||0));
+    const priorQuality=pending.plans[index].timingQuality||0,priorCount=pending.plans[index]._timingCount||0;
+    pending.plans[index]._timingCount=priorCount+1;
+    pending.plans[index].timingQuality=(priorQuality*priorCount+quality)/(priorCount+1);
+    // Preserve the same targeting decisions used in the ordinary offline draft/match.
+    if(phase==='serve'&&Number.isInteger(Number(m.zone))&&Number(m.zone)>=1&&Number(m.zone)<=6)
+     pending.plans[index].serveZone=Number(m.zone);
+    if(phase==='attack'&&Number.isInteger(Number(m.zone))&&Number(m.zone)>=1&&Number(m.zone)<=6)
+     pending.plans[index].attackZone=Number(m.zone);
+    if(phase==='set'&&Number.isInteger(Number(m.setTo))&&Number(m.setTo)>=0&&Number(m.setTo)<6)
+     pending.plans[index].setTo=Number(m.setTo);
+    pending.selected.add(index);
+    send(player.ws,{type:'tactical_confirm',phase,choice:m.choice,timingQuality:quality});
     if(pendingComplete(room))advancePhase(room);
     return;
    }
@@ -290,8 +359,9 @@ wss.on('connection',ws=>{
    if(m.type==='leave')leave(ws);
   }catch(error){console.error('WebSocket error',error);send(ws,{type:'error',text:'Server error; try joining again.'});}
  });
- ws.on('close',()=>leave(ws));
+ ws.on('close',()=>{raidLeave(ws);leave(ws);});
 });
 const heartbeat=setInterval(()=>{for(const ws of wss.clients){if(ws.isAlive===false){ws.terminate();continue;}ws.isAlive=false;ws.ping();}},25000);heartbeat.unref();
 const expiry=setInterval(()=>{const limit=Date.now()-90*60*1000;for(const room of rooms.values())if(room.createdAt<limit&&room.status!=='playing'){broadcast(room,{type:'notice',text:'Lobby expired; create a new room.'});for(const p of [...room.players]){p.ws.roomCode=null;}clearTimer(room);rooms.delete(room.code);}},60000);expiry.unref();
+const raidExpiry=setInterval(()=>{for(const room of raidRooms.values())if(Date.now()-room.createdAt>2*60*60*1000){clearTimeout(room.timer);raidRooms.delete(room.code);}},60000);raidExpiry.unref();
 server.listen(PORT,'0.0.0.0',()=>console.log(`SPIKE LEGENDS Haikyuu Fan Roster listening at http://localhost:${PORT}`));
