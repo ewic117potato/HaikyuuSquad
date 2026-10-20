@@ -6,6 +6,14 @@
 'use strict';
 // Exceptional athletes. 90+ is intentionally restricted to proven standouts.
 const OVERRIDES=Object.freeze({
+ // Canonical identity is unknown: gameplay ratings for unnamed supporting roster slots.
+ 'Itachiyama Reserve #2':84,
+ 'Itachiyama Reserve #4':81,
+ 'Itachiyama Reserve #5':83,
+ 'Itachiyama Reserve #6':79,
+ 'Itachiyama Reserve #8':80,
+ 'Itachiyama Reserve #9':78,
+
  'Hayato Ikejiri':78,
  'Hikaru Komaki':77,
  'Motoki Teradomari':88,
@@ -101,7 +109,21 @@ function ratingFor(base,index,stage){
  const cap=star?100:start>=85?94:start>=78?89:84;
  return Math.max(60,Math.min(cap,start+increase));
 }
-function weightFor(base,index){const n=ratingFor(base,index,0);return n>=97?.35:n>=94?.75:n>=90?1.5:n>=85?4:n>=78?8:15;}
+// School scouting is meant to be fun, not a premium-packs lottery.
+// A school Kageyama remains exceptional but is no longer near-impossible.
+// Sakusa is not forced by Itachiyama's formerly three-person pool.
+function weightFor(base,index){
+ if(base.name==='Tobio Kageyama'&&base.school==='KARASUNO')return 16;
+ if(base.name==='Kiyoomi Sakusa'&&base.school==='ITACHIYAMA')return 3;
+ const n=ratingFor(base,index,0);
+ if(n>=99)return 5;
+ if(n>=97)return 6;
+ if(n>=94)return 9;
+ if(n>=90)return 10;
+ if(n>=85)return 11;
+ if(n>=78)return 13;
+ return 12;
+}
 function rarityFor(power){return power>=100?5:power>=97?4:power>=92?3:power>=85?2:power>=75?1:0;}
 function buildCard(base,index,stage){const power=ratingFor(base,index,stage),pos=base.pos,legacyId=Number.isInteger(base.id)?base.id:index;
  return {key:`${legacyId}-${stage}`,idx:legacyId,stage,variant:STAGES[stage],name:base.name,school:base.school,

@@ -50,6 +50,11 @@ function chooseRally(room,rng=Math.random,tacticPlans={}){
   const override=i===0?tacticPlans.home:tacticPlans.away;
   if(override&&typeof override==='object')for(const phase of Object.keys(Tactics.OPTIONS))
     if(Tactics.OPTIONS[phase].some(o=>o.id===override[phase]))selected[phase]=override[phase];
+  if(override&&typeof override==='object'){
+   selected.serveZone=Tactics.aim(override.serveZone);
+   selected.attackZone=Tactics.aim(override.attackZone);
+   if(Number.isInteger(override.setTo)&&override.setTo>=0&&override.setTo<6)selected.setTo=override.setTo;
+  }
   return selected;
  });
  const synergy=players.map(p=>{
@@ -64,7 +69,7 @@ function chooseRally(room,rng=Math.random,tacticPlans={}){
    action:ev.action,actor,setter,defender:ev.defender,phases:ev.phases,
    highlight:ev.method==='dump'||String(ev.action).includes('ACE')||rng()<.20,
    message:ev.phases.at(-1),strategies:players.map(p=>p.strategy),
-   timestamp:Date.now(),serve:ev.serve,chance:+chance.toFixed(3),method:ev.method};
+   timestamp:Date.now(),serve:ev.serve,serveZone:ev.serveZone,attackZone:ev.attackZone,beats:ev.beats,chance:+chance.toFixed(3),method:ev.method};
  if(room.boxScore)room.boxScore[winner][actor]=(room.boxScore[winner][actor]||0)+1;
  if(ev.action.includes('ACE'))room.stats[winner].aces++;
  else if(ev.action.includes('BLOCK'))room.stats[winner].blocks++;

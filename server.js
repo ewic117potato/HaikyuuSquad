@@ -63,7 +63,7 @@ const server=http.createServer((req,res)=>{
  const route=(req.url||'/').split('?')[0];
  if(route==='/api/portrait'){apiPortrait(req,res);return;}
  if(route==='/api/portrait-status'){portraitStatus(req,res);return;}
- if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'v20-refined-arena'}));return;}
+ if(route==='/health'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,service:'spike-legends',version:'v21-school-scout'}));return;}
  if(route==='/api/public-config'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({supabaseUrl:process.env.SUPABASE_URL||'',supabasePublishableKey:process.env.SUPABASE_PUBLISHABLE_KEY||''}));return;}
  let pathname;
  try{pathname=decodeURIComponent(route)}catch{res.writeHead(400);res.end('Bad request');return;}

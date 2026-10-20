@@ -1,0 +1,14 @@
+/* V21 scout transparency and improved portrait presentation. */
+.v21-scout-note{border:1px solid #cdb45482;background:linear-gradient(120deg,#25200c,#142c1d);padding:12px 15px;border-radius:12px;color:#fae5a6;font-size:13px;line-height:1.5}
+.v13-illustrated-card[data-stage="0"] .v17-caption small{letter-spacing:.5px}
+.v3-card[data-key^="21"] .v13-card-image{object-fit:cover}
+
+/* More defined role and rarity identity on every card, including fallback imagery. */
+.v13-illustrated-card{isolation:isolate;transition:transform .2s ease,filter .2s ease;backface-visibility:hidden}
+@media(hover:hover) and (pointer:fine){.v13-illustrated-card:hover{transform:translateY(-5px);filter:saturate(1.14)}}
+.v13-illustrated-card .v17-portrait:after{content:'';position:absolute;inset:0;background:linear-gradient(130deg,transparent 30%,rgba(255,255,255,.075) 47%,transparent 62%);pointer-events:none}
+.v13-illustrated-card[data-stage="1"]{box-shadow:0 0 16px #669eff55}
+.v13-illustrated-card[data-stage="2"]{box-shadow:0 0 16px #6fd4ec66}
+.v13-illustrated-card[data-stage="3"]{box-shadow:0 0 19px #f5b44f77}
+.v13-illustrated-card[data-stage="4"]{box-shadow:0 0 22px #e86ee388}
+@media(prefers-reduced-motion:reduce){.v13-illustrated-card{transition:none}.v13-illustrated-card:hover{transform:none}}

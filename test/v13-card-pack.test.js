@@ -2,8 +2,8 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const R=require('../public/roster-data'),B=require('../public/balance'),P=require('../public/pack-engine');
 const all=JSON.parse(fs.readFileSync('public/cards/catalog.json','utf8'));
-assert.equal(all.cards.length,336);assert.equal(all.staff.length,156);
-assert.equal(new Set([...all.cards,...all.staff].map(c=>c.key)).size,492);
+assert.equal(all.cards.length,342);assert.equal(all.staff.length,156);
+assert.equal(new Set([...all.cards,...all.staff].map(c=>c.key)).size,498);
 for(const c of [...all.cards,...all.staff]){
  const f=path.join('public',c.file);
  assert(fs.existsSync(f),`Artwork missing: ${c.key} ${f}`);

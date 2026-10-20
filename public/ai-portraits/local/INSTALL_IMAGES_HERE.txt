@@ -1,0 +1,1 @@
+Optional offline artwork: download the V21 AI artwork ZIP referenced in README_V21.md and extract its numbered .webp images into THIS folder. These local files take priority over externally hosted images.

@@ -1,0 +1,19 @@
+.v22-court-block{margin:14px 0;border:1px solid #5e8dbb;border-radius:16px;background:linear-gradient(130deg,#12243d,#071325);overflow:hidden;box-shadow:0 8px 40px #0008}
+.v22-header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 14px;color:#eff7ff;font-size:13px;font-weight:800;letter-spacing:.08em;flex-wrap:wrap}
+.v22-header small{font-weight:500;letter-spacing:0;color:#88c9e8}.v22-header button,.v22-zone button{cursor:pointer;color:#ecf8ff;border:1px solid #5985a6;background:#19324e;border-radius:6px;padding:5px 9px;font:inherit}
+.v22-canvas{width:100%;height:min(46vw,380px);min-height:230px;position:relative}.v22-canvas canvas{display:block;width:100%;height:100%}
+.v22-loading{height:100%;display:grid;place-items:center;color:#9db6c6}
+.v22-status{display:flex;gap:16px;padding:8px 14px;font-weight:700;color:#ffd78b;background:#061629;flex-wrap:wrap}
+.v22-aim{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#0d213a;color:#d8e9ff}
+.v22-aim>div:first-child{max-width:240px}.v22-aim small{color:#95abc9;display:block;font-size:11px;margin-top:4px}
+.v22-zone{display:grid;grid-template-columns:repeat(3,minmax(38px,1fr));gap:5px;width:min(310px,100%)}
+.v22-zone button{font-size:11px;font-weight:700;min-height:27px}.v22-zone button[aria-pressed=true]{background:#f9a432;color:#0d1e32;border-color:#ffe3ac;box-shadow:0 0 12px #f9a43277}
+.v22-modehint{padding:8px 14px;color:#9baec9;font-size:12px;line-height:1.4}
+.v22-fallback-note{font-size:12px;color:#9cb4cf}
+@media(max-width:600px){.v22-canvas{min-height:200px;height:280px}.v22-aim{align-items:flex-start}.v22-zone{width:100%}.v22-header{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.v22-court-block *{scroll-behavior:auto!important;animation:none!important}}
+
+.v22-canvas{isolation:isolate}.v22-webgl{width:100%;height:100%;display:block;touch-action:manipulation}.v22-labels{position:absolute;inset:0;pointer-events:none;z-index:2}.v22-player-tag{position:absolute;transform:translate(-50%,-50%);font-size:clamp(7px,1vw,10px);font-weight:1000;white-space:nowrap;color:white;padding:2px 5px;border-radius:4px;border:1px solid #ffffff60;text-shadow:0 2px 4px #000;background:#126fafa8}.v22-player-tag.opponent{background:#ba3344ae}
+.v22-overlay-prompt{position:absolute;z-index:3;left:50%;top:7%;transform:translateX(-50%);background:#071d35c9;border:1px solid #5296c0;border-radius:7px;padding:5px 11px;color:#f3f8ff;font-weight:900;font-size:12px;pointer-events:none;white-space:nowrap}
+.v22-cameras{display:flex;flex-wrap:wrap;gap:6px}.v22-hitter{padding:10px;background:#0a1a30}.v22-hitter span{color:#a9c6e0;font-size:11px;letter-spacing:1px;font-weight:900}.v22-hitter>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.v22-hitter button{border:1px solid #577ba4;background:#1b3450;color:#e2efff;border-radius:6px;padding:6px 9px;font-size:11px;cursor:pointer}.v22-hitter button[aria-pressed=true]{background:#a56c30;color:white;border-color:#ffc47d}.v22-hitter button:disabled{opacity:.35;cursor:not-allowed}
+.v22-status span{color:#87b9dd}

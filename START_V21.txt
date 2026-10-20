@@ -1,0 +1,6 @@
+1. This ZIP contains the entire V21 game at its root.
+2. If replacing V20, copy its contents into your GitHub repository folder, then Commit to main and Push origin.
+3. Optional individual art ZIP (56 high-detail generated character portraits):
+https://d2ol7oe51mr4n9.cloudfront.net/user_3IwAt93rOrD0F1V81PG3d3zpGoM/59b3140c-a023-418a-bda1-e14b1b1fb68d.zip
+4. Extract numbered .webp images to public/ai-portraits/local/ for self-hosting.
+5. Detailed notes: README_V21.md

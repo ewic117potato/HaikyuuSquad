@@ -39,8 +39,8 @@ const secondary=D.makeOffer({roster:R.SPIKE_ROSTER,targetSchool:'NOHEBI',allowed
  cardFromIndex:(i,v)=>B.buildCard(R.SPIKE_ROSTER[i],i,0),rand:Math.random});
 assert.equal(secondary.school,'NOHEBI');
 const all=JSON.parse(fs.readFileSync('public/cards/catalog.json'));
-assert.equal(all.cards.length,336);assert.equal(all.staff.length,156);
-assert.equal(new Set([...all.cards,...all.staff].map(c=>c.key)).size,492);
+assert.equal(all.cards.length,342);assert.equal(all.staff.length,156);
+assert.equal(new Set([...all.cards,...all.staff].map(c=>c.key)).size,498);
 assert.equal(all.cards.find(x=>x.key==='0-0').power,92);
 for(const c of [...all.cards,...all.staff]){
  const path='public/'+c.file;assert(fs.existsSync(path),path);

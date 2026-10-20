@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "20.0.0",
+  "version": "22.0.0",
   "private": true,
-  "description": "Haikyuu Legends V20 Refined Arena: tactical coaching QoL, faster autoplay, quest rewards, safe save exports, and improved responsive UI.",
+  "description": "V22 procedural 3D tactical court, animated rallies, aim zones and selectable hitters",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -24,7 +24,9 @@
     "test:v16": "node test/v16-showdown.test.js && npm run test:v15",
     "test:v18": "node test/v18-gauntlet.test.js && npm run test:v16",
     "test:v19": "node test/v19-tactics.test.js && node test/v19-server.test.js && npm run test:v18",
-    "test:v20": "node test/v20-quality.test.js && node test/v20-game.test.js && npm run test:v19"
+    "test:v20": "node test/v20-quality.test.js && node test/v20-game.test.js && npm run test:v19",
+    "test:v21": "node test/v21-scout.test.js && npm run test:v20",
+    "test:v22": "node test/v22-three-d.test.js && npm run test:v21"
   },
   "dependencies": {
     "ws": "^8.18.0"
