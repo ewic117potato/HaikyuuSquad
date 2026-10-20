@@ -12,7 +12,7 @@
  const normalizeEvent=e=>({winner:e?.winner??0,serve:e?.serve??0,action:e?.action||'',beats:Array.isArray(e?.beats)?e.beats:[],rally:e?.rally||0,choices:e?.choices||null});
  const cyan=[.11,.72,.98],ember=[1,.27,.23],line=[.85,.91,1],wood=[.52,.26,.13];
  const color=(a,b=1)=>a.map(v=>clamp(v*b,0,1)), len=v=>Math.hypot(...v), subtract=(a,b)=>a.map((v,i)=>v-b[i]), add=(a,b)=>a.map((v,i)=>v+b[i]), scale=(a,f)=>a.map(v=>v*f), norm=a=>scale(a,1/(len(a)||1));
- let obj=null, lastGame=null, prevRally=-1, raf=0, cameraMode='broadcast', tracking=false;
+ let obj=null, lastGame=null, prevRally=-1, raf=0, cameraMode='dynamic', tracking=false;
  const vShader=`attribute vec4 aClip;attribute vec3 aColor; varying vec3 vColor;void main(){gl_Position=aClip;vColor=aColor;}`;
  const fShader=`precision mediump float;varying vec3 vColor;void main(){gl_FragColor=vec4(pow(clamp(vColor,0.0,1.0),vec3(0.83)),1.0);}`;
  function shader(gl,type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
@@ -32,7 +32,13 @@
   // camera looks down negative Z, screen right points positive world X.
   const r=norm([front[2]*-1,0,front[0]]);const up=norm([r[1]*front[2]-r[2]*front[1],r[2]*front[0]-r[0]*front[2],r[0]*front[1]-r[1]*front[0]]);
   return {cam,front,right:r,up};}
- function camera(){return cameraMode==='side'?look([19,12,15],[0,0,0]):cameraMode==='top'?look([.03,27,12],[0,0,0]):look([0,17,24],[0,0,0]);}
+ function camera(){
+  if(cameraMode==='dynamic'&&obj?.playing&&obj.ball){
+   const p=obj.ball;const x=clamp(p[0]*.25,-1.2,1.2),z=clamp(p[2]*.13,-1.2,1.2);
+   return look([x,14.2,22.5+z],[p[0]*.20,1,p[2]*.10]);
+  }
+  return cameraMode==='side'?look([19,12,15],[0,0,0]):cameraMode==='top'?look([.03,27,12],[0,0,0]):look([0,17,24],[0,0,0]);
+ }
  function project(p,cam,aspect){const d=subtract(p,cam.cam),z=d[0]*cam.front[0]+d[1]*cam.front[1]+d[2]*cam.front[2],x=d[0]*cam.right[0]+d[1]*cam.right[1]+d[2]*cam.right[2],y=d[0]*cam.up[0]+d[1]*cam.up[1]+d[2]*cam.up[2];const fov=Math.tan(44*PI/360);return [x/fov/aspect,y/fov,(100.2/99.8)*z-(40/99.8),z];}
  function drawFrame(time){
   if(!obj||!obj.root||!obj.root.isConnected){raf=0;return;}if(document.hidden){raf=requestAnimationFrame(drawFrame);return;}
@@ -80,14 +86,14 @@
   for(let side=0;side<2;side++)for(let i=0;i<6;i++){
    const [x,,z]=athleteXYZ(side,i),r=roster[side]?.[i]||{},tone=side?ember:cyan;
    const spike=(obj.playing&&at<1&&currentActor===r.name&&currentBeat&&['spike','block','dump','set'].includes(currentBeat.kind));
-   const jump=spike?Math.sin(Math.PI*Math.min(1,(at*obj.playing.tracks.length)%1))*0.62:0;
+   const jump=spike?Math.sin(Math.PI*Math.min(1,(at*obj.playing.tracks.length)%1))*(currentBeat.kind==='spike'?1.25:.72):0;
    box(x,.045,z,1.07,.035,1.07,color(tone,.16));
    sphere([x,.23+jump,z],.15,[.10,.11,.15]);
    line3([x-.12,.24+jump,z],[x-.23,.82+jump,z],.18,[.13,.14,.21]);line3([x+.12,.24+jump,z],[x+.23,.82+jump,z],.18,[.13,.14,.21]);
    box(x,1.12+jump,z,.58,.88,.37,color(tone,1));
    sphere([x,1.80+jump,z],.28,[.93,.71,.57]);
    sphere([x,2.03+jump,z-.045],.22,[.095,.10,.14]);
-   const armHigh=spike?2.45:1.33;
+   const armHigh=spike?(currentBeat.kind==='spike'?2.85:2.45):1.33;
    line3([x-.25,1.48+jump,z],[x-.51,spike?armHigh+jump:1.21+jump,z-.06],.20,[.84,.59,.43]);
    line3([x+.25,1.48+jump,z],[x+.51,spike?armHigh+jump:1.21+jump,z-.06],.20,[.84,.59,.43]);
    labels.push({p:[x,2.30+jump,z],label:(r.name||'PLAYER').split(' ').at(-1),rating:r.power||'',side});
@@ -95,6 +101,11 @@
   // Physical volleyball with a moving shadow and luminous flight path.
   const shadowPos=[ball[0],.058,ball[2]];box(shadowPos[0],shadowPos[1],shadowPos[2],.45,.02,.45,[.07,.09,.14]);
   if(obj.playing&&at<1&&density){for(let i=1;i<=4;i++){let trail=scale(subtract(ball,obj.playing.tracks[0]?.from||[0,3,0]),i*.045);sphere(subtract(ball,trail),.11-i*.015,[.08+i*.07,.55,.95]);}}
+  // Impact flare and action-dependent ball highlight on spike / block / dump.
+  if(obj.playing&&at<1&&currentBeat&&['spike','dump','block'].includes(currentBeat.kind)&&density){
+   const power=currentBeat.kind==='spike'?.55:.3;
+   for(let j=0;j<5;j++){const theta=j*PI*2/5+time*.001;const r=.34+Math.sin(time*.014)*.06;
+    sphere([ball[0]+Math.cos(theta)*r,ball[1]+Math.sin(theta)*r,ball[2]],.07+power*.045,[.95,.57,.20]);}}
   sphere(ball,.235,[.96,.91,.78]);sphere(add(ball,[.065,.035,.035]),.10,[.14,.48,.77]);
   if(obj.gl){const gl=obj.gl;gl.viewport(0,0,w,h);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(obj.prog);gl.bindBuffer(gl.ARRAY_BUFFER,obj.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(verts),gl.DYNAMIC_DRAW);
    gl.enableVertexAttribArray(obj.aClip);gl.vertexAttribPointer(obj.aClip,4,gl.FLOAT,false,28,0);gl.enableVertexAttribArray(obj.aColor);gl.vertexAttribPointer(obj.aColor,3,gl.FLOAT,false,28,16);gl.drawArrays(gl.TRIANGLES,0,verts.length/7);
@@ -119,11 +130,11 @@
   const phase=match?.type==='bot'?match?.phaseList?.[match.phaseIndex]:match?.pendingPhase;
   obj.targetMarker=(phase==='serve'||phase==='attack')?{side:match?.type==='live'?(match?.playingSide??0):0,zone:match?.aim?.[phase==='serve'?'serveZone':'attackZone']||4}:null;
   const event=match?.events?.at(-1);
-  if(event&&prevRally!==match.rally){prevRally=match.rally;const tracks=setupTracks(event,match.rosters);obj.playing={start:performance.now(),duration:Math.min(1550,Math.max(850,tracks.length*340)),tracks,event};const s=container.querySelector('.v22-move-label');if(s)s.textContent='🏐 '+(event.action||'LIVE RALLY');}
+  if(event&&prevRally!==match.rally){prevRally=match.rally;const tracks=setupTracks(event,match.rosters);obj.playing={start:performance.now(),duration:Math.min(3900,Math.max(1650,tracks.length*650)),tracks,event};const s=container.querySelector('.v22-move-label');if(s)s.textContent='🏐 '+(event.action||'LIVE RALLY');}
   if(!raf)raf=requestAnimationFrame(drawFrame);
  }
  function unmount(){if(obj){obj.root=null;obj.labels=null;obj.canvas?.remove();obj.playing=null;}if(raf){cancelAnimationFrame(raf);raf=0;}prevRally=-1;}
- function setCamera(mode){if(['broadcast','side','top'].includes(mode))cameraMode=mode;return cameraMode;}
+ function setCamera(mode){if(['dynamic','broadcast','side','top'].includes(mode))cameraMode=mode;return cameraMode;}
  function getCamera(){return cameraMode;}
  return {mount,unmount,setCamera,getCamera,zoneXY,zoneAtScreen,xyzZone,athleteXYZ,normalizeEvent,setupTracks};
 });

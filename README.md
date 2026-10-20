@@ -1,3 +1,7 @@
+# HAIKYUU LEGENDS V24 — CINEMATIC SCOUT & 3D RALLY
+
+See [START_V24.md](START_V24.md) for full update instructions and known limitations.
+
 # V23 — INSTANT FRIEND DRAFTS & END-OF-DRAFT CARD REVEAL
 
 **Start with [`START_V23.md`](START_V23.md)** for all changes and update steps. In friend duels, school rolls are instant and both players draft independently. When both squads are done, each card is revealed one by one before Ready.

@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "23.0.0",
+  "version": "24.0.0",
   "private": true,
-  "description": "V23 instant independent friend drafting and 12-card final 1v1 reveal with duel animations",
+  "description": "V24 configurable high-OVR scout safeguards, cinematic pull reveals and enhanced 3D rally playback",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -27,7 +27,8 @@
     "test:v20": "node test/v20-quality.test.js && node test/v20-game.test.js && npm run test:v19",
     "test:v21": "node test/v21-scout.test.js && npm run test:v20",
     "test:v22": "node test/v22-three-d.test.js && npm run test:v21",
-    "test:v23": "node test/v23-async-duel.test.js && npm run test:v22"
+    "test:v23": "node test/v23-async-duel.test.js && npm run test:v22",
+    "test:v24": "node test/v24-cinematic.test.js && node test/v24-behavior.test.js && npm run test:v23"
   },
   "dependencies": {
     "ws": "^8.18.0"
