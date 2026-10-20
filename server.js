@@ -95,14 +95,27 @@ function rerollSameSchool(room,p){
  send(p.ws,{type:'draft_offer',round:p.squad.length+1,total:6,school:result.school,cards:result.cards,
    rerolls:p.rerolls,schoolRolls:p.schoolRolls,needed:Draft.needs(p.squad),settings:room.settings});
 }
-function startDraft(room){room.status='draft';room.draftRound=0;room.players.forEach(p=>{
- p.squad=[];p.rerolls=room.settings.rerolls;p.schoolRolls=room.settings.extraRolls;
- p.offer=null;p.picked=false;newOffer(room,p);
-});snapshot(room);}
-function snapshot(room){room.players.forEach((p,i)=>send(p.ws,{type:'room',code:room.code,youIndex:i,
+// V23: Both friends draft at their own pace. There is NO per-pick round lock.
+// Offers are private to their owner until both teams finish and the reveal begins.
+function startDraft(room){
+ room.status='draft';room.draftRound=0;
+ room.players.forEach(p=>{
+  p.squad=[];p.ready=false;p.rerolls=room.settings.rerolls;
+  p.schoolRolls=room.settings.extraRolls;p.offer=null;p.picked=false;
+  newOffer(room,p);
+ });
+ snapshot(room);
+}
+function snapshot(room){
+ room.players.forEach((p,i)=>send(p.ws,{type:'room',code:room.code,youIndex:i,
  status:room.status,mode:room.mode||'saved',settings:room.settings,draftRound:room.draftRound||0,
- players:room.players.map(x=>({name:x.name,ready:x.ready,power:x.squad.length?Math.round(x.squad.reduce((s,y)=>s+y.power,0)/x.squad.length):0,strategy:x.strategy,school:teamwork(x.squad).topSchool})),
- strategies:room.players.map(x=>x.strategy),playModes:room.players.map(x=>x.playMode),format:'First to 15 · win by 2'}));}
+ players:room.players.map(x=>({name:x.name,ready:x.ready,picks:x.squad.length,
+  draftFinished:room.mode==='fresh'&&x.squad.length===6,
+  // Keep the draft secret before the six-card showdown.
+  power:room.status==='draft'?null:(x.squad.length?Math.round(x.squad.reduce((s,y)=>s+y.power,0)/x.squad.length):0),
+  strategy:x.strategy,school:room.status==='draft'?'HIDDEN':teamwork(x.squad).topSchool})),
+ strategies:room.players.map(x=>x.strategy),playModes:room.players.map(x=>x.playMode),format:'First to 15 · win by 2'}));
+}
 function reset(room){clearTimer(room);room.status='waiting';room.score=[0,0];room.serving=0;room.rally=0;room.stats=[{aces:0,blocks:0,digs:0,spikes:0},{aces:0,blocks:0,digs:0,spikes:0}];room.boxScore=[{},{}];room.rematchVotes.clear();room.players.forEach(p=>p.ready=false);snapshot(room);}
 function finish(room){clearTimer(room);room.status='finished';const winner=room.score[0]>room.score[1]?0:1;
  const mvp=room.boxScore.map(b=>Object.entries(b).sort((a,b)=>b[1]-a[1])[0]||['Unknown',0]);
@@ -168,8 +181,8 @@ function startRally(room){
  issuePhase(room);
 }
 function begin(room){room.status='playing';room.rally=0;room.score=[0,0];room.serving=0;room.stats=[{aces:0,blocks:0,digs:0,spikes:0},{aces:0,blocks:0,digs:0,spikes:0}];room.boxScore=[{},{}];
- broadcast(room,{type:'start',players:room.players.map(p=>({name:p.name,squad:p.squad,strategy:p.strategy,synergy:teamwork(p.squad)})),score:room.score.slice(),at:Date.now(),revealMs:INTRO_MS,playModes:room.players.map(p=>p.playMode)});
- room.timer=setTimeout(()=>startRally(room),INTRO_MS+350);
+ broadcast(room,{type:'start',players:room.players.map(p=>({name:p.name,squad:p.squad,strategy:p.strategy,synergy:teamwork(p.squad)})),score:room.score.slice(),at:Date.now(),revealMs:room.mode==='fresh'?0:INTRO_MS,playModes:room.players.map(p=>p.playMode)});
+ room.timer=setTimeout(()=>startRally(room),room.mode==='fresh'?450:INTRO_MS+350);
 }
 
 function leave(ws){const room=rooms.get(ws.roomCode);ws.roomCode=null;if(!room)return;
@@ -201,29 +214,43 @@ wss.on('connection',ws=>{
    const room=rooms.get(ws.roomCode);if(!room)return;
    const player=room.players.find(p=>p.ws===ws);if(!player)return;
    if(m.type==='draft_reroll'&&room.status==='draft'){
-    if(player.picked)return;
+    if(player.squad.length>=6)return;
     if(player.rerolls<=0){send(ws,{type:'error',text:'No draft rerolls left.'});return;}
     player.rerolls--;rerollSameSchool(room,player);return;
    }
    if(m.type==='draft_school_roll'&&room.status==='draft'){
-    if(player.picked||!player.offer)return;
+    if(player.squad.length>=6||!player.offer)return;
     if(player.schoolRolls<=0){send(ws,{type:'error',text:'No extra school rolls left.'});return;}
     player.schoolRolls--;newOffer(room,player);return;
    }
    if(m.type==='draft_pick'&&room.status==='draft'){
-    if(player.picked||!player.offer)return;
+    if(player.squad.length>=6||!player.offer)return;
     const choice=player.offer.cards.find(c=>c.key===m.key);
     if(!choice){send(ws,{type:'error',text:'That card is not in your offer.'});return;}
-    if(!Draft.eligible(player.squad,choice)){send(ws,{type:'error',text:'That position is already filled. Choose a needed position or reroll.'});return;}
-    player.lastSchool=player.offer.school;player.squad.push({...choice,id:choice.key,slot:choice.position});
-    player.picked=true;send(ws,{type:'draft_picked',pick:choice,round:room.draftRound+1});
-    if(room.players.every(x=>x.picked)){
-     room.draftRound++;
-     if(room.draftRound===6){
-       for(const p of room.players){const ordered=Draft.lineup(p.squad);if(!ordered){send(p.ws,{type:'error',text:'Invalid final squad'});return;}p.squad=ordered.map((c,i)=>({...c,slot:['OH','MB','OP',ordered[3].position,'OH','S'][i]}));}
-       room.status='waiting';broadcast(room,{type:'draft_complete',players:room.players.map(x=>({name:x.name,squad:x.squad}))});snapshot(room);}
-     else{room.players.forEach(x=>{x.picked=false;newOffer(room,x);});snapshot(room);}
+    if(!Draft.eligible(player.squad,choice)){
+     send(ws,{type:'error',text:'That position is already filled. Choose a needed position or reroll.'});return;
     }
+    player.lastSchool=player.offer.school;
+    player.squad.push({...choice,id:choice.key,slot:choice.position});
+    player.offer=null; // Prevent replaying a previous choice with a second message.
+    send(ws,{type:'draft_picked',pick:choice,round:player.squad.length,total:6});
+    if(player.squad.length<6){
+     // The NEXT SCHOOL IS FREE and available immediately, even if your friend is behind.
+     newOffer(room,player);
+    }else{
+     const ordered=Draft.lineup(player.squad);
+     if(!ordered){send(ws,{type:'error',text:'Invalid final squad; contact support.'});return;}
+     player.squad=ordered.map((c,i)=>({...c,slot:['OH','MB','OP',ordered[3].position,'OH','S'][i]}));
+     if(!room.players.every(x=>x.squad.length===6)){
+      send(ws,{type:'draft_waiting',picks:6,total:6,text:'Your squad is ready. Your friend can finish drafting at their own pace.'});
+     }
+    }
+    room.draftRound=Math.max(...room.players.map(x=>x.squad.length));
+    if(room.players.every(x=>x.squad.length===6)){
+     room.status='waiting';room.draftRound=6;
+     broadcast(room,{type:'draft_complete',players:room.players.map(x=>({name:x.name,squad:x.squad}))});
+    }
+    snapshot(room);
     return;
    }
    if(m.type==='ready'&&room.status==='waiting'){

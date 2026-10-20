@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "22.0.0",
+  "version": "23.0.0",
   "private": true,
-  "description": "V22 procedural 3D tactical court, animated rallies, aim zones and selectable hitters",
+  "description": "V23 instant independent friend drafting and 12-card final 1v1 reveal with duel animations",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -26,7 +26,8 @@
     "test:v19": "node test/v19-tactics.test.js && node test/v19-server.test.js && npm run test:v18",
     "test:v20": "node test/v20-quality.test.js && node test/v20-game.test.js && npm run test:v19",
     "test:v21": "node test/v21-scout.test.js && npm run test:v20",
-    "test:v22": "node test/v22-three-d.test.js && npm run test:v21"
+    "test:v22": "node test/v22-three-d.test.js && npm run test:v21",
+    "test:v23": "node test/v23-async-duel.test.js && npm run test:v22"
   },
   "dependencies": {
     "ws": "^8.18.0"

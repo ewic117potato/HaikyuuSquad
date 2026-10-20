@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071324"><title>Haikyuu Legends — V23 Duel Reveal Preview</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="v3.css"><link rel="stylesheet" href="v16-duels.css"><link rel="stylesheet" href="v23-duel-reveals.css">
+<style>body{background:radial-gradient(ellipse at top,#152f57,#07101e 70%);color:white;min-height:100vh;margin:0;font-family:system-ui,Arial,sans-serif}main{max-width:1000px;padding:34px 20px;margin:0 auto}h1{font-size:clamp(27px,4vw,54px);margin:10px 0}.demo-description{max-width:680px;line-height:1.65;color:#b5d2e6}.demo-actions{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}.demo-note{margin-top:25px;padding:18px;border:1px solid #428cce77;border-radius:12px;background:#0b1a2e;line-height:1.6;color:#b5cfe9}a{color:#9bdaff}</style></head>
+<body><main><p>⚔ HAIKYUU LEGENDS V23</p><h1>FINAL DUEL REVEAL</h1><p class="demo-description">Both players can roll and draft their teams independently. Once both six-player squads are locked in, each position is revealed one card at a time, with an animated face-off. This preview uses example squads and does not change your save or connect to multiplayer.</p>
+<div class="demo-actions"><button type="button" class="btn" id="startDemo">▶ WATCH 1v1 REVEAL</button><a class="btn ghost" href="index.html">← BACK TO GAME</a></div>
+<div class="demo-note">Watch the two sides reveal their 12 cards sequentially. The <b>Skip to Ready</b> button skips only the cinematic; it doesn't spend rolls or affect your team.</div></main><div id="modal"></div>
+<script src="roster-data.js"></script><script src="balance.js"></script><script src="duel-v16.js"></script>
+<script>
+'use strict';
+const seq=[['Shoyo Hinata','Kei Tsukishima','Daichi Sawamura','Yu Nishinoya','Asahi Azumane','Tobio Kageyama'],['Taketora Yamamoto','Tetsuro Kuroo','Nobuyuki Kai','Morisuke Yaku','Shohei Fukunaga','Kenma Kozume']];
+function team(names){return names.map(n=>{const row=SPIKE_ROSTER.find(p=>p.name===n);return row?SpikeBalance.buildCard(row,SPIKE_ROSTER.indexOf(row),0):{name:n,position:'OH',power:80,school:'DEMO'};});}
+function preview(){const all=seq.map(team);DuelV16.intro(all,['KARASUNO','NEKOMA'],()=>{document.getElementById('modal').innerHTML=`<div class="overlay"><div class="dialog v16-dialog v23-reveal-dialog" style="text-align:center"><div class="v16-kicker">✓ REVEAL COMPLETE</div><h2>READY FOR THE FIRST SERVE</h2><p>Both teams have been revealed. In a real friend duel, each player can now press Ready and the 3D volleyball match begins.</p><button class="btn" id="again">↻ REPLAY REVEAL</button><button class="btn ghost" id="closeDemo">CLOSE</button></div></div>`;document.getElementById('again').onclick=preview;document.getElementById('closeDemo').onclick=()=>{document.getElementById('modal').innerHTML='';};},9600);}
+document.getElementById('startDemo').onclick=preview;
+</script></body></html>

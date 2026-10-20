@@ -1,3 +1,7 @@
+# V23 — INSTANT FRIEND DRAFTS & END-OF-DRAFT CARD REVEAL
+
+**Start with [`START_V23.md`](START_V23.md)** for all changes and update steps. In friend duels, school rolls are instant and both players draft independently. When both squads are done, each card is revealed one by one before Ready.
+
 # HAIKYUU LEGENDS — V20 REFINED ARENA
 
 A browser-based, unofficial Haikyuu-inspired squad-building volleyball game. This ZIP is the **complete replacement project** for GitHub + Render, with optional Supabase cloud saves. It does not require local Node.js to deploy through GitHub Desktop.

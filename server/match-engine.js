@@ -11,7 +11,7 @@ function sanitizeSquad(squad){
  if(!Array.isArray(squad)||squad.length!==6)return [];
  const allowed=['S','OH','MB','OP','L'];const slots=['OH','MB','OP','MB/L','OH','S'];
  const sanitized=squad.map((x,i)=>({
-   name:safeName(x?.name),id:String(x?.id||'').slice(0,80),
+   name:safeName(x?.name),id:String(x?.id||'').slice(0,80),cardKey:/^(?:\d+-[0-3](?:_(?:elite|apex))?|quest-[a-z0-9-]+)$/.test(String(x?.cardKey||''))?String(x.cardKey):'',
    power:clamp(Number(x?.power)||65,60,115),attack:clamp(Number(x?.attack)||65,60,115),
    defense:clamp(Number(x?.defense)||65,60,115),set:clamp(Number(x?.set)||65,60,115),
    position:allowed.includes(x?.position)?x.position:slots[i],slot:slots[i],awakening:clamp(Number(x?.awakening)||0,0,6),

@@ -5,23 +5,57 @@ window.DuelV16=(()=>{
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
  let token=0,clock=null;
  const cleanup=()=>{token++;if(clock)clearTimeout(clock);clock=null};
- const photo=c=>{const id=c?.portrait||'';return /^portraits\/[\w/.\-]+\.(svg|webp|png)$/.test(id)?id:'portraits/staff-placeholder.svg';};
- function intro(rosters,names,onDone,ms=7500){cleanup();const cur=token;const host=document.getElementById('modal');if(!host){onDone();return;}
+ const safePath=x=>/^(?:portraits|cards\/players)\/[\w.\-\/]+\.(?:svg|webp|png)$/.test(x||'')?x:'';
+ function photo(c){
+   // Full character-specific artwork even if a saved squad only carries a UID.
+   const roster=(typeof SPIKE_ROSTER!=='undefined'&&Array.isArray(SPIKE_ROSTER))?SPIKE_ROSTER:[];
+   const athlete=roster.find(x=>x.name===c?.name&&x.school===c?.school);
+   const idx=Number.isInteger(c?.idx)?c.idx:(athlete?.id??null);
+   const raw=String(c?.cardKey||c?.key||c?.id||'');
+   const key=/^\d+-[0-3](?:_(?:elite|apex))?$/.test(raw)?raw:idx!==null?`${idx}-0`:'';
+   const fallback=safePath(c?.portrait)||(idx!==null?`portraits/${String(idx).padStart(2,'0')}.svg`:'portraits/staff-placeholder.svg');
+   const card=key?safePath(`cards/players/${key}.webp`):'';
+   const individual=(idx!==null&&typeof V17_INDIVIDUAL_PORTRAITS!=='undefined')?V17_INDIVIDUAL_PORTRAITS[idx]:'';
+   return {src:individual||card||fallback,card:card||fallback,fallback};
+ }
+ function intro(rosters,names,onDone,ms=9600){
+   cleanup();const current=token;
+   const host=document.getElementById('modal');if(!host){onDone();return;}
    const a=Array.isArray(rosters?.[0])?rosters[0]:[],b=Array.isArray(rosters?.[1])?rosters[1]:[];
-   host.innerHTML=`<div class="overlay" id="overlay"><div class="dialog v16-dialog"><div class="v16-kicker">⚔ PRE-MATCH SHOWDOWN</div><h2 class="v16-title">POSITION FACE-OFF</h2><div class="v16-intro-score"><b>${esc(names?.[0]||'HOME')}</b><span>VS</span><b>${esc(names?.[1]||'AWAY')}</b></div><div class="v16-reveal" id="v16-reveal" aria-live="polite"></div><div class="v16-progress"><div id="v16-progress"></div></div><div class="v16-foot"><span id="v16-count">ROUND 1 / 6</span><button class="btn ghost sm" id="v16-skip">SKIP INTRO →</button></div></div></div>`;
-   const panel=document.getElementById('v16-reveal'),meter=document.getElementById('v16-progress'),counter=document.getElementById('v16-count');
-   const show=i=>{
-     const ca=a[i]||{},cb=b[i]||{};
-     const one=(c,side)=>`<article class="v16-face v16-${side}" style="--side:${side==='home'?'#ff994e':'#39b7ff'}"><div class="v16-portrait"><img src="${photo(c)}" alt="${esc(c.name||'Unknown player')}"></div><b class="v16-ovr">${Math.round(Number(c.power)||0)} <small>OVR</small></b><strong>${esc(c.name||'UNKNOWN')}</strong><small>${esc(c.school||'')} · ${esc(c.position||'')}</small></article>`;
-     panel.innerHTML=`${one(ca,'home')}<div class="v16-versus">VS</div>${one(cb,'away')}`;
-     meter.style.width=((i+1)/6*100)+'%';counter.textContent=`${slots[i]} · ${i+1}/6`;
+   const totals=[a,b].map(r=>r.reduce((sum,c)=>sum+(Number(c?.power)||0),0));
+   host.innerHTML=`<div class="overlay v23-reveal-overlay" id="overlay"><div class="dialog v16-dialog v23-reveal-dialog" role="dialog" aria-modal="true" aria-label="Final squad reveal">
+     <div class="v16-kicker">⚔ HAIKYUU LEGENDS · SQUAD SHOWDOWN</div><h2 class="v16-title">THE FINAL REVEAL</h2>
+     <p class="v23-reveal-sub">No wait between draft picks. Now reveal each team member one by one.</p>
+     <div class="v16-intro-score"><b>${esc(names?.[0]||'HOME')}</b><span>VS</span><b>${esc(names?.[1]||'AWAY')}</b></div>
+     <div class="v23-reveal-stage"><div class="v23-stadium-beams" aria-hidden="true"></div><div class="v16-reveal" id="v16-reveal" aria-live="polite"></div></div>
+     <div class="v23-reveal-score" id="v23-reveal-score">??? OVR <span>VS</span> ??? OVR</div>
+     <div class="v16-progress"><div id="v16-progress"></div></div>
+     <div class="v16-foot"><span id="v16-count">REVEAL 1 / 12</span><button type="button" class="btn ghost sm" id="v16-skip">SKIP TO READY →</button></div>
+     <p class="v23-reveal-sub">${esc(names?.[0]||'HOME')}: ${a.length} players &nbsp;·&nbsp; ${esc(names?.[1]||'AWAY')}: ${b.length} players</p>
+    </div></div>`;
+   const panel=document.getElementById('v16-reveal'),meter=document.getElementById('v16-progress'),counter=document.getElementById('v16-count'),score=document.getElementById('v23-reveal-score');
+   const face=(c,side,shown)=>{
+     if(!shown)return `<article class="v16-face v23-mystery v16-${side}" aria-label="Mystery opponent"><div class="v23-mystery-mark">?</div><strong>HIDDEN CARD</strong><small>TO BE REVEALED</small></article>`;
+     const art=photo(c||{});const power=Math.round(Number(c?.power)||0);
+     return `<article class="v16-face v16-${side} v23-flash" style="--side:${side==='home'?'#ff994e':'#39b7ff'}"><span class="v23-card-shine" aria-hidden="true"></span><div class="v16-portrait"><img src="${art.src}" alt="${esc(c?.name||'Unknown player')}" onerror="if(!this.dataset.cardFallback){this.dataset.cardFallback='1';this.src='${art.card}'}else{this.onerror=null;this.src='${art.fallback}'}"></div><b class="v16-ovr">${power}<small> OVR</small></b><strong>${esc(c?.name||'UNKNOWN')}</strong><small>${esc(c?.school||'')} · ${esc(c?.position||'')}</small></article>`;
    };
-   const duration=Math.max(3000,Number(ms)||7500),step=Math.floor((duration-400)/6);let idx=0;
-   show(0);
-   function next(){if(token!==cur)return;idx++;if(idx>=6){finish();return;}show(idx);clock=setTimeout(next,step);}
-   function finish(){if(token!==cur)return;cleanup();onDone();}
-   document.getElementById('v16-skip').addEventListener('click',finish);
-   clock=setTimeout(next,step);
+   const reduced=typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+   const duration=Math.max(3200,Number(ms)||9600),step=Math.floor((duration-300)/12),actualStep=reduced?Math.min(180,step):step;
+   let idx=0;
+   function paint(k){if(token!==current)return;
+     const position=Math.floor(k/2),revealAway=k%2===1;
+     panel.innerHTML=face(a[position],'home',true)+`<div class="v16-versus">${revealAway?'VS':'⚡'}</div>`+face(b[position],'away',revealAway);
+     panel.setAttribute('data-side',revealAway?'away':'home');
+     meter.style.width=((k+1)/12*100)+'%';
+     counter.textContent=`${slots[position]} · ${k+1}/12 CARDS REVEALED`;
+     const one=totals[0],two=totals[1];
+     score.innerHTML=`${k===11?one:'???'} OVR <span>VS</span> ${k===11?two:'???'} OVR`;
+   }
+   function finish(){if(token!==current)return;cleanup();onDone();}
+   function advance(){if(token!==current)return;idx++;if(idx>=12){finish();return;}paint(idx);clock=setTimeout(advance,actualStep);}
+   paint(0);
+   document.getElementById('v16-skip')?.addEventListener('click',finish);
+   clock=setTimeout(advance,actualStep);
  }
  // Position-aware rally simulator: serve -> receive -> set -> attack -> block/dig.
  const avg=(r,key)=>r.reduce((n,c)=>n+(Number(c?.[key])||Number(c?.power)||70),0)/Math.max(1,r.length);
