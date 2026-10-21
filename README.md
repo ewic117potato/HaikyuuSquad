@@ -1,3 +1,9 @@
+# V26.3 — Courtside update
+
+See [START_V26_3_COURTSIDE.md](START_V26_3_COURTSIDE.md) for changes and launch instructions.
+
+> **LATEST: V26.2 Refined Hub.** See [START_V26_2_REFINED.md](START_V26_2_REFINED.md) for changes and local development instructions.
+
 > **LATEST: V26 Ultimate Overhaul.** Start with [`START_V26.md`](START_V26.md) for complete features, update steps and test limitations.
 
 # V23 — INSTANT FRIEND DRAFTS & END-OF-DRAFT CARD REVEAL

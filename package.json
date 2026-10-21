@@ -1,8 +1,8 @@
 {
   "name": "spike-legends",
-  "version": "26.0.0",
+  "version": "26.3.0",
   "private": true,
-  "description": "V26 ultimate overhaul: 3D animated humanoid rallies, player-specific chemistry and rivalry, premium pity, Nationals Road, progress quests and co-op raids",
+  "description": "V26.3 Courtside: corrected volleyball animation, replay continuity and court-first match presentation",
   "scripts": {
     "start": "node server.js",
     "test": "node test/server-smoke.js",
@@ -29,7 +29,10 @@
     "test:v22": "node test/v22-three-d.test.js && npm run test:v21",
     "test:v23": "node test/v23-async-duel.test.js && npm run test:v22",
     "test:v25": "node test/v25-cinematics.test.js && npm run test:v23",
-    "test:v26": "node test/v26-overhaul.test.js && node test/v26-raid-server.test.js && npm run test:v25 && node test/v22-renderer.test.js && node test/v22-server-target.test.js"
+    "test:v26": "node test/v26-overhaul.test.js && node test/v26-raid-server.test.js && npm run test:v25 && node test/v22-renderer.test.js && node test/v22-server-target.test.js",
+    "test:arena": "node test/v26-arena-enhanced.test.js && node test/v22-renderer.test.js",
+    "test:hub": "node test/v26-2-hub.test.js",
+    "test:courtside": "node test/v26-3-playback.test.js && npm run test:arena && npm run test:hub"
   },
   "dependencies": {
     "ws": "^8.18.0"

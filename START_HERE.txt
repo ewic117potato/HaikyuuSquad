@@ -1,19 +1,10 @@
-HAIKYUU LEGENDS V20 — REFINED ARENA
-=================================
+HAIKYUU LEGENDS V26.3 — COURTSIDE
 
-1. In the deployed game, click SAVE BACKUP > EXPORT SAVE to preserve progress.
-2. Extract this ZIP.
-3. Copy the CONTENTS of the extracted folder into your GitHub Desktop repository's main folder.
-4. In GitHub Desktop: Commit to main > Push origin.
-5. Check Render deploy logs for Live status.
-6. Open the website and test school scouting, a manual bot duel, Auto Play,
-   quests, collection and saved teams. Use SAVE BACKUP to restore a JSON save if needed.
+Extract the entire ZIP first.
+Windows: double-click START_LOCAL_DEV_WINDOWS.bat (Node.js 20+).
+Other systems: npm install, then npm start. Open http://localhost:3000
 
-Render: Root Directory blank | Build npm install | Start npm start
-NOTE: package.json must be visible on the repository's main GitHub page.
+Read START_V26_3_COURTSIDE.md for changes and instructions.
 
-Main improvements: 1x/2x/4x automatic matches; pause/resume; tactical hints;
-keyboard 1–4 commands; claim-all quests; save export/import; reusable staff
-recruitment choices; high-OVR match correction; responsive UI polish.
-
-Complete instructions and limitations: README.md
+For an existing deployment, replace the project files, commit and redeploy.
+Export your save first if changing the website address.

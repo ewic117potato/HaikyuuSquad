@@ -17,3 +17,37 @@
 .v22-overlay-prompt{position:absolute;z-index:3;left:50%;top:7%;transform:translateX(-50%);background:#071d35c9;border:1px solid #5296c0;border-radius:7px;padding:5px 11px;color:#f3f8ff;font-weight:900;font-size:12px;pointer-events:none;white-space:nowrap}
 .v22-cameras{display:flex;flex-wrap:wrap;gap:6px}.v22-hitter{padding:10px;background:#0a1a30}.v22-hitter span{color:#a9c6e0;font-size:11px;letter-spacing:1px;font-weight:900}.v22-hitter>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.v22-hitter button{border:1px solid #577ba4;background:#1b3450;color:#e2efff;border-radius:6px;padding:6px 9px;font-size:11px;cursor:pointer}.v22-hitter button[aria-pressed=true]{background:#a56c30;color:white;border-color:#ffc47d}.v22-hitter button:disabled{opacity:.35;cursor:not-allowed}
 .v22-status span{color:#87b9dd}
+
+/* V26 COURTSIDE DIRECTOR: larger gameplay canvas, crisp broadcast overlays */
+.v22-court-block{border:1px solid #668fab;border-radius:17px;background:#060f20;box-shadow:0 22px 65px #0009,0 0 0 1px #ffffff13;}
+.v22-canvas{height:clamp(360px,54vw,625px);min-height:360px;background:#070f20;isolation:isolate;overflow:hidden;}
+.v22-canvas canvas.v22-webgl{height:100%;width:100%;display:block;image-rendering:auto;}
+.v22-header{background:linear-gradient(110deg,#0b1b33,#142740 55%,#0c1b31);padding:13px 16px;border-bottom:1px solid #53729155;}
+.v22-film-ui{position:absolute;inset:0;z-index:4;pointer-events:none;font-family:Inter,'Arial',sans-serif;text-shadow:0 2px 8px #030b19;}
+.v22-film-top{position:absolute;top:14px;left:15px;right:15px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.v22-film-title{border-left:3px solid #edc47f;background:#06172edb;padding:8px 11px;border-radius:0 7px 7px 0;color:#fff;font-size:12px;font-weight:1000;letter-spacing:.14em;}
+.v22-film-title small{display:block;font-size:9px;letter-spacing:.12em;color:#8eb3ce;margin-top:4px;}
+.v22-film-live{color:#fbe6bb;background:#081c32d9;border:1px solid #e9a15d55;border-radius:20px;font-size:10px;letter-spacing:.12em;font-weight:900;padding:8px 11px;white-space:nowrap;}
+.v22-action-card{position:absolute;left:16px;bottom:39px;max-width:69%;border-left:4px solid #ffc264;border-radius:0 8px 8px 0;padding:9px 15px;background:linear-gradient(90deg,#09152af2,#11243ad1);box-shadow:0 10px 30px #050f2188;}
+.v22-action-callout{font-size:clamp(13px,2.2vw,23px);font-weight:1000;letter-spacing:.025em;color:#fff;line-height:1.13;}
+.v22-action-detail{font-size:11px;color:#c8ddf2;letter-spacing:.08em;font-weight:900;margin-top:6px;}
+.v22-replay-track{position:absolute;bottom:0;left:0;right:0;height:5px;background:#0b2235;overflow:hidden;}
+.v22-replay-fill{display:block;background:linear-gradient(90deg,#ffb16f,#f6d2a4,#ffffff);height:100%;width:0%;box-shadow:0 0 12px #fff7c8;}
+.v22-player-tag{font-size:clamp(9px,1.1vw,12px);padding:4px 7px;border-radius:5px;color:#f1f7ff;background:#0b2038cf;border:1px solid #4da5ce83;box-shadow:0 4px 8px #08102099;text-transform:uppercase;letter-spacing:.035em;transition:background .2s ease;}
+.v22-player-tag.opponent{background:#491d31d9;border-color:#db718a85;}
+.v22-player-tag.is-actor{color:#1a1722;background:#ffe2a7;border-color:#fff6cb;box-shadow:0 0 16px #eebc8277;transform:translate(-50%,-50%) scale(1.10);}
+.v22-overlay-prompt.v22-move-label{top:61px;font-size:10px;letter-spacing:.07em;color:#d8eaff;background:#061d32d5;border-color:#6684a1;}
+#modal .dialog:has(.v5-duel-arena),#modal .dialog:has(.v26-raid-match){width:min(1270px,96vw);max-width:1270px;padding:clamp(12px,2vw,26px);}
+#modal .dialog:has(.v5-duel-arena) .v5-duel-arena{max-width:1190px;}
+#modal .dialog:has(.v26-raid-match) .v22-canvas{height:clamp(370px,48vw,600px);}
+@media(max-width:750px){
+ .v22-canvas{height:clamp(275px,70vw,490px);min-height:275px;}
+ .v22-film-title{font-size:10px;padding:5px 7px}.v22-film-title small{font-size:8px}
+ .v22-film-live{font-size:9px;padding:6px 8px}
+ .v22-action-card{bottom:28px;left:7px;max-width:75%;padding:6px 9px}
+ .v22-action-callout{font-size:14px}.v22-action-detail{font-size:9px}
+ .v22-player-tag{font-size:8px;padding:2px 4px}
+ .v22-overlay-prompt.v22-move-label{display:none}
+ #modal .dialog:has(.v5-duel-arena),#modal .dialog:has(.v26-raid-match){width:min(100vw - 12px,1270px);padding:10px}
+}
+@media(prefers-reduced-motion:reduce){.v22-film-ui *, .v22-canvas *{animation:none!important;transition:none!important}}

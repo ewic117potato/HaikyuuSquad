@@ -1,0 +1,39 @@
+/* V26.3 Courtside — restrained broadcast presentation */
+.v22-court-block,.v22-arena-wrap{border:1px solid #385465;border-radius:16px;overflow:hidden;background:#08121c;box-shadow:0 18px 48px #0005}
+.v22-header,.v22-stage-top{background:#101f2b;padding:12px 16px;gap:10px;flex-wrap:wrap;border-bottom:1px solid #ffffff12}
+.v22-header>span{font-size:11px;letter-spacing:.09em;color:#c8d9e4}
+.v22-header small{display:block;font-size:10px;font-weight:400;letter-spacing:0;margin-top:4px;color:#8199aa}
+.v22-cameras{display:flex;flex-wrap:wrap;gap:4px}
+.v22-cameras button{background:#192c3a;border:1px solid transparent;color:#b5c7d5;border-radius:6px;padding:8px 10px;font:700 10px system-ui;letter-spacing:.04em;cursor:pointer}
+.v22-cameras button.active,.v22-cameras button[aria-pressed=true]{background:#d8f7ea;color:#102923;border-color:#d8f7ea}
+.v22-cameras button:hover{border-color:#8da9ba}
+.v22-canvas,.v22-viewport{position:relative;height:clamp(330px,49vw,620px);overflow:hidden;isolation:isolate;background:#07121d}
+.v22-film-top{top:17px;left:18px;right:18px}
+.v22-film-title{border-left:3px solid #8ee8c5;background:#08151dd9;font-size:10px;letter-spacing:.18em;padding:8px 12px;border-radius:0 4px 4px 0}
+.v22-film-title small{color:#94afbb;font-size:8px}
+.v22-film-live{font-size:9px;color:#9defc8;background:#0b1d22d9;border-color:#9defc833}
+.v22-overlay-prompt.v22-move-label{display:none}
+.v22-action-card{left:18px;bottom:68px;border-left:3px solid #eec38b;max-width:75%;padding:10px 15px;background:linear-gradient(90deg,#081722ef,#081722b8);box-shadow:none;border-radius:0 5px 5px 0}
+.v22-action-callout{font:800 clamp(13px,1.6vw,21px) system-ui;letter-spacing:.035em}
+.v22-action-detail{font-size:9px;letter-spacing:.12em;margin-top:4px;color:#b0c7d3}
+.v22-replay-track{bottom:0;height:3px;background:#ffffff15}
+.v22-replay-fill{background:#95e8ca;box-shadow:none}
+.v22-player-tag{font:700 9px system-ui;padding:3px 6px;border-radius:3px;box-shadow:none;background:#102a38c9;border-color:#ffffff24}
+.v22-player-tag.is-actor{background:#f6dbac;color:#222b34;border-color:#ffecca;box-shadow:0 2px 12px #0004}
+.v25-court-hud{bottom:16px;left:18px;right:18px;gap:6px;align-items:center}
+.v25-court-hud span{border-radius:4px;border:1px solid #ffffff1a;background:#0a1724ed;padding:9px 12px;font-size:10px;box-shadow:none}
+.v25-court-hud b{font-size:19px;line-height:1;margin:0 5px;color:#f9e1b5;font-variant-numeric:tabular-nums}
+.v22-status{padding:10px 16px;font-size:10px;letter-spacing:.06em;background:#10202a;color:#b3c8d2}
+.v5-duel-arena{display:flex;flex-direction:column;gap:10px}
+.v5-duel-arena>.eyebrow{order:-4}.v5-duel-arena>.v5-duel-score{order:-3}.v5-duel-arena>.v22-court-block{order:-2}.v5-duel-arena>.v19-panel{order:-1}
+.v5-duel-score{margin:0!important;padding:14px 20px!important;background:#10212c!important;border:1px solid #ffffff15!important;border-radius:12px!important}
+.v19-panel{margin:0!important;border-radius:12px!important;background:#10202c!important;border-color:#ffffff20!important}
+.v19-choice-grid button{box-shadow:none!important;border-radius:8px!important;min-height:90px}
+#modal .dialog:has(.v5-duel-arena){width:min(1200px,97vw);max-width:1200px;padding:20px;background:#09131e;border:1px solid #405564}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #9df0d0!important;outline-offset:3px}
+@media(max-width:650px){#modal .dialog:has(.v5-duel-arena){padding:8px}.v22-canvas,.v22-viewport{height:360px;min-height:280px}.v22-header{padding:9px}.v22-cameras button{padding:8px;font-size:9px}.v22-film-top{top:10px;left:10px;right:10px}.v22-film-live{display:none}.v22-action-card{left:10px;bottom:62px;max-width:90%;padding:7px 10px}.v25-court-hud{left:8px;right:8px;bottom:13px}.v25-court-hud span{font-size:8px;padding:7px 5px}.v25-court-hud b{font-size:15px;margin:0 2px}.v19-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v22-player-tag{font-size:8px}}
+.v22-underfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding:10px 14px;color:#8fa9ba;font:10px system-ui;letter-spacing:.04em}
+.v22-zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:10px 0}
+.v22-zones button{padding:9px 5px;border:1px solid #385463;border-radius:6px;background:#152b39;color:#c4d7e2;font:700 10px system-ui;cursor:pointer}
+.v22-zones button span{display:block;font-size:8px;margin-top:4px;color:#90aabb}
+.v22-zones button[aria-pressed=true]{border-color:#92e4c5;background:#24463f;color:#e0ffee}

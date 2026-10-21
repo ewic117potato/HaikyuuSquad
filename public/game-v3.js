@@ -218,7 +218,7 @@ let view='home',selectionSlot=0,filters='',chosenSchool='ALL SCHOOLS',offer=null
 function updateHeader(){const a=$('#coins'),b=$('#tickets'),n=$('#playerName');if(a)a.textContent=f(state.coins);if(b)b.textContent=f(state.tickets);if(n)n.textContent=state.name;const gems=$('#gems');if(gems)gems.textContent=f(state.gems);const rr=$('#rerolls');if(rr)rr.textContent=f(state.v3.rerolls);const lvl=$('#headerLevel');if(lvl)lvl.textContent=f(state.level);const st=$('#staffCount');if(st)st.textContent=f(state.coaches.length);}
 function notice(msg){const el=$('#toast');if(!el)return;el.textContent=msg;el.setAttribute?.('role','status');el.setAttribute?.('aria-live','polite');el.classList.add('show');clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.classList.remove('show'),4000)}
 function popup(body){
- if(typeof Spike3D!=='undefined')Spike3D.unmount();
+ if(typeof Spike3D!=='undefined'&&!((body.includes('id="v22Match3D"')&&$('#v22Match3D'))||(body.includes('id="v26Raid3D"')&&$('#v26Raid3D'))))Spike3D.unmount();
  const old=$('#modal .dialog');const prevScroll=old?.scrollTop||0;
  const current=document.activeElement;const remember=current?.dataset?.v==='tacticChoice'?{phase:current.dataset.phase,choice:current.dataset.choice}:null;
  $('#modal').innerHTML=`<div class="overlay" id="overlay"><div class="dialog v3-dialog" role="dialog" aria-modal="true" aria-label="Haikyuu Legends game panel"><button class="close" aria-label="Close panel" data-v="close">✕</button>${body}</div></div>`;
@@ -320,7 +320,8 @@ function v15QuestList(){
  {name:'Activate a Chemistry Link',progress:Math.min(1,state.v3.chemistryRuns||0),goal:1,reward:'REROLLS'}];
  return qDef.map(q=>`<button type="button" class="v15-quest-line" data-go="quests"><span class="v15-quest-diamond">✦</span><span class="v15-quest-text"><strong>${q.name}</strong><small><i style="width:${q.progress/q.goal*100}%"></i></small></span><span>${q.progress}/${q.goal}</span></button>`).join('');
 }
-function home(){
+// V26.1 legacy landing page retained as a compatibility/fallback renderer; V26.2 uses the focused dashboard by default.
+function legacyHome(){
  const equipped=state.squad.map(player);const hasTeam=equipped.some(Boolean);
  const showcaseKeys=['0-0','1-0','15-0','6-0','13-0','4-0'];
  const lineup=hasTeam?equipped:showcaseKeys.map(k=>BY_KEY[k]||null);
@@ -357,6 +358,56 @@ function home(){
  <section class="v15-panel v15-elite-reel"><div class="v15-section-head"><div><strong>TOP SCHOOL CARDS</strong><span>STARS WORTH CHASING</span></div><button data-go="roll">SCOUT NOW →</button></div><div class="v15-card-reel">${selectCards(0,9).map(v15MiniCard).join('')}</div></section>
  <section class="v15-premium-reels">${[{s:1,title:'NATIONALS',desc:'TOURNAMENT REWARDS'},{s:2,title:'TIMESKIP',desc:'FUTURE STARS'},{s:3,title:'PROFESSIONAL',desc:'100+ OVR CONTRACTS'}].map(t=>`<div class="v15-panel"><div class="v15-section-head"><div><strong>${t.title}</strong><span>${t.desc}</span></div><button data-go="${t.s===1?'nationals':'shop'}">VIEW →</button></div><div class="v15-card-reel">${selectCards(t.s,5).map(v15MiniCard).join('')}</div></div>`).join('')}</section>
  <div class="v15-home-foot"><span>◈ HAIKYUU LEGENDS V26 · UNOFFICIAL FAN PROJECT</span><span>Progress saves in this browser, with optional Supabase cloud backup.</span><button data-go="quests">EARN MORE ROLLS →</button></div>
+ </div>`;
+}
+
+function home(){
+ const cards=owned(), equipped=state.squad.map(player), fielded=equipped.filter(Boolean);
+ const complete=fielded.length===6, hasPicks=Boolean(state.v3.run);
+ const drafted=state.v3.run?.picks?.length||0;
+ const links=Links.evaluate(fielded);
+ const road=Math.min(100,Math.max(0,Number(state.v3.nationalsRoad?.cleared)||0));
+ const career=Math.min(57,Math.max(0,Number(state.career)||0));
+ const claimable=Quality.questStatus(DAILY,'daily',state.v3,state.v3.claimed).claimable;
+ const recent=cards.at(-1);
+ const bonding=links.links.slice(0,2);
+ const roadPct=Math.round(road), careerPct=Math.round(career/57*100);
+ const currentGoal=!complete?'Finish your six-player squad':career<57?'Win your next School Battle':road<100?'Continue Nationals Road':'Challenge your friends or raid bosses';
+ const goalView=!complete?'roll':career<57?'career':road<100?'nationals':'raids';
+ const nextTitle=hasPicks?'Continue your draft':complete?'Scout a stronger squad':'Start your first draft';
+ const nextDesc=hasPicks?`${drafted}/6 recruits selected · keep your progress`:'Choose from four players each roll · build your six';
+ const linkCount=links.links.length;
+ const roster=equipped.map((c,i)=>`<div class="v262-slot ${c?'filled':''}">
+  ${c?`<img src="${escapeHtml(v13CardPath(c))}" loading="lazy" alt="${escapeHtml(c.name)}" onerror="this.onerror=null;this.src='${escapeHtml(c.portrait||'portraits/staff-placeholder.svg')}'">`:`<span aria-hidden="true">${['OH','MB','OP','LIB','OH','S'][i]}</span>`}
+  <div class="v262-slot-text"><b>${c?escapeHtml(c.name.split(' ').at(-1)):['Outside','Middle','Opposite','Defence','Outside','Setter'][i]}</b><small>${c?`${c.power+(Number(c.level)||0)+(links.byName?.[c.name]?.bonus||0)} OVR`:'EMPTY SLOT'}</small></div>
+ </div>`).join('');
+ const progress=(title,value,total,subtitle,go)=>`<button type="button" class="v262-track" data-go="${go}"><span class="v262-track-line"><strong>${title}</strong><b>${value} / ${total}</b></span><span class="v262-meter"><i style="width:${Math.max(0,Math.min(100,Math.round(value/total*100)))}%"></i></span><small>${subtitle}</small></button>`;
+ return `<div class="v262-home">
+  <header class="v262-welcome"><div><div class="v262-eyebrow">● SQUAD HEADQUARTERS <span>V26.3 COURTSIDE</span></div><h1>YOUR COURT. YOUR NEXT MOVE.</h1><p>Everything you need to play, draft and progress — without hunting through menus.</p></div><div class="v262-profile-strip"><strong>${complete?ovr():'—'}</strong><span>TEAM OVR</span><small>${cards.length} cards collected</small></div></header>
+  <section class="v262-main-actions" aria-label="Start playing">
+   <button type="button" class="v262-action v262-action-draft" data-go="roll"><span class="v262-action-over">01 · BUILD YOUR TEAM</span><strong>◈ ${nextTitle.toUpperCase()}</strong><small>${nextDesc}</small>${hasPicks?`<span class="v262-meter"><i style="width:${Math.round(drafted/6*100)}%"></i></span>`:''}<span class="v262-action-enter">OPEN DRAFT ↗</span></button>
+   <button type="button" class="v262-action v262-action-play" data-go="${goalView}"><span class="v262-action-over">02 · PICK UP WHERE YOU LEFT OFF</span><strong>▶ ${complete?'CONTINUE PLAYING':'BUILD YOUR FIRST SIX'}</strong><small>${currentGoal}${complete?` · ${career}/57 battles cleared`:''}</small><span class="v262-action-enter">${complete?'CONTINUE →':'GET STARTED →'}</span></button>
+  </section>
+  <section class="v262-shortcuts" aria-label="Game modes">
+    <button type="button" data-go="career"><span>⚡</span><strong>School Battles</strong><small>${career}/57 complete</small></button>
+    <button type="button" data-go="nationals"><span>🏆</span><strong>Nationals</strong><small>${road}/100 stages</small></button>
+    <button type="button" data-go="duels"><span>⚔</span><strong>1v1 Friends</strong><small>Normal school draft</small></button>
+    <button type="button" data-go="raids"><span>👥</span><strong>Co-op Raids</strong><small>Up to 4 friends</small></button>
+  </section>
+  <section class="v262-center">
+   <div class="v262-panel v262-team"><div class="v262-panel-heading"><div><span class="v262-eyebrow">YOUR LINEUP</span><h2>${complete?'READY TO PLAY':'STARTING SIX'}</h2></div><button type="button" data-go="squad">EDIT SQUAD ↗</button></div>
+    <div class="v262-six" aria-label="Your six starting positions">${roster}</div>
+    <div class="v262-bonds"><div><span>⚡ ACTIVE LINKS</span><strong>${linkCount}</strong></div><div><span>⬆ INDIVIDUAL CARD BOOSTS</span><strong>+${links.total||0} OVR</strong></div></div>
+    ${bonding.length?`<div class="v262-bond-lines">${bonding.map(x=>`<span>${escapeHtml(x.label)} <b>+${x.bonus} EACH</b></span>`).join('')}</div>`:'<p class="v262-muted">Draft linked characters to unlock individual chemistry and rivalry boosts.</p>'}
+    ${recent?`<div class="v262-recent">LAST RECRUIT: <b>${escapeHtml(recent.name)}</b> · ${recent.power} OVR <button type="button" data-go="collection">VIEW COLLECTION ↗</button></div>`:''}
+   </div>
+   <aside class="v262-panel v262-progress"><div class="v262-panel-heading"><div><span class="v262-eyebrow">CAREER PROGRESS</span><h2>YOUR NEXT REWARDS</h2></div><button type="button" data-go="quests">ALL QUESTS ↗</button></div>
+    ${progress('School Gauntlet · 57 STAGES',career,57,career<57?'UNLOCK MORE SCHOOLS by clearing chapters':'All school battles cleared','career')}
+    ${progress('Nationals Road',road,100,road<100?`Next challenge: stage ${road+1}`:'Road completed','nationals')}
+    <button type="button" class="v262-claim" data-go="quests"><span>✦ DAILY QUEST REWARDS</span><strong>${claimable?`${claimable} READY TO CLAIM`:'EARN ROLLS & REROLLS'}</strong><small>Every quest has its own progress bar. View objectives →</small></button>
+   </aside>
+  </section>
+  <footer class="v262-footer"><div><b>QUICK LINKS</b><span>Manage cards, packs and settings without crowding your homepage.</span></div><nav aria-label="Quick links"><button type="button" data-go="shop">PACK SHOP</button><button type="button" data-go="collection">COLLECTION</button><button type="button" data-go="quests">QUESTS</button><button type="button" data-v="gameGuide">HOW TO PLAY</button></nav></footer>
  </div>`;
 }
 function drawFromSchool(school='ALL SCHOOLS',avoidSchool=null){return Draft.makeOffer({roster:SPIKE_ROSTER,allowedSchools:unlockedSchools(),existing:(state.v3.run?.picks||[]).map(player).filter(Boolean),targetSchool:school==='ALL SCHOOLS'?null:school,avoidSchool,cardFromIndex:(i,v)=>{
@@ -982,11 +1033,30 @@ function completeMatch(win,coin,career=false){if(coach()?.buff==='coins')coin=Ma
 // auto play uses exactly the same simulation and team-strength calculations.
 function tacticalPhases(game){const serving=game.serving===0;return [serving?'serve':'receive','set','attack','defense'];}
 function prepareTacticalRally(game){game.aim={serveZone:4,attackZone:4,setTo:4};game.plan={};game.phaseList=tacticalPhases(game);game.phaseIndex=0;game.showOutcome=false;drawArena();}
-function runBotAuto(game){clearInterval(botTick);if(game!==duel||game.type!=='bot'||game.mode!=='auto'||game.paused)return;game.plan={};game.showOutcome=false;
- botTick=setInterval(()=>{if(game!==duel||game.mode!=='auto'||game.paused){clearInterval(botTick);return;}resolveBotRally(game,{});},V25.autoInterval(state.v3.autoSpeed,state.v3.cinemaMatch));}
+function runBotAuto(game){
+ clearInterval(botTick);
+ if(game!==duel||game.type!=='bot'||game.mode!=='auto'||game.paused)return;
+ game.plan={};game.showOutcome=false;
+ // A rally finishes playing before the next is computed: adapt the timer to
+ // actual serve/pass/set/spike event count, not a fixed 1-second slideshow.
+ const schedule=(delay)=>{
+  clearInterval(botTick);
+  botTick=setInterval(()=>{
+   if(game!==duel||game.mode!=='auto'||game.paused){clearInterval(botTick);return;}
+   if(typeof Spike3D!=='undefined'&&Spike3D.isPlaying())return;
+   resolveBotRally(game,{});
+   if(game!==duel||game.mode!=='auto'||game.paused)return;
+   const count=game.events?.at(-1)?.beats?.length||4;
+   const replay=V25.replayDuration(count,state.v3.autoSpeed,state.v3.cinemaMatch);
+   const next=Math.max(V25.autoInterval(state.v3.autoSpeed,state.v3.cinemaMatch),replay+390);
+   if(Math.abs(next-delay)>150)schedule(next);
+  },delay);
+ };
+ schedule(V25.autoInterval(state.v3.autoSpeed,state.v3.cinemaMatch));
+}
 function toggleMatchCinema(){state.v3.cinemaMatch=!state.v3.cinemaMatch;save();if(duel?.type==='bot'&&duel.mode==='auto'&&!duel.paused)runBotAuto(duel);drawArenaSafe();notice(state.v3.cinemaMatch?'Cinematic rally replays enabled.':'Fast rally replays enabled.');}
 function setAutoSpeed(speed){const next=Quality.speed(speed);state.v3.autoSpeed=next;save();if(duel?.type==='bot'&&duel.mode==='auto'&&!duel.paused&&!duel.intro)runBotAuto(duel);drawArenaSafe();}
-function toggleAutoPause(){if(duel?.type!=='bot'||duel.mode!=='auto')return;duel.paused=!duel.paused;if(duel.paused)clearInterval(botTick);else runBotAuto(duel);drawArenaSafe();}
+function toggleAutoPause(){if(duel?.type!=='bot'||duel.mode!=='auto')return;duel.paused=!duel.paused;if(duel.paused){clearInterval(botTick);Spike3D.pause();}else{Spike3D.resume();runBotAuto(duel);}drawArenaSafe();}
 function drawArenaSafe(){if(duel&&!duel.intro)drawArena();else render();}
 function changeTacticalMode(next){if(next!=='manual'&&next!=='auto')return;state.v3.matchMode=next;save();if(duel?.type==='bot'&&!duel.intro){duel.mode=next;clearInterval(botTick);if(next==='auto'){timingState=null;if(typeof cancelAnimationFrame==='function')cancelAnimationFrame(timingRaf);duel.paused=false;runBotAuto(duel);drawArena();}else{duel.paused=false;prepareTacticalRally(duel);}}else if(duel?.type==='live'){duel.mode=next;duel.pendingPhase=null;duel.waiting=false;if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'match_mode',mode:next}));drawArena();}else render();}
 function timingAthlete(phase){

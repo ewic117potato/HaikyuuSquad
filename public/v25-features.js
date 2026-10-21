@@ -30,15 +30,15 @@
   }
   function tier(power){if(power>=105)return 'APEX';if(power>=100)return 'MYTHIC';if(power>=95)return 'LEGENDARY';if(power>=90)return 'ELITE';return 'STANDARD';}
   function replayDuration(beats,speed=1,cinema=true){
-    if(!cinema)return 700;
-    const steps=Math.max(2,Math.min(9,Math.round(Number(beats)||3)));
+    if(!cinema)return 750;
+    const steps=Math.max(2,Math.min(12,Math.round(Number(beats)||4)));
     const s=[1,2,4].includes(Number(speed))?Number(speed):1;
-    return Math.round(clamp((steps*400+450)/Math.sqrt(s),900,4900));
+    // Enough time to watch the whole serve -> pass -> set -> attack sequence.
+    return Math.round(clamp(750+steps*700/Math.pow(s,.72),1200,9800));
   }
-  // Auto Play respects the animation timeline; 4x is still substantially faster.
   function autoInterval(speed=1,cinema=true,base=1050){
-    if(!cinema)return Math.max(220,Math.round(base/(Number(speed)||1)));
-    return replayDuration(4,speed,true)+200;
+    if(!cinema)return Math.max(250,Math.round(base/(Number(speed)||1)));
+    return replayDuration(4,speed,true)+350;
   }
   return {threshold,protectedCards,tier,replayDuration,autoInterval};
 });
